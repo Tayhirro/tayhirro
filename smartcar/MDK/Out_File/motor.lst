@@ -1,0 +1,210 @@
+C251 COMPILER V5.60.0,  motor                                                              06/10/23  19:39:35  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE motor
+OBJECT MODULE PLACED IN .\Out_File\motor.obj
+COMPILER INVOKED BY: C:\Program Files\keil-5\C251\BIN\C251.EXE ..\CODE\motor.c XSMALL INTR2 WARNINGLEVEL(3) OPTIMIZE(0,S
+                    -PEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\
+                    -CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\motor.lst) TABS(2) OBJECT(.\Out_File\motor.obj) 
+
+stmt  level    source
+
+    1          #include "motor.h"
+    2          #include "zf_pwm.h"
+    3          #include "common.h"
+    4          #include "zf_delay.h"
+    5          #include "pidcc.h"
+    6          /********************************************************************
+    7          ** º¯ÊýÃû³Æ: void motor_init() 
+    8          ** ¹¦ÄÜÃèÊö: ÉèÖÃ¶æ»ú×ªÏò
+    9          ** Èë¿Ú£º½Ç¶ÈÖµ
+   10          ** ³ö¿Ú£º
+   11          ** ËµÃ÷:  
+   12          *********************************************************************/
+   13          void motor_init()         
+   14          {    
+   15   1          //³õÊ¼»¯FTM2_CH0Êä³öÆµÂÊÎª100HZ,Õ¼¿Õ±wÈÎª13%µÄPWM £ºFTM2_CH0¶ÔÓ¦PTA10¿Ú
+   16   1          pwm_init( MOTOR_FTMCH0 ,MOTOR_FREQ, MOTOR_INIT_VAL); 
+   17   1          pwm_init( MOTOR_FTMCH1 ,MOTOR_FREQ, MOTOR_INIT_VAL); //MOTOR_FREQ
+   18   1      //#if MOTOR_DOUBLE
+   19   1          pwm_init( MOTOR_FTMCH2 ,MOTOR_FREQ, MOTOR_INIT_VAL); // MOTOR_INIT_VAL
+   20   1          pwm_init( MOTOR_FTMCH3 ,MOTOR_FREQ, MOTOR_INIT_VAL); 
+   21   1      //#endif
+   22   1      }
+   23          //#if !MOTOR_DOUBLE
+   24          /********************************************************************
+   25          ** º¯ÊýÃû³Æ: PWMSetMotor
+   26          ** ¹¦ÄÜÃèÊö: ÉèÖÃËÙ¶È
+   27          ** Èë¿Ú£ºËÙ¶È
+   28          ** ³ö¿Ú£º
+   29          ** ËµÃ÷:  
+   30          *********************************************************************/
+   31          /*void PWMSetMotor(uint16 speed_pwm)         
+   32          {
+   33              if(speed_pwm < MOTOR_MIN)
+   34              {
+   35                speed_pwm = MOTOR_MIN;
+   36              }
+   37              if(speed_pwm > MOTOR_MAX)
+   38              {
+   39                speed_pwm = MOTOR_MAX;
+   40              }
+   41              
+   42              if(speed_pwm > 0) 
+   43              {
+   44                  pwm_duty(MOTOR_FTMCH0, (uint32)speed_pwm);
+   45                  pwm_duty(MOTOR_FTMCH1, 0);
+   46              } 
+   47              else 
+   48              {
+   49                 speed_pwm = -speed_pwm;
+   50                 pwm_duty(MOTOR_FTMCH1, (uint32)speed_pwm);
+   51                  pwm_duty(MOTOR_FTMCH0, 0);
+   52              }
+   53          }*/
+   54          
+   55          /********************************************************************
+   56          ** º¯ÊýÃû³Æ: motorCtrl
+   57          ** ¹¦ÄÜÃèÊö: ËÙ¶È¿ØÖÆËã·¨
+C251 COMPILER V5.60.0,  motor                                                              06/10/23  19:39:35  PAGE 2   
+
+   58          ** Èë¿Ú£º
+   59          ** ³ö¿Ú£º
+   60          ** ËµÃ÷:  
+   61          *********************************************************************/
+   62          /*void motorCtrl()
+   63          {
+   64              /***
+   65            s32 speed_pwm;
+   66              
+   67              speed_pwm = 0;    //È¥³ýwarning
+   68              
+   69              //×Ô¼ºµÄËÙ¶È¿ØÖÆËã·¨
+   70              
+   71              
+   72              
+   73              PWMSetMotor(speed_pwm);
+   74            ***/
+   75          //}*/
+   76          
+   77          //#endif
+   78          
+   79          
+   80          //#if MOTOR_DOUBLE
+   81          /********************************************************************
+   82          ** º¯ÊýÃû³Æ: PWMSetMotor
+   83          ** ¹¦ÄÜÃèÊö: ÉèÖÃËÙ¶È
+   84          ** Èë¿Ú£º×óÓÒËÙ¶È
+   85          ** ³ö¿Ú£º
+   86          ** ËµÃ÷:  
+   87          *********************************************************************/
+   88          void PWMSetMotor2(int16 speed_pwmL,int16 speed_pwmR)         
+   89          {
+   90   1          if(speed_pwmL < MOTOR_MIN)
+   91   1          {
+   92   2            speed_pwmL = MOTOR_MIN;
+   93   2          }
+   94   1          if(speed_pwmL > MOTOR_MAX)
+   95   1          {
+   96   2            speed_pwmL = MOTOR_MAX;
+   97   2          }
+   98   1          
+   99   1          if(speed_pwmR < MOTOR_MIN)
+  100   1          {
+  101   2            speed_pwmR = MOTOR_MIN;
+  102   2          }
+  103   1          if(speed_pwmR > MOTOR_MAX)
+  104   1          {
+  105   2            speed_pwmR = MOTOR_MAX;
+  106   2          }
+  107   1          
+  108   1          if(speed_pwmL > 0) 
+  109   1          {
+  110   2              pwm_duty(MOTOR_FTMCH0, (uint32)speed_pwmL);
+  111   2              pwm_duty(MOTOR_FTMCH1,100);
+  112   2          } 
+  113   1          else 
+  114   1          {
+  115   2             speed_pwmL = -speed_pwmL;
+  116   2             
+  117   2              
+  118   2              
+  119   2              pwm_duty(MOTOR_FTMCH0, (uint32)speed_pwmL);
+  120   2              pwm_duty(MOTOR_FTMCH1, 0);
+  121   2          }
+  122   1          
+  123   1          if(speed_pwmR > 0) 
+C251 COMPILER V5.60.0,  motor                                                              06/10/23  19:39:35  PAGE 3   
+
+  124   1          {
+  125   2              
+  126   2             pwm_duty(MOTOR_FTMCH2, (uint32)speed_pwmR);
+  127   2             pwm_duty(MOTOR_FTMCH3, 100);
+  128   2          } 
+  129   1          else 
+  130   1          {
+  131   2             speed_pwmR = -speed_pwmR;
+  132   2             pwm_duty(MOTOR_FTMCH2, (uint32)speed_pwmR);
+  133   2             pwm_duty(MOTOR_FTMCH3,0);
+  134   2          }
+  135   1      }
+  136          
+  137          /********************************************************************
+  138          ** º¯ÊýÃû³Æ: motorCtrl
+  139          ** ¹¦ÄÜÃèÊö: ËÙ¶È¿ØÖÆËã·¨
+  140          ** Èë¿Ú£º
+  141          ** ³ö¿Ú£º
+  142          ** ËµÃ÷:  
+  143          *********************************************************************/
+  144          void motorCtrl()
+  145          {
+  146   1        
+  147   1          /*s32 speed_pwm;
+  148   1          
+  149   1          speed_pwm = 0;    //È¥³ýwarning
+  150   1          
+  151   1          //×Ô¼ºµÄËÙ¶È¿ØÖÆËã·¨
+  152   1          
+  153   1          
+  154   1          
+  155   1          PWMSetMotor2(speed_pwm,speed_pwm);
+  156   1        */
+  157   1      }
+  158          extern protect_motor;
+  159          extern adc_left_mid;
+  160          extern adc_right_mid;
+  161          
+  162          void protect(void){
+  163   1        if(adc_left_mid<30 && adc_right_mid<30){
+  164   2                   protect_motor=0;}
+  165   1      }
+  166          //#endif
+  167          
+  168          
+  169          
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =       342     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =         4     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =    ------     ------
+End of Module Information.
+
+C251 COMPILER V5.60.0,  motor                                                              06/10/23  19:39:35  PAGE 4   
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

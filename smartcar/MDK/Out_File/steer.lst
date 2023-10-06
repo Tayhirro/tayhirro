@@ -1,0 +1,98 @@
+C251 COMPILER V5.60.0,  steer                                                              06/10/23  19:39:35  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE steer
+OBJECT MODULE PLACED IN .\Out_File\steer.obj
+COMPILER INVOKED BY: C:\Program Files\keil-5\C251\BIN\C251.EXE ..\CODE\steer.c XSMALL INTR2 WARNINGLEVEL(3) OPTIMIZE(0,S
+                    -PEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\
+                    -CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\steer.lst) TABS(2) OBJECT(.\Out_File\steer.obj) 
+
+stmt  level    source
+
+    1          #include "steer.h"
+    2          
+    3          /********************************************************************
+    4          ** 函数名称 : void steer_init() 
+    5          ** 功能描述 : 设置舵机转向
+    6          ** 入口     ：
+    7          ** 出口     ：
+    8          ** 说明     :  初始化PWM波及占空比
+    9          *********************************************************************/
+   10           void steer_init()         
+   11          {
+   12   1          //ASSERT_RST(STEER_INIT_VAL <= FTM_PRECISON,"舵机0最大值不能超过PWM精度值");        
+   13   1          pwm_init(STEER_FTMCH,STEER_FREQ , STEER_MIDDLE);
+   14   1      /*#if STEER_DOUBLE
+   15   1          //ASSERT_RST(STEER_INIT_VAL1 <= FTM_PRECISON,"舵机最大值不能超过PWM精度值");
+   16   1          ftm_pwm_init(STEER_FTMN,STEER_FTMCH1,STEER_FREQ,STEER_INIT_VAL1); 
+   17   1      #endif*/
+   18   1      }
+   19          
+   20          /********************************************************************
+   21          ** 函数名称: void PWMSetSteer(int angle_pwm) 
+   22          ** 功能描述: 设置舵机转向
+   23          ** 入口：角度值
+   24          ** 出口：
+   25          ** 说明:  
+   26          *********************************************************************/
+   27          void PWMSetSteer(int angle_pwm)         
+   28          {
+   29   1          //占空比不能超过上限（防止过压）
+   30   1          //同时防止方向打死  
+   31   1          //这个保护措施是必要的
+   32   1          if(angle_pwm < STEER_RIGHT)
+   33   1               angle_pwm = STEER_RIGHT;
+   34   1          if(angle_pwm > STEER_LEFT)
+   35   1               angle_pwm = STEER_LEFT;
+   36   1              
+   37   1          pwm_duty(STEER_FTMCH,angle_pwm);
+   38   1      }
+   39          
+   40          
+   41          /********************************************************************
+   42          ** 函数名称: steerCtrl
+   43          ** 功能描述: 速度控制算法
+   44          ** 入口：
+   45          ** 出口：
+   46          ** 说明:  
+   47          *********************************************************************/
+   48          void steerCtrl()
+   49          {
+   50   1          /*
+   51   1          int angle_pwm;
+   52   1          angle_pwm = 0;    //去除warning
+   53   1          
+   54   1          //自己的舵机控制算法
+   55   1          
+   56   1          
+   57   1          PWMSetSteer(angle_pwm) ; 
+C251 COMPILER V5.60.0,  steer                                                              06/10/23  19:39:35  PAGE 2   
+
+   58   1          */ 
+   59   1      }
+   60          
+   61          
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =        81     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =         2     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =    ------     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

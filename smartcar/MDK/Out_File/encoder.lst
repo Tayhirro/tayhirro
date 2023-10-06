@@ -1,0 +1,62 @@
+C251 COMPILER V5.60.0,  encoder                                                            06/10/23  19:39:35  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE encoder
+OBJECT MODULE PLACED IN .\Out_File\encoder.obj
+COMPILER INVOKED BY: C:\Program Files\keil-5\C251\BIN\C251.EXE ..\CODE\encoder.c XSMALL INTR2 WARNINGLEVEL(3) OPTIMIZE(0
+                    -,SPEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;.
+                    -.\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\encoder.lst) TABS(2) OBJECT(.\Out_File\encoder.obj) 
+
+stmt  level    source
+
+    1          #include "headfile.h"
+    2          #include "encoder.h"
+    3          #include "pidcc.h"
+    4          
+    5          float encoder_integral=0;
+    6          float encoder_integral1=0,encoder_integral2=0;
+    7          float encoder=0;
+    8          int  right_speed_in;
+    9          int  left_speed_in;
+   10          /*******************************************
+   11          *************编码器计数函数*****************
+   12          *******************************************/
+   13          void EncoderCount(void)
+   14          {
+   15   1           //读取采集到的编码器脉冲数
+   16   1           right_speed_in = ctimer_count_read(SPEEDR_PLUSE);
+   17   1           left_speed_in = ctimer_count_read(SPEEDL_PLUSE);
+   18   1           //计数器清零
+   19   1          ctimer_count_clean(SPEEDR_PLUSE);
+   20   1          ctimer_count_clean(SPEEDL_PLUSE);
+   21   1          encoder=(right_speed_in+left_speed_in)*0.5;
+   22   1          encoder_integral=encoder_integral+encoder*0.02;
+   23   1      
+   24   1      
+   25   1         toipid_speed_left->input_val= (int)left_speed_in;      //需要修改
+   26   1         toipid_speed_right->input_val= (int)right_speed_in;  
+   27   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =       119     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =        20     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =        32     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

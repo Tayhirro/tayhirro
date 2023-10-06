@@ -1,0 +1,51 @@
+C251 COMPILER V5.60.0,  allinit                                                            06/10/23  19:39:34  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE allinit
+OBJECT MODULE PLACED IN .\Out_File\allinit.obj
+COMPILER INVOKED BY: C:\Program Files\keil-5\C251\BIN\C251.EXE ..\CODE\allinit.c XSMALL INTR2 WARNINGLEVEL(3) OPTIMIZE(0
+                    -,SPEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;.
+                    -.\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\allinit.lst) TABS(2) OBJECT(.\Out_File\allinit.obj) 
+
+stmt  level    source
+
+    1          #include "headfile.h" 
+    2          
+    3          
+    4          
+    5          void Timer_Init(void){
+    6   1        ctimer_count_init(CTIM0_P34);
+    7   1        ctimer_count_init(CTIM3_P04);
+    8   1        pit_timer_ms(TIM_0,10);  //中断开启
+    9   1      };
+   10          
+   11          
+   12          
+   13          void all_init(void)
+   14          { 
+   15   1        Timer_Init();//中断初始化
+   16   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =        26     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =    ------     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =    ------     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
