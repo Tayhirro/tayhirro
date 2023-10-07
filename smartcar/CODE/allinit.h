@@ -2,6 +2,6 @@
 #define _ALLINIT_H_
 
 void Timer_Init(void);
-
+void all_init(void);
 
 #endif

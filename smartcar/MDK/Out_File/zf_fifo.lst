@@ -1,4 +1,4 @@
-C251 COMPILER V5.60.0,  zf_fifo                                                            06/10/23  19:39:33  PAGE 1   
+C251 COMPILER V5.60.0,  zf_fifo                                                            07/10/23  15:37:22  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE zf_fifo
@@ -66,7 +66,7 @@ stmt  level    source
    50   1          fifo->max       = size;
    51   1          return FIFO_SUCCESS;
    52   1      }
-C251 COMPILER V5.60.0,  zf_fifo                                                            06/10/23  19:39:33  PAGE 2   
+C251 COMPILER V5.60.0,  zf_fifo                                                            07/10/23  15:37:22  PAGE 2   
 
    53          
    54          //-------------------------------------------------------------------------------------------------------
@@ -134,7 +134,7 @@ stmt  level    source
              -------------
   107          uint32 fifo_used (fifo_struct *fifo)
   108          {
-C251 COMPILER V5.60.0,  zf_fifo                                                            06/10/23  19:39:33  PAGE 3   
+C251 COMPILER V5.60.0,  zf_fifo                                                            07/10/23  15:37:22  PAGE 3   
 
   109   1          return (fifo->max - fifo->size);
   110   1      }
@@ -202,7 +202,7 @@ stmt  level    source
   163   1          uint8 data_check = 0;
   164   1          uint32 temp_length;
   165   1      
-C251 COMPILER V5.60.0,  zf_fifo                                                            06/10/23  19:39:33  PAGE 4   
+C251 COMPILER V5.60.0,  zf_fifo                                                            07/10/23  15:37:22  PAGE 4   
 
   166   1          if(*length > fifo_used(fifo))
   167   1          {

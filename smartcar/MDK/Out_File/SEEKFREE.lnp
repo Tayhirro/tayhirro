@@ -33,7 +33,6 @@
 ".\Out_File\EM.obj",
 ".\Out_File\encoder.obj",
 ".\Out_File\motor.obj",
-".\Out_File\pid.obj",
 ".\Out_File\pidcc.obj",
 ".\Out_File\steer.obj" 
 TO ".\Out_File\SEEKFREE" 

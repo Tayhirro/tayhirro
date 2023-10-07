@@ -1,4 +1,4 @@
-C251 COMPILER V5.60.0,  SEEKFREE_WIRELESS_CH573                                            06/10/23  19:39:34  PAGE 1   
+C251 COMPILER V5.60.0,  SEEKFREE_WIRELESS_CH573                                            07/10/23  15:37:23  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE SEEKFREE_WIRELESS_CH573
@@ -66,7 +66,7 @@ stmt  level    source
    50   1          wireless_ch573_data = WIRELESS_CH573_DATA_BUF;
    51   1          fifo_write_buffer(&wireless_ch573_fifo, &wireless_ch573_data, 1);       // 存入 FIFO
    52   1      }
-C251 COMPILER V5.60.0,  SEEKFREE_WIRELESS_CH573                                            06/10/23  19:39:34  PAGE 2   
+C251 COMPILER V5.60.0,  SEEKFREE_WIRELESS_CH573                                            07/10/23  15:37:23  PAGE 2   
 
    53          
    54          
@@ -134,7 +134,7 @@ stmt  level    source
              -------------
   111          //  @brief      573转串口模块初始化
   112          //  @param      NULL
-C251 COMPILER V5.60.0,  SEEKFREE_WIRELESS_CH573                                            06/10/23  19:39:34  PAGE 3   
+C251 COMPILER V5.60.0,  SEEKFREE_WIRELESS_CH573                                            07/10/23  15:37:23  PAGE 3   
 
   113          //  @return     void          
   114          //  @since      v1.0

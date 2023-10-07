@@ -1,4 +1,4 @@
-C251 COMPILER V5.60.0,  zf_spi                                                             06/10/23  19:39:33  PAGE 1   
+C251 COMPILER V5.60.0,  zf_spi                                                             07/10/23  15:37:22  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE zf_spi
@@ -66,7 +66,7 @@ stmt  level    source
    48   1          {
    49   2        //IO口需要配置为：准双向口（传统8051端口模式，弱上拉）
    50   2          case SPI_CH1:
-C251 COMPILER V5.60.0,  zf_spi                                                             06/10/23  19:39:33  PAGE 2   
+C251 COMPILER V5.60.0,  zf_spi                                                             07/10/23  15:37:22  PAGE 2   
 
    51   2          gpio_mode(P1_3,GPIO);
    52   2          gpio_mode(P1_4,GPIO);
@@ -134,7 +134,7 @@ stmt  level    source
   114   1          else
   115   1          {
   116   2              //不做操作
-C251 COMPILER V5.60.0,  zf_spi                                                             06/10/23  19:39:33  PAGE 3   
+C251 COMPILER V5.60.0,  zf_spi                                                             07/10/23  15:37:22  PAGE 3   
 
   117   2          }
   118   1          SPCTL |= 1<<6;    //使能SPI功能
@@ -202,7 +202,7 @@ stmt  level    source
   176   1          switch(spi_n)
   177   1          {
   178   2          case SPI_CH1:
-C251 COMPILER V5.60.0,  zf_spi                                                             06/10/23  19:39:33  PAGE 4   
+C251 COMPILER V5.60.0,  zf_spi                                                             07/10/23  15:37:22  PAGE 4   
 
   179   2              P_SW1 |= (0x00<<2);
   180   2              break;

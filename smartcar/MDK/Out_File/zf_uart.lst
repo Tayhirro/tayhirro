@@ -1,4 +1,4 @@
-C251 COMPILER V5.60.0,  zf_uart                                                            06/10/23  19:39:33  PAGE 1   
+C251 COMPILER V5.60.0,  zf_uart                                                            07/10/23  15:37:22  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE zf_uart
@@ -66,7 +66,7 @@ stmt  level    source
    48          {
    49   1          uint16 brt;
    50   1      
-C251 COMPILER V5.60.0,  zf_uart                                                            06/10/23  19:39:33  PAGE 2   
+C251 COMPILER V5.60.0,  zf_uart                                                            07/10/23  15:37:22  PAGE 2   
 
    51   1        brt = (uint16)(65536 - (sys_clk/baud/4));
    52   1      
@@ -134,7 +134,7 @@ stmt  level    source
   114   4              P_SW2 |= 0x01;
   115   4            }
   116   3            
-C251 COMPILER V5.60.0,  zf_uart                                                            06/10/23  19:39:33  PAGE 3   
+C251 COMPILER V5.60.0,  zf_uart                                                            07/10/23  15:37:22  PAGE 3   
 
   117   3            IE2 |= 0x01 << 0; //允许串行口2中断
   118   3            busy[2] = 0;
@@ -202,7 +202,7 @@ stmt  level    source
   180   4              P_SW2 |= 0x04;
   181   4            }
   182   3            IE2 |= 0x01<<4; //允许串行口4中断
-C251 COMPILER V5.60.0,  zf_uart                                                            06/10/23  19:39:33  PAGE 4   
+C251 COMPILER V5.60.0,  zf_uart                                                            07/10/23  15:37:22  PAGE 4   
 
   183   3            busy[4] = 0;
   184   3            break;
@@ -270,7 +270,7 @@ stmt  level    source
              -------------
   242          //  @brief      串口发送字符串
   243          //  @param      uart_n          串口模块号(USART_1,USART_2,USART_3,USART_4)
-C251 COMPILER V5.60.0,  zf_uart                                                            06/10/23  19:39:33  PAGE 5   
+C251 COMPILER V5.60.0,  zf_uart                                                            07/10/23  15:37:22  PAGE 5   
 
   244          //  @param      *str            要发送的字符串地址
   245          //  @return     void

@@ -1,12 +1,12 @@
-C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  06/10/23  15:08:54  PAGE 1   
+C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  07/10/23  14:21:17  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE SEEKFREE_ICM20602
 OBJECT MODULE PLACED IN .\Out_File\SEEKFREE_ICM20602.obj
-COMPILER INVOKED BY: D:\keil251\C251\BIN\C251.EXE ..\..\Libraries\seekfree_peripheral\SEEKFREE_ICM20602.c XSMALL INTR2 W
-                    -ARNINGLEVEL(3) OPTIMIZE(0,SPEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Librar
-                    -ies\seekfree_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\SEEKFREE_ICM20602.lst) TABS(2) OBJECT(.\
-                    -Out_File\SEEKFREE_ICM20602.obj) 
+COMPILER INVOKED BY: C:\Program Files\keil-5\C251\BIN\C251.EXE ..\..\Libraries\seekfree_peripheral\SEEKFREE_ICM20602.c X
+                    -SMALL INTR2 WARNINGLEVEL(3) OPTIMIZE(0,SPEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries
+                    -;..\..\Libraries\seekfree_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\SEEKFREE_ICM20602.lst) TABS
+                    -(2) OBJECT(.\Out_File\SEEKFREE_ICM20602.obj) 
 
 stmt  level    source
 
@@ -66,7 +66,7 @@ stmt  level    source
                #define ICM20602_SDA_HIGH()         ICM20602_SDA_PIN = 1    //IO口输出高电平
                
                #define ICM20602_SCL_LOW()          ICM20602_SCL_PIN = 0    //IO口输出低电平
-C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  06/10/23  15:08:54  PAGE 2   
+C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  07/10/23  14:21:17  PAGE 2   
 
                #define ICM20602_SCL_HIGH()         ICM20602_SCL_PIN = 1    //IO口输出高电平
                
@@ -134,7 +134,7 @@ stmt  level    source
                  
                  ICM20602_SCL_HIGH();
                    icm20602_simiic_delay();
-C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  06/10/23  15:08:54  PAGE 3   
+C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  07/10/23  14:21:17  PAGE 3   
 
                  
                    if(GET_ICM20602_SDA)           //应答为高电平，异常，通信失败
@@ -202,7 +202,7 @@ stmt  level    source
                  
                    return c;
                }
-C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  06/10/23  15:08:54  PAGE 4   
+C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  07/10/23  14:21:17  PAGE 4   
 
                
                
@@ -270,7 +270,7 @@ stmt  level    source
                {
                  icm20602_simiic_start();
                    icm20602_send_ch( (dev_add<<1) | 0x00);  //发送器件地址加写位
-C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  06/10/23  15:08:54  PAGE 5   
+C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  07/10/23  14:21:17  PAGE 5   
 
                  icm20602_send_ch( reg );          //发送从机寄存器地址
                
@@ -338,7 +338,7 @@ stmt  level    source
              -------------
   302          static void icm20602_simspi_w_reg_byte(uint8 cmd, uint8 val)
   303          {
-C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  06/10/23  15:08:54  PAGE 6   
+C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  07/10/23  14:21:17  PAGE 6   
 
   304   1      
   305   1          cmd |= ICM20602_SPI_W;
@@ -406,7 +406,7 @@ stmt  level    source
   361   1          icm20602_simspi_wr_byte(cmd);
   362   1      
   363   1        while(num--)
-C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  06/10/23  15:08:54  PAGE 7   
+C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  07/10/23  14:21:17  PAGE 7   
 
   364   1        {
   365   2          *val++ = icm20602_simspi_wr_byte(0);
@@ -474,7 +474,7 @@ stmt  level    source
   419          // 参数说明     dat            数据缓冲区
   420          // 参数说明     len             数据长度
   421          // 返回参数     void
-C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  06/10/23  15:08:54  PAGE 8   
+C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  07/10/23  14:21:17  PAGE 8   
 
   422          // 使用示例     icm20602_read_registers(ICM20602_ACC_ADDRESS, dat, 6);
   423          // 备注信息     内部调用
@@ -542,7 +542,7 @@ stmt  level    source
              -------------
   479          // 函数简介     获取ICM20602陀螺仪数据
   480          // 参数说明     void
-C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  06/10/23  15:08:54  PAGE 9   
+C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  07/10/23  14:21:17  PAGE 9   
 
   481          // 返回参数     void
   482          // 使用示例     icm20602_get_gyro();                                            // 执行该函数后，直接查看
@@ -610,7 +610,7 @@ stmt  level    source
   531   2              case 0x18: gyro_data = (float)gyro_value / 16.4f;   break;              // 0x18 陀螺仪量程为:±20
              -00dps     获取到的陀螺仪数据除以 16.4          可以转化为带物理单位的数据，单位为：°/s
   532   2              default: break;
-C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  06/10/23  15:08:54  PAGE 10  
+C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  07/10/23  14:21:17  PAGE 10  
 
   533   2          }
   534   1          return gyro_data;
@@ -678,7 +678,7 @@ stmt  level    source
   592   4                      break;
   593   4                  }
   594   3              }while(0x41 != val);
-C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  06/10/23  15:08:54  PAGE 11  
+C251 COMPILER V5.60.0,  SEEKFREE_ICM20602                                                  07/10/23  14:21:17  PAGE 11  
 
   595   2              if(1 == return_state)
   596   2              {

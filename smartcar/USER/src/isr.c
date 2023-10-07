@@ -21,6 +21,7 @@
 #include "steer.h"
 #include "motor.h"
 #include "encoder.h"
+#include "EM.h"
 extern int left_steer ;
 extern int right_steer ;
 extern int adc_left_edge,  adc_left_mid,  adc_mid,  adc_right_mid,  adc_right_edge; 
@@ -140,8 +141,10 @@ void TM0_Isr() interrupt 1
 }
 void TM1_Isr() interrupt 3     
 {
-	 EncoderCount();
-	 pid_steers();
+	 EM_adc();            //µç´Åadc
+	 ADC_Normalization1(adc);
+	 EncoderCount();      //±àÂëÆ÷
+	 pid_steers();    
 	 speed_pid();
 }
 void TM2_Isr() interrupt 12

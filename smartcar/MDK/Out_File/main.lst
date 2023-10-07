@@ -1,4 +1,4 @@
-C251 COMPILER V5.60.0,  main                                                               06/10/23  19:39:34  PAGE 1   
+C251 COMPILER V5.60.0,  main                                                               07/10/23  15:37:23  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE main
@@ -53,43 +53,36 @@ stmt  level    source
    40   1        board_init();     // 初始化寄存器,勿删除此句代码。
    41   1        
    42   1        // 此处编写用户代码(例如：外设初始化代码等)
-   43   1        ips114_init();      //初始化1.1.4寸ips屏幕
-   44   1        motor_init();
-   45   1        steer_init();    
-   46   1        adc_init(ADC_P01,ADC_SYSclk_DIV_2);
-   47   1        adc_init(ADC_P00,ADC_SYSclk_DIV_2);
-   48   1        ctimer_count_init(CTIM0_P34);
-   49   1        ctimer_count_init(CTIM3_P04);
-   50   1        pit_timer_ms(TIM_1,10);  //中断开启
-   51   1        //PWMSetSteer(2050);
-   52   1          while(1)
-   53   1        {
-   54   2          
-   55   2          ips114_clear(WHITE);  
-C251 COMPILER V5.60.0,  main                                                               06/10/23  19:39:34  PAGE 2   
+   43   1        Timer_Init();
+   44   1        all_init();
+   45   1          while(1)
+   46   1        {
+   47   2          
+   48   2          ips114_clear(WHITE);  
+   49   2          //ips114_showuint16(0,0,adc_left_mid);
+   50   2          //ips114_showuint16(0,2,adc_right_mid);
+   51   2          ips114_showuint16(0,0,(uint16)toipid_speed_left->input_val);
+   52   2          ips114_showuint16(0,2,(uint16)toipid_speed_right->input_val);
+   53   2          
+   54   2        //  ips114_showuint16(0,4,topid_steer->Kd_output_val);
+   55   2          //ips114_showuint16(0,0,1);
+C251 COMPILER V5.60.0,  main                                                               07/10/23  15:37:23  PAGE 2   
 
-   56   2          //ips114_showuint16(0,0,adc_left_mid);
-   57   2          //ips114_showuint16(0,2,adc_right_mid);
-   58   2          ips114_showuint16(0,0,(uint16)toipid_speed_left->input_val);
-   59   2          ips114_showuint16(0,2,(uint16)toipid_speed_right->input_val);
-   60   2          
-   61   2        //  ips114_showuint16(0,4,topid_steer->Kd_output_val);
-   62   2          //ips114_showuint16(0,0,1);
-   63   2          //ips114_showuint16(0,2,2);
-   64   2          //delay_ms(1000);
-   65   2          if(protect_motor){
-   66   3          PWMSetMotor2(1800,1800);}
-   67   2          else{PWMSetMotor2(0,0);}
-   68   2          
-   69   2        }
-   70   1      }
-   71          
-   72          
+   56   2          //ips114_showuint16(0,2,2);
+   57   2          //delay_ms(1000);
+   58   2          if(protect_motor){
+   59   3          PWMSetMotor2(1800,1800);}
+   60   2          else{PWMSetMotor2(0,0);}
+   61   2          
+   62   2        }
+   63   1      }
+   64          
+   65          
 
 
 Module Information          Static   Overlayable
 ------------------------------------------------
-  code size            =       131     ------
+  code size            =        87     ------
   ecode size           =    ------     ------
   data size            =    ------     ------
   idata size           =    ------     ------

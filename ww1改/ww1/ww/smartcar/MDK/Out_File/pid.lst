@@ -1,11 +1,11 @@
-C251 COMPILER V5.60.0,  pid                                                                06/10/23  15:08:55  PAGE 1   
+C251 COMPILER V5.60.0,  pid                                                                07/10/23  14:21:18  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE pid
 OBJECT MODULE PLACED IN .\Out_File\pid.obj
-COMPILER INVOKED BY: D:\keil251\C251\BIN\C251.EXE ..\USER\src\pid.c XSMALL INTR2 WARNINGLEVEL(3) OPTIMIZE(0,SPEED) BROWS
-                    -E INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USE
-                    -R\inc;..\USER\src) DEBUG PRINT(.\Out_File\pid.lst) TABS(2) OBJECT(.\Out_File\pid.obj) 
+COMPILER INVOKED BY: C:\Program Files\keil-5\C251\BIN\C251.EXE ..\USER\src\pid.c XSMALL INTR2 WARNINGLEVEL(3) OPTIMIZE(0
+                    -,SPEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;.
+                    -.\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\pid.lst) TABS(2) OBJECT(.\Out_File\pid.obj) 
 
 stmt  level    source
 
@@ -66,7 +66,7 @@ stmt  level    source
    55              
    56              if(error2 < 0)
    57              {
-C251 COMPILER V5.60.0,  pid                                                                06/10/23  15:08:55  PAGE 2   
+C251 COMPILER V5.60.0,  pid                                                                07/10/23  14:21:18  PAGE 2   
 
    58                p2 = 300;
    59              }
@@ -134,7 +134,7 @@ stmt  level    source
   121            return a<b?a:b;
   122          }
   123          
-C251 COMPILER V5.60.0,  pid                                                                06/10/23  15:08:55  PAGE 3   
+C251 COMPILER V5.60.0,  pid                                                                07/10/23  14:21:18  PAGE 3   
 
   124          //·½Ïò»·PID
   125              
@@ -202,7 +202,7 @@ stmt  level    source
   187                      if(speedflag == 1)
   188                      {
   189                        setpoint1 = NORMAL_SPEED+1*dir_error;
-C251 COMPILER V5.60.0,  pid                                                                06/10/23  15:08:55  PAGE 4   
+C251 COMPILER V5.60.0,  pid                                                                07/10/23  14:21:18  PAGE 4   
 
   190                        setpoint2 = NORMAL_SPEED;
   191                      }
@@ -270,7 +270,7 @@ stmt  level    source
   253                      dir_control_P=5;
   254                      dir_P_value=dir_control_P*dir_error;
   255                      if(speedflag == 1)
-C251 COMPILER V5.60.0,  pid                                                                06/10/23  15:08:55  PAGE 5   
+C251 COMPILER V5.60.0,  pid                                                                07/10/23  14:21:18  PAGE 5   
 
   256                      {
   257                        setpoint2 = NORMAL_SPEED-1*dir_error;
@@ -339,7 +339,7 @@ Module Information          Static   Overlayable
   bitaddressable size  =    ------     ------
   ebitaddressable size =    ------     ------
   far data size        =    ------     ------
-C251 COMPILER V5.60.0,  pid                                                                06/10/23  15:08:55  PAGE 6   
+C251 COMPILER V5.60.0,  pid                                                                07/10/23  14:21:18  PAGE 6   
 
   huge data size       =    ------     ------
   const size           =    ------     ------

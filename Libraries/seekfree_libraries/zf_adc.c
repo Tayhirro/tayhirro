@@ -85,24 +85,3 @@ uint16 adc_once(ADCN_enum adcn,ADCRES_enum resolution)
 
 	return adc_value;
 }
-#define  FILTER_N              10
- float Filter(ADCN_enum adcn, ADCRES_enum resolution) {
-	int     i, j;
-	int     filter_temp, filter_sum = 0;
-	int     filter_buf[FILTER_N];
-	for (i = 0; i < FILTER_N; i++) {
-		filter_buf[i] = adc_once(adcn,resolution);
-	}
-	// 采样值从小到大排列（冒泡法）
-	for (j = 0; j < FILTER_N - 1; j++) {
-		for (i = 0; i < FILTER_N - 1 - j; i++) {
-			if (filter_buf[i] > filter_buf[i + 1]) {
-				filter_temp = filter_buf[i];
-				filter_buf[i] = filter_buf[i + 1];
-				filter_buf[i + 1] = filter_temp;
-			}
-		}
-	}
-	for (i = 1; i < FILTER_N - 1; i++) filter_sum += filter_buf[i];
-	return (float)filter_sum / (FILTER_N - 2);
-}

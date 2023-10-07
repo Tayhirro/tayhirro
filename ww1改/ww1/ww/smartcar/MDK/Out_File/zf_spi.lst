@@ -1,11 +1,12 @@
-C251 COMPILER V5.60.0,  zf_spi                                                             06/10/23  15:08:53  PAGE 1   
+C251 COMPILER V5.60.0,  zf_spi                                                             07/10/23  14:21:16  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE zf_spi
 OBJECT MODULE PLACED IN .\Out_File\zf_spi.obj
-COMPILER INVOKED BY: D:\keil251\C251\BIN\C251.EXE ..\..\Libraries\seekfree_libraries\zf_spi.c XSMALL INTR2 WARNINGLEVEL(
-                    -3) OPTIMIZE(0,SPEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree
-                    -_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\zf_spi.lst) TABS(2) OBJECT(.\Out_File\zf_spi.obj) 
+COMPILER INVOKED BY: C:\Program Files\keil-5\C251\BIN\C251.EXE ..\..\Libraries\seekfree_libraries\zf_spi.c XSMALL INTR2 
+                    -WARNINGLEVEL(3) OPTIMIZE(0,SPEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libra
+                    -ries\seekfree_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\zf_spi.lst) TABS(2) OBJECT(.\Out_File\z
+                    -f_spi.obj) 
 
 stmt  level    source
 
@@ -65,9 +66,9 @@ stmt  level    source
    48   1          {
    49   2        //IO口需要配置为：准双向口（传统8051端口模式，弱上拉）
    50   2          case SPI_CH1:
-   51   2          gpio_mode(P1_3,GPIO);
-C251 COMPILER V5.60.0,  zf_spi                                                             06/10/23  15:08:53  PAGE 2   
+C251 COMPILER V5.60.0,  zf_spi                                                             07/10/23  14:21:16  PAGE 2   
 
+   51   2          gpio_mode(P1_3,GPIO);
    52   2          gpio_mode(P1_4,GPIO);
    53   2          gpio_mode(P1_5,GPIO);
    54   2              break;
@@ -133,9 +134,9 @@ stmt  level    source
   114   1          else
   115   1          {
   116   2              //不做操作
-  117   2          }
-C251 COMPILER V5.60.0,  zf_spi                                                             06/10/23  15:08:53  PAGE 3   
+C251 COMPILER V5.60.0,  zf_spi                                                             07/10/23  14:21:16  PAGE 3   
 
+  117   2          }
   118   1          SPCTL |= 1<<6;    //使能SPI功能
   119   1      }
   120          
@@ -201,9 +202,9 @@ stmt  level    source
   176   1          switch(spi_n)
   177   1          {
   178   2          case SPI_CH1:
-  179   2              P_SW1 |= (0x00<<2);
-C251 COMPILER V5.60.0,  zf_spi                                                             06/10/23  15:08:53  PAGE 4   
+C251 COMPILER V5.60.0,  zf_spi                                                             07/10/23  14:21:16  PAGE 4   
 
+  179   2              P_SW1 |= (0x00<<2);
   180   2              break;
   181   2          case SPI_CH2:
   182   2              P_SW1 |= (0x01<<2);

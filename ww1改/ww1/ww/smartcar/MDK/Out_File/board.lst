@@ -1,11 +1,11 @@
-C251 COMPILER V5.60.0,  board                                                              06/10/23  15:08:53  PAGE 1   
+C251 COMPILER V5.60.0,  board                                                              07/10/23  14:21:15  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE board
 OBJECT MODULE PLACED IN .\Out_File\board.obj
-COMPILER INVOKED BY: D:\keil251\C251\BIN\C251.EXE ..\..\Libraries\libraries\board.c XSMALL INTR2 WARNINGLEVEL(3) OPTIMIZ
-                    -E(0,SPEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_periphera
-                    -l;..\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\board.lst) TABS(2) OBJECT(.\Out_File\board.obj) 
+COMPILER INVOKED BY: C:\Program Files\keil-5\C251\BIN\C251.EXE ..\..\Libraries\libraries\board.c XSMALL INTR2 WARNINGLEV
+                    -EL(3) OPTIMIZE(0,SPEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekf
+                    -ree_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\board.lst) TABS(2) OBJECT(.\Out_File\board.obj) 
 
 stmt  level    source
 
@@ -66,7 +66,7 @@ stmt  level    source
    51   2          CLKDIV = 0x04;
    52   2          IRTRIM = T22M_ADDR;
    53   2          VRTRIM = VRT27M_ADDR;
-C251 COMPILER V5.60.0,  board                                                              06/10/23  15:08:53  PAGE 2   
+C251 COMPILER V5.60.0,  board                                                              07/10/23  14:21:15  PAGE 2   
 
    54   2          IRCBAND = 0x02;
    55   2          CLKDIV = 0x00;
@@ -134,7 +134,7 @@ stmt  level    source
   117          
   118          
   119          
-C251 COMPILER V5.60.0,  board                                                              06/10/23  15:08:53  PAGE 3   
+C251 COMPILER V5.60.0,  board                                                              07/10/23  14:21:15  PAGE 3   
 
   120          
   121          void board_init(void)
@@ -202,7 +202,7 @@ stmt  level    source
   183          char putchar(char c)
   184          {
   185   1        uart_putchar(DEBUG_UART, c);//把自己实现的串口打印一字节数据的函数替换到这里
-C251 COMPILER V5.60.0,  board                                                              06/10/23  15:08:53  PAGE 4   
+C251 COMPILER V5.60.0,  board                                                              07/10/23  14:21:15  PAGE 4   
 
   186   1      
   187   1        return c;

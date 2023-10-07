@@ -1,12 +1,12 @@
-C251 COMPILER V5.60.0,  zf_delay                                                           06/10/23  15:08:53  PAGE 1   
+C251 COMPILER V5.60.0,  zf_delay                                                           07/10/23  14:21:16  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE zf_delay
 OBJECT MODULE PLACED IN .\Out_File\zf_delay.obj
-COMPILER INVOKED BY: D:\keil251\C251\BIN\C251.EXE ..\..\Libraries\seekfree_libraries\zf_delay.c XSMALL INTR2 WARNINGLEVE
-                    -L(3) OPTIMIZE(0,SPEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfr
-                    -ee_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\zf_delay.lst) TABS(2) OBJECT(.\Out_File\zf_delay.o
-                    -bj) 
+COMPILER INVOKED BY: C:\Program Files\keil-5\C251\BIN\C251.EXE ..\..\Libraries\seekfree_libraries\zf_delay.c XSMALL INTR
+                    -2 WARNINGLEVEL(3) OPTIMIZE(0,SPEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Lib
+                    -raries\seekfree_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\zf_delay.lst) TABS(2) OBJECT(.\Out_Fi
+                    -le\zf_delay.obj) 
 
 stmt  level    source
 
@@ -66,7 +66,7 @@ stmt  level    source
    48          void delay_ms(uint16 ms)
    49          {
    50   1        uint16 i;
-C251 COMPILER V5.60.0,  zf_delay                                                           06/10/23  15:08:53  PAGE 2   
+C251 COMPILER V5.60.0,  zf_delay                                                           07/10/23  14:21:16  PAGE 2   
 
    51   1        do {
    52   2            i = zf_delay_ms;

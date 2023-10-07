@@ -1,11 +1,11 @@
-C251 COMPILER V5.60.0,  main                                                               06/10/23  17:43:26  PAGE 1   
+C251 COMPILER V5.60.0,  main                                                               07/10/23  14:21:18  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE main
 OBJECT MODULE PLACED IN .\Out_File\main.obj
-COMPILER INVOKED BY: D:\keil251\C251\BIN\C251.EXE ..\USER\src\main.c XSMALL INTR2 WARNINGLEVEL(3) OPTIMIZE(0,SPEED) BROW
-                    -SE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\US
-                    -ER\inc;..\USER\src) DEBUG PRINT(.\Out_File\main.lst) TABS(2) OBJECT(.\Out_File\main.obj) 
+COMPILER INVOKED BY: C:\Program Files\keil-5\C251\BIN\C251.EXE ..\USER\src\main.c XSMALL INTR2 WARNINGLEVEL(3) OPTIMIZE(
+                    -0,SPEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;
+                    -..\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\main.lst) TABS(2) OBJECT(.\Out_File\main.obj) 
 
 stmt  level    source
 
@@ -66,7 +66,7 @@ stmt  level    source
    53   1        //ctimer_count_init(CTIM3_P04);
    54   1        pit_timer_ms(TIM_0,10);  //ÖÐ¶Ï¿ªÆô
    55   1        //PWMSetSteer(2050);
-C251 COMPILER V5.60.0,  main                                                               06/10/23  17:43:26  PAGE 2   
+C251 COMPILER V5.60.0,  main                                                               07/10/23  14:21:18  PAGE 2   
 
    56   1          while(1)
    57   1        {

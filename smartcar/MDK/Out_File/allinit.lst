@@ -1,4 +1,4 @@
-C251 COMPILER V5.60.0,  allinit                                                            06/10/23  19:39:34  PAGE 1   
+C251 COMPILER V5.60.0,  allinit                                                            07/10/23  15:37:23  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE allinit
@@ -10,26 +10,32 @@ COMPILER INVOKED BY: C:\Program Files\keil-5\C251\BIN\C251.EXE ..\CODE\allinit.c
 stmt  level    source
 
     1          #include "headfile.h" 
-    2          
-    3          
-    4          
+    2          #include "motor.h"
+    3          #include "steer.h"
+    4          #include "pidcc.h"
     5          void Timer_Init(void){
     6   1        ctimer_count_init(CTIM0_P34);
     7   1        ctimer_count_init(CTIM3_P04);
-    8   1        pit_timer_ms(TIM_0,10);  //中断开启
+    8   1        pit_timer_ms(TIM_1,10);  //中断开启
     9   1      };
    10          
    11          
    12          
    13          void all_init(void)
    14          { 
-   15   1        Timer_Init();//中断初始化
-   16   1      }
+   15   1        PID_param_init();
+   16   1        Timer_Init();//中断初始化
+   17   1        ips114_init();      //初始化1.1.4寸ips屏幕
+   18   1        motor_init();
+   19   1        steer_init();    
+   20   1        adc_init(ADC_P01,ADC_SYSclk_DIV_2);
+   21   1        adc_init(ADC_P00,ADC_SYSclk_DIV_2);
+   22   1      }
 
 
 Module Information          Static   Overlayable
 ------------------------------------------------
-  code size            =        26     ------
+  code size            =        58     ------
   ecode size           =    ------     ------
   data size            =    ------     ------
   idata size           =    ------     ------

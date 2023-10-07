@@ -1,4 +1,4 @@
-C251 COMPILER V5.60.0,  zf_adc                                                             06/10/23  19:39:32  PAGE 1   
+C251 COMPILER V5.60.0,  zf_adc                                                             07/10/23  15:37:21  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE zf_adc
@@ -66,7 +66,7 @@ stmt  level    source
    49   2            P1M1 |= (1 << (adcn & 0x07));
    50   2        }
    51   1        ADCCFG |= speed&0x0F;     //ADC时钟频率SYSclk/2/speed&0x0F;
-C251 COMPILER V5.60.0,  zf_adc                                                             06/10/23  19:39:32  PAGE 2   
+C251 COMPILER V5.60.0,  zf_adc                                                             07/10/23  15:37:21  PAGE 2   
 
    52   1        
    53   1        ADCCFG |= 1<<5;         //转换结果右对齐。 ADC_RES 保存结果的高 2 位， ADC_RESL 保存结果的低 8 位。
@@ -106,41 +106,18 @@ stmt  level    source
    85   1      
    86   1        return adc_value;
    87   1      }
-   88          #define  FILTER_N              10
-   89           float Filter(ADCN_enum adcn, ADCRES_enum resolution) {
-   90   1        int     i, j;
-   91   1        int     filter_temp, filter_sum = 0;
-   92   1        int     filter_buf[FILTER_N];
-   93   1        for (i = 0; i < FILTER_N; i++) {
-   94   2          filter_buf[i] = adc_once(adcn,resolution);
-   95   2        }
-   96   1        // 采样值从小到大排列（冒泡法）
-   97   1        for (j = 0; j < FILTER_N - 1; j++) {
-   98   2          for (i = 0; i < FILTER_N - 1 - j; i++) {
-   99   3            if (filter_buf[i] > filter_buf[i + 1]) {
-  100   4              filter_temp = filter_buf[i];
-  101   4              filter_buf[i] = filter_buf[i + 1];
-  102   4              filter_buf[i + 1] = filter_temp;
-  103   4            }
-  104   3          }
-  105   2        }
-  106   1        for (i = 1; i < FILTER_N - 1; i++) filter_sum += filter_buf[i];
-  107   1        return (float)filter_sum / (FILTER_N - 2);
-  108   1      }
 
 
 Module Information          Static   Overlayable
 ------------------------------------------------
-  code size            =       606     ------
+  code size            =       267     ------
   ecode size           =    ------     ------
   data size            =    ------     ------
   idata size           =    ------     ------
-C251 COMPILER V5.60.0,  zf_adc                                                             06/10/23  19:39:32  PAGE 3   
-
   pdata size           =    ------     ------
   xdata size           =    ------     ------
   xdata-const size     =    ------     ------
-  edata size           =        42     ------
+  edata size           =        10     ------
   bit size             =    ------     ------
   ebit size            =    ------     ------
   bitaddressable size  =    ------     ------

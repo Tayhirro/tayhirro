@@ -4,6 +4,8 @@
 #include "motor.h"
 #include "steer.h"
 #include "encoder.h"
+#include "EM.h"
+
 
 #define LOC_INTEGRAL_START_ERR 200  /*积分分离时对应的误差范围*/
 #define LOC_INTEGRAL_MAX_VAL 800   /*积分范围限定，防止积分饱和*/
@@ -12,7 +14,7 @@
 // steer pid
 
 #define con 20             //adc转换常数           （可调）
-#define NORMAL_SPEED 1800  //直道速度							 （可调）
+#define NORMAL_SPEED 2200  //直道速度							 （可调）
 #define STOP_SPEED 1500    //检测到停止标志时的速度（可调）
 #define CIRCLE_SPEED 1600  //进环速度              （可调）
 
@@ -97,6 +99,8 @@ void PID_param_init()
 		ipid_speed_right.omax=4000;
 }
 
+
+
 //**************************//
 //*****环岛入环adc检测******//
 //**************************//
@@ -110,6 +114,9 @@ int judge_circle_out(float adc_left_edge,float adc_right_edge,float adc_mid){
         if(adc_left_edge - adc_right_edge > outcircle_threshold1 && adc_mid > outcircle_threshold2)return 1;
 	      else return 0;
 }
+
+
+
 //***********************//
 //*****环岛检测函数******//
 //***********************//
@@ -141,8 +148,6 @@ void judge_circle(){
 //*****adc采集加舵机pid******//
 //***************************//
 void pid_steers(){
-	adc_left_mid=Filter(ADC_P01,ADC_12BIT);
-	adc_right_mid=Filter(ADC_P00,ADC_12BIT);
 	//adc_left_edge=Filter(ADC_P00,ADC_12BIT); //改通道
 	//adc_right_edge=Filter(ADC_P00,ADC_12BIT);//改通道
 	//adc_mid=Filter(ADC_P00,ADC_12BIT);       //改通道

@@ -1,11 +1,11 @@
-C251 COMPILER V5.60.0,  motor                                                              06/10/23  15:08:55  PAGE 1   
+C251 COMPILER V5.60.0,  motor                                                              07/10/23  14:21:18  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE motor
 OBJECT MODULE PLACED IN .\Out_File\motor.obj
-COMPILER INVOKED BY: D:\keil251\C251\BIN\C251.EXE ..\USER\src\motor.c XSMALL INTR2 WARNINGLEVEL(3) OPTIMIZE(0,SPEED) BRO
-                    -WSE INCDIR(..\USER\src;..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;
-                    -..\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\motor.lst) TABS(2) OBJECT(.\Out_File\motor.obj) 
+COMPILER INVOKED BY: C:\Program Files\keil-5\C251\BIN\C251.EXE ..\USER\src\motor.c XSMALL INTR2 WARNINGLEVEL(3) OPTIMIZE
+                    -(0,SPEED) BROWSE INCDIR(..\USER\src;..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfre
+                    -e_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\motor.lst) TABS(2) OBJECT(.\Out_File\motor.obj) 
 
 stmt  level    source
 
@@ -66,7 +66,7 @@ stmt  level    source
    55          /********************************************************************
    56          ** 函数名称: motorCtrl
    57          ** 功能描述: 速度控制算法
-C251 COMPILER V5.60.0,  motor                                                              06/10/23  15:08:55  PAGE 2   
+C251 COMPILER V5.60.0,  motor                                                              07/10/23  14:21:18  PAGE 2   
 
    58          ** 入口：
    59          ** 出口：
@@ -134,7 +134,7 @@ stmt  level    source
   121   2          }
   122   1          
   123   1          if(speed_pwmR > 0) 
-C251 COMPILER V5.60.0,  motor                                                              06/10/23  15:08:55  PAGE 3   
+C251 COMPILER V5.60.0,  motor                                                              07/10/23  14:21:18  PAGE 3   
 
   124   1          {
   125   2              
@@ -204,7 +204,7 @@ Module Information          Static   Overlayable
   hconst size          =    ------     ------
 End of Module Information.
 
-C251 COMPILER V5.60.0,  motor                                                              06/10/23  15:08:55  PAGE 4   
+C251 COMPILER V5.60.0,  motor                                                              07/10/23  14:21:18  PAGE 4   
 
 
 C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

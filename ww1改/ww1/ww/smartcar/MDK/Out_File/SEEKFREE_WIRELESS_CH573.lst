@@ -1,12 +1,12 @@
-C251 COMPILER V5.60.0,  SEEKFREE_WIRELESS_CH573                                            06/10/23  15:08:54  PAGE 1   
+C251 COMPILER V5.60.0,  SEEKFREE_WIRELESS_CH573                                            07/10/23  14:21:18  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE SEEKFREE_WIRELESS_CH573
 OBJECT MODULE PLACED IN .\Out_File\SEEKFREE_WIRELESS_CH573.obj
-COMPILER INVOKED BY: D:\keil251\C251\BIN\C251.EXE ..\..\Libraries\seekfree_peripheral\SEEKFREE_WIRELESS_CH573.c XSMALL I
-                    -NTR2 WARNINGLEVEL(3) OPTIMIZE(0,SPEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\
-                    -Libraries\seekfree_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\SEEKFREE_WIRELESS_CH573.lst) TABS(
-                    -2) OBJECT(.\Out_File\SEEKFREE_WIRELESS_CH573.obj) 
+COMPILER INVOKED BY: C:\Program Files\keil-5\C251\BIN\C251.EXE ..\..\Libraries\seekfree_peripheral\SEEKFREE_WIRELESS_CH5
+                    -73.c XSMALL INTR2 WARNINGLEVEL(3) OPTIMIZE(0,SPEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_lib
+                    -raries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\SEEKFREE_WIRELESS_CH5
+                    -73.lst) TABS(2) OBJECT(.\Out_File\SEEKFREE_WIRELESS_CH573.obj) 
 
 stmt  level    source
 
@@ -66,7 +66,7 @@ stmt  level    source
    50   1          wireless_ch573_data = WIRELESS_CH573_DATA_BUF;
    51   1          fifo_write_buffer(&wireless_ch573_fifo, &wireless_ch573_data, 1);       // 存入 FIFO
    52   1      }
-C251 COMPILER V5.60.0,  SEEKFREE_WIRELESS_CH573                                            06/10/23  15:08:54  PAGE 2   
+C251 COMPILER V5.60.0,  SEEKFREE_WIRELESS_CH573                                            07/10/23  14:21:18  PAGE 2   
 
    53          
    54          
@@ -134,7 +134,7 @@ stmt  level    source
              -------------
   111          //  @brief      573转串口模块初始化
   112          //  @param      NULL
-C251 COMPILER V5.60.0,  SEEKFREE_WIRELESS_CH573                                            06/10/23  15:08:54  PAGE 3   
+C251 COMPILER V5.60.0,  SEEKFREE_WIRELESS_CH573                                            07/10/23  14:21:18  PAGE 3   
 
   113          //  @return     void          
   114          //  @since      v1.0

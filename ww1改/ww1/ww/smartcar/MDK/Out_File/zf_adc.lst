@@ -1,11 +1,12 @@
-C251 COMPILER V5.60.0,  zf_adc                                                             06/10/23  15:08:53  PAGE 1   
+C251 COMPILER V5.60.0,  zf_adc                                                             07/10/23  14:21:16  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE zf_adc
 OBJECT MODULE PLACED IN .\Out_File\zf_adc.obj
-COMPILER INVOKED BY: D:\keil251\C251\BIN\C251.EXE ..\..\Libraries\seekfree_libraries\zf_adc.c XSMALL INTR2 WARNINGLEVEL(
-                    -3) OPTIMIZE(0,SPEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree
-                    -_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\zf_adc.lst) TABS(2) OBJECT(.\Out_File\zf_adc.obj) 
+COMPILER INVOKED BY: C:\Program Files\keil-5\C251\BIN\C251.EXE ..\..\Libraries\seekfree_libraries\zf_adc.c XSMALL INTR2 
+                    -WARNINGLEVEL(3) OPTIMIZE(0,SPEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libra
+                    -ries\seekfree_peripheral;..\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\zf_adc.lst) TABS(2) OBJECT(.\Out_File\z
+                    -f_adc.obj) 
 
 stmt  level    source
 
@@ -65,9 +66,9 @@ stmt  level    source
    49   2            P1M1 |= (1 << (adcn & 0x07));
    50   2        }
    51   1        ADCCFG |= speed&0x0F;     //ADC时钟频率SYSclk/2/speed&0x0F;
-   52   1        
-C251 COMPILER V5.60.0,  zf_adc                                                             06/10/23  15:08:53  PAGE 2   
+C251 COMPILER V5.60.0,  zf_adc                                                             07/10/23  14:21:16  PAGE 2   
 
+   52   1        
    53   1        ADCCFG |= 1<<5;         //转换结果右对齐。 ADC_RES 保存结果的高 2 位， ADC_RESL 保存结果的低 8 位。
    54   1      }
    55          
@@ -134,9 +135,9 @@ Module Information          Static   Overlayable
   ecode size           =    ------     ------
   data size            =    ------     ------
   idata size           =    ------     ------
-  pdata size           =    ------     ------
-C251 COMPILER V5.60.0,  zf_adc                                                             06/10/23  15:08:53  PAGE 3   
+C251 COMPILER V5.60.0,  zf_adc                                                             07/10/23  14:21:16  PAGE 3   
 
+  pdata size           =    ------     ------
   xdata size           =    ------     ------
   xdata-const size     =    ------     ------
   edata size           =        42     ------

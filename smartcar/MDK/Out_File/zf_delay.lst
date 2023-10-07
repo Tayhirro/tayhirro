@@ -1,4 +1,4 @@
-C251 COMPILER V5.60.0,  zf_delay                                                           06/10/23  19:39:32  PAGE 1   
+C251 COMPILER V5.60.0,  zf_delay                                                           07/10/23  15:37:21  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE zf_delay
@@ -66,7 +66,7 @@ stmt  level    source
    48          void delay_ms(uint16 ms)
    49          {
    50   1        uint16 i;
-C251 COMPILER V5.60.0,  zf_delay                                                           06/10/23  19:39:32  PAGE 2   
+C251 COMPILER V5.60.0,  zf_delay                                                           07/10/23  15:37:21  PAGE 2   
 
    51   1        do {
    52   2            i = zf_delay_ms;

@@ -1,4 +1,4 @@
-C251 COMPILER V5.60.0,  zf_pwm                                                             06/10/23  19:39:33  PAGE 1   
+C251 COMPILER V5.60.0,  zf_pwm                                                             07/10/23  15:37:22  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE zf_pwm
@@ -66,7 +66,7 @@ stmt  level    source
    50          {
    51   1        switch(pwmch)
    52   1        {
-C251 COMPILER V5.60.0,  zf_pwm                                                             06/10/23  19:39:33  PAGE 2   
+C251 COMPILER V5.60.0,  zf_pwm                                                             07/10/23  15:37:22  PAGE 2   
 
    53   2          case PWMA_CH1P_P10:
    54   2          {
@@ -134,7 +134,7 @@ stmt  level    source
   116   2          {
   117   3            gpio_mode(P1_4,GPO_PP);
   118   3            break;
-C251 COMPILER V5.60.0,  zf_pwm                                                             06/10/23  19:39:33  PAGE 3   
+C251 COMPILER V5.60.0,  zf_pwm                                                             07/10/23  15:37:22  PAGE 3   
 
   119   3          }
   120   2          case PWMA_CH3N_P15:
@@ -202,7 +202,7 @@ stmt  level    source
   182   2          case PWMA_CH4N_P33:
   183   2          {
   184   3            gpio_mode(P3_3,GPO_PP);
-C251 COMPILER V5.60.0,  zf_pwm                                                             06/10/23  19:39:33  PAGE 4   
+C251 COMPILER V5.60.0,  zf_pwm                                                             07/10/23  15:37:22  PAGE 4   
 
   185   3            break;
   186   3          }
@@ -270,7 +270,7 @@ stmt  level    source
   248   2          {
   249   3            gpio_mode(P7_6,GPO_PP);
   250   3            break;
-C251 COMPILER V5.60.0,  zf_pwm                                                             06/10/23  19:39:33  PAGE 5   
+C251 COMPILER V5.60.0,  zf_pwm                                                             07/10/23  15:37:22  PAGE 5   
 
   251   3          }
   252   2      
@@ -338,7 +338,7 @@ stmt  level    source
   311   2          match_temp = period_temp * ((float)duty / PWM_DUTY_MAX);  // Õ¼¿Õ±È     
   312   2        }
   313   1        else
-C251 COMPILER V5.60.0,  zf_pwm                                                             06/10/23  19:39:33  PAGE 6   
+C251 COMPILER V5.60.0,  zf_pwm                                                             07/10/23  15:37:22  PAGE 6   
 
   314   1        {
   315   2          match_temp = period_temp + 1;               // dutyÎª100%
@@ -406,7 +406,7 @@ stmt  level    source
   374          //  Sample usage:           pwm_duty(PWM0_P00, 5000);     //³õÊ¼»¯PWM0  Ê¹ÓÃÒý½ÅP0.0  Êä³öPWMÆµÂÊ50HZ   Õ
              -¼¿Õ±ÈÎª°Ù·ÖÖ® 5000/PWM_DUTY_MAX*100
   375          //              PWM_DUTY_MAXÔÚfsl_pwm.hÎÄ¼þÖÐ Ä¬ÈÏÎª10000
-C251 COMPILER V5.60.0,  zf_pwm                                                             06/10/23  19:39:33  PAGE 7   
+C251 COMPILER V5.60.0,  zf_pwm                                                             07/10/23  15:37:22  PAGE 7   
 
   376          //-------------------------------------------------------------------------------------------------------
              -------------
@@ -474,7 +474,7 @@ stmt  level    source
   434   1        
   435   1        
   436   1        
-C251 COMPILER V5.60.0,  zf_pwm                                                             06/10/23  19:39:33  PAGE 8   
+C251 COMPILER V5.60.0,  zf_pwm                                                             07/10/23  15:37:22  PAGE 8   
 
   437   1      //  P_SW2 |= 0x80;
   438   1        

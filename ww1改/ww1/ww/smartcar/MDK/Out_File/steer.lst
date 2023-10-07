@@ -1,11 +1,11 @@
-C251 COMPILER V5.60.0,  steer                                                              06/10/23  15:08:55  PAGE 1   
+C251 COMPILER V5.60.0,  steer                                                              07/10/23  14:21:18  PAGE 1   
 
 
 C251 COMPILER V5.60.0, COMPILATION OF MODULE steer
 OBJECT MODULE PLACED IN .\Out_File\steer.obj
-COMPILER INVOKED BY: D:\keil251\C251\BIN\C251.EXE ..\USER\src\steer.c XSMALL INTR2 WARNINGLEVEL(3) OPTIMIZE(0,SPEED) BRO
-                    -WSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\U
-                    -SER\inc;..\USER\src) DEBUG PRINT(.\Out_File\steer.lst) TABS(2) OBJECT(.\Out_File\steer.obj) 
+COMPILER INVOKED BY: C:\Program Files\keil-5\C251\BIN\C251.EXE ..\USER\src\steer.c XSMALL INTR2 WARNINGLEVEL(3) OPTIMIZE
+                    -(0,SPEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral
+                    -;..\CODE;..\USER\inc;..\USER\src) DEBUG PRINT(.\Out_File\steer.lst) TABS(2) OBJECT(.\Out_File\steer.obj) 
 
 stmt  level    source
 
@@ -66,7 +66,7 @@ stmt  level    source
    55   1          
    56   1          
    57   1          PWMSetSteer(angle_pwm) ; 
-C251 COMPILER V5.60.0,  steer                                                              06/10/23  15:08:55  PAGE 2   
+C251 COMPILER V5.60.0,  steer                                                              07/10/23  14:21:18  PAGE 2   
 
    58   1          */ 
    59   1      }
