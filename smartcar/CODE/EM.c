@@ -15,19 +15,24 @@ void EM_adc()
     int filter_temp;
 	  int Left[10],Left_M[10],Middle_L[10],Right[10],Right_M[10],Middle_R[10],Middle[10], Middle_H[10];
 	  static int adc_last[8]={0};
+		
+		
+		
     for(i=0;i<10;i++)
     {      
    			Left[i]=adc_once(ADC_P11, ADC_12BIT);//采集10次求平均  分辨率12位
 			  Left_M[i]=adc_once(ADC_P13, ADC_12BIT);//采集10次求平均  分辨率12位
         Middle_L[i]=adc_once(ADC_P01, ADC_12BIT);	//采集10次求平均  分辨率12位
 			  Middle_H[i]=adc_once(ADC_P00, ADC_12BIT);//采集10次求平均  分辨率12位
-			  Middle[i]=adc_once(ADC_P15, ADC_12BIT);//采集10次求平均  分辨率12位
+			  //Middle[i]=adc_once(ADC_P15, ADC_12BIT);//采集10次求平均  分辨率12位
         Middle_R[i]=adc_once(ADC_P14, ADC_12BIT);//采集10次求平均  分辨率12位
 			  Right_M[i]=adc_once(ADC_P17, ADC_12BIT);//采集10次求平均  分辨率12位
 			  Right[i]=adc_once(ADC_P16, ADC_12BIT);	//采集10次求平均  分辨率12位
     }
 
     // 采样值从小到大排列（冒泡法）
+		
+		
     //左横
     for(j = 0; j < 10 - 1; j++)
     {
