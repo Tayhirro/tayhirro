@@ -1,0 +1,507 @@
+C251 COMPILER V5.60.0,  pidcc                                                              06/10/23  17:55:10  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE pidcc
+OBJECT MODULE PLACED IN .\Out_File\pidcc.obj
+COMPILER INVOKED BY: D:\keil251\C251\BIN\C251.EXE ..\USER\src\pidcc.c XSMALL INTR2 WARNINGLEVEL(3) OPTIMIZE(0,SPEED) BRO
+                    -WSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\U
+                    -SER\inc;..\USER\src) DEBUG PRINT(.\Out_File\pidcc.lst) TABS(2) OBJECT(.\Out_File\pidcc.obj) 
+
+stmt  level    source
+
+    1          #include "pidcc.h"
+    2          #include "common.h"
+    3          #include "headfile.h"
+    4          #include "motor.h"
+    5          #include "steer.h"
+    6          
+    7          #define LOC_INTEGRAL_START_ERR 200  /*»ý·Ö·ÖÀëÊ±¶ÔÓ¦µÄÎó²î·¶Î§*/
+    8          #define LOC_INTEGRAL_MAX_VAL 800   /*»ý·Ö·¶Î§ÏÞ¶¨£¬·ÀÖ¹»ý·Ö±¥ºÍ*/
+    9          #define SPE_DEAD_ZONE   5.0f       /*ËÙ¶È»·ËÀÇø*/
+   10          
+   11          // steer pid
+   12          
+   13          #define con 20             //adc×ª»»³£Êý           £¨¿Éµ÷£©
+   14          #define NORMAL_SPEED 2000  //Ö±µÀËÙ¶È              £¨¿Éµ÷£©
+   15          #define STOP_SPEED 1500    //¼ì²âµ½Í£Ö¹±êÖ¾Ê±µÄËÙ¶È£¨¿Éµ÷£©
+   16          #define CIRCLE_SPEED 1800  //½ø»·ËÙ¶È              £¨¿Éµ÷£©
+   17          
+   18          #define angle_left_pwm    1980     //×ó»·µº Èë»·¶æ»ú´ò½Ç¶ÔÓ¦pwm                                          
+             -      £¨¿Éµ÷£©
+   19          #define angle_right_pwm   1680     //ÓÒ»·µº Èë»·¶æ»ú´ò½Ç¶ÔÓ¦pwm                                                £¨¿Éµ÷£©
+   20          #define incircle_delay_ms   20     //²»ÓÃ±àÂëÆ÷¼ÆËãÂ·³ÌµÄ»°£¬¸ÃÖµÎª¼ì²âµ½Ô¤½ø»·±êÖ¾ºó£¬´ò¹Ì¶¨½ÇÖ®Ç°ÑÓÊ±µÄ
+             -Ê±³¤   (¿Éµ÷)
+   21          #define outcircle_delay_ms  20     //²»ÓÃ±àÂëÆ÷¼ÆËãÂ·³ÌµÄ»°£¬¸ÃÖµÎª¼ì²âµ½Ô¤³ö»·±êÖ¾ºó£¬´ò¹Ì¶¨½ÇÖ®ºóÑÓÊ±µÄ
+             -Ê±³¤   (¿Éµ÷)
+   22          
+   23          #define incircle_threshold1  10    //Èë»·×î×óadc¼õ×îÓÒadcÅÐ¶¨ãÐÖµ                                        
+             -      £¨¿Éµ÷£©
+   24          #define incircle_threshold2  10    //Èë»·ÖÐ¼äadcÅÐ¶¨ãÐÖµ                                                 
+             -      £¨¿Éµ÷£©
+   25          //#define incircle_threshold3  10    //Èë»·adcÅÐ¶¨ãÐÖµ     ÐèÒªÊ±¿ÉÔÙ¼Ó
+   26          #define outcircle_threshold1  10    //³ö»·×î×óadc¼õ×îÓÒadcÅÐ¶¨ãÐÖµ                                       
+             -       £¨¿Éµ÷£©
+   27          #define outcircle_threshold2  10    //³ö»·ÖÐ¼äadcÅÐ¶¨ãÐÖµ                                                
+             -       £¨¿Éµ÷£©
+   28          //#define outcircle_threshold3  10    //³ö»·adcÅÐ¶¨ãÐÖµ     ÐèÒªÊ±¿ÉÔÙ¼Ó
+   29          
+   30          
+   31          int speedflag=1;           //Ö±µÀ¡¢Í£Ö¹¡¢½ø»·ÅÐ¶Ï±êÖ¾
+   32          PID pid_steer;
+   33          iPID ipid_speed_left;
+   34          iPID ipid_speed_right;
+   35          
+   36          
+   37          float setpoint_left=1800.0; // setpoint_left -> left ×ó±ß±ê×¼ËÙ¶È    setpoint_right -> right  ÓÒ±ß±ê×¼ËÙ¶
+             -È
+   38          float setpoint_right=1800.0;
+   39          int adc_left_edge,  adc_left_mid,  adc_mid,  adc_right_mid,  adc_right_edge;  //×î×ó¡¢ÖÐ×ó¡¢ÖÐ¡¢ÖÐÓÒ¡¢×îÓ
+             -ÒadcµÄ¶ÁÈ¡ÊýÖµ£¨Ó¦ÉèÖÃÎªÈ«¾Ö±äÁ¿£©
+   40          int status=1;                      //³öÈë»·±êÖ¾Î»(»·µº±êÖ¾Î»)£¬¼ì²âµ½Ô¤Èë»·×´Ì¬ºó£¬ÖµÎª0£¬·ñÔòÎª1,¼´Ò»°ãÇ
+             -é¿öÏÂÖµ¶¼Îª1
+   41          
+   42          
+   43          void PID_param_init()
+   44          {
+   45   1          /* ????????? */
+   46   1          pid_steer.target_val =0;               
+   47   1          pid_steer.output_val = 1880;
+C251 COMPILER V5.60.0,  pidcc                                                              06/10/23  17:55:10  PAGE 2   
+
+   48   1          pid_steer.err = 0.0;
+   49   1          pid_steer.err_last = 0.0;
+   50   1          pid_steer.integral = 0.0;
+   51   1      
+   52   1          pid_steer.Kp = 0.05;
+   53   1          pid_steer.Ki = 0;
+   54   1          pid_steer.Kd = 0;
+   55   1          pid_steer.input_val=0;
+   56   1          pid_steer.Kp_output_val=0;
+   57   1          pid_steer.Ki_output_val=0;
+   58   1          pid_steer.Kd_output_val=0;
+   59   1          /* ????????? */
+   60   1          ipid_speed_left.target_val=10.0;              
+   61   1          ipid_speed_left.output_val=0.0;
+   62   1          ipid_speed_left.err=0.0;
+   63   1          ipid_speed_left.err_last=0.0;
+   64   1        
+   65   1          ipid_speed_left.Kp_output_val=0;
+   66   1          ipid_speed_left.Ki_output_val=0;
+   67   1          ipid_speed_left.Kd_output_val=0;
+   68   1          
+   69   1          ipid_speed_left.Kp = 80.0;
+   70   1          ipid_speed_left.Ki = 2.0;
+   71   1          ipid_speed_left.Kd = 100.0;
+   72   1          ipid_speed_left.input_val=0;
+   73   1          ipid_speed_left.integral=0.0;
+   74   1          
+   75   1          ipid_speed_right.target_val=10.0;              
+   76   1          ipid_speed_right.output_val=0.0;
+   77   1          ipid_speed_right.err=0.0;
+   78   1          ipid_speed_right.err_last=0.0;
+   79   1      
+   80   1          ipid_speed_right.Kp_output_val=0;
+   81   1          ipid_speed_right.Ki_output_val=0;
+   82   1          ipid_speed_right.Kd_output_val=0;
+   83   1          
+   84   1          ipid_speed_right.integral=0.0;
+   85   1      
+   86   1          ipid_speed_right.Kp = 80.0;
+   87   1          ipid_speed_right.Ki = 2.0;
+   88   1          ipid_speed_right.Kd = 100.0;
+   89   1          ipid_speed_right.input_val=0;
+   90   1          
+   91   1          
+   92   1          ipid_speed_left.omin=4000;
+   93   1          ipid_speed_left.omax=4000;
+   94   1          ipid_speed_right.omin=4000;
+   95   1          ipid_speed_right.omax=4000;
+   96   1      }
+   97          
+   98          //**************************//
+   99          //*****»·µºÈë»·adc¼ì²â******//
+  100          //**************************//
+  101          int judge_circle_in(float adc_left_edge,float adc_right_edge,float adc_mid){
+  102   1              if(adc_left_edge - adc_right_edge > incircle_threshold1 && adc_mid > incircle_threshold2)return 1
+             -;
+  103   1              else return 0;
+  104   1      }//**************************//
+  105          //*****»·µº³ö»·adc¼ì²â******//
+  106          //**************************//
+  107          int judge_circle_out(float adc_left_edge,float adc_right_edge,float adc_mid){
+  108   1              if(adc_left_edge - adc_right_edge > outcircle_threshold1 && adc_mid > outcircle_threshold2)return
+             - 1;
+  109   1              else return 0;
+  110   1      }
+  111          //***********************//
+C251 COMPILER V5.60.0,  pidcc                                                              06/10/23  17:55:10  PAGE 3   
+
+  112          //*****»·µº¼ì²âº¯Êý******//
+  113          //***********************//
+  114          //»·µº¼ì²â·ÅÖ÷º¯ÊýÀï       Í£³µ±êÖ¾Î»µ½Ê±ºò·ÅÍâ²¿ÖÐ¶Ï
+  115          void judge_circle(){
+  116   1          if(status  &&  judge_circle_in(adc_left_edge,adc_right_edge,adc_mid) ){
+  117   2               status=0;
+  118   2               delay_ms(incircle_delay_ms);     //Ö±µÀËÙ¶È¿ì£¬³å½ø»·µºÑÓÊ±ÉèÖÃÐèÒªÐ¡Ò»µã
+  119   2               PWMSetSteer(angle_left_pwm);
+  120   2               speedflag=2;
+  121   2               
+  122   2          }
+  123   1          
+  124   1          if(status == 0 && judge_circle_out(adc_left_mid,adc_right_mid,adc_mid) ){
+  125   2               speedflag=1;
+  126   2               PWMSetSteer(angle_left_pwm);
+  127   2               delay_ms(outcircle_delay_ms);  
+  128   2               status=1;  
+  129   2          } 
+  130   1      //    else if(judge_right(adc_right_edge,adc_right_mid,adc_mid)=1){
+  131   1      //         circleflag=1;
+  132   1      //         PWMSetSteer(angle_right_pwm);
+  133   1      //         speedflag=2;
+  134   1      //    }
+  135   1      
+  136   1      }
+  137          
+  138          //***************************//
+  139          //*****adc²É¼¯¼Ó¶æ»úpid******//
+  140          //***************************//
+  141          void pid_steers(){
+  142   1        adc_left_mid=Filter(ADC_P01,ADC_12BIT);
+  143   1        adc_right_mid=Filter(ADC_P00,ADC_12BIT);
+  144   1        adc_mid=Filter(ADC_P05,ADC_12BIT);
+  145   1        //adc_left_edge=Filter(ADC_P00,ADC_12BIT); //¸ÄÍ¨µÀ
+  146   1        //adc_right_edge=Filter(ADC_P00,ADC_12BIT);//¸ÄÍ¨µÀ
+  147   1        //adc_mid=Filter(ADC_P00,ADC_12BIT);       //¸ÄÍ¨µÀ
+  148   1        ele_direction_control(&pid_steer,&ipid_speed_left,&ipid_speed_right,adc_left_mid,adc_right_mid);
+  149   1      }
+  150          
+  151          void ele_direction_control(PID* topid_steer,iPID* toipid_speed_left,iPID* toipid_speed_right,float adc_le
+             -ft_mid,float adc_right_mid)
+  152          {
+  153   1              //int i = H-21;
+  154   1              //ADresult0 = 0;
+  155   1              
+  156   1              //for(;i>H-41;i--)
+  157   1              //{
+  158   1              // ADresult0 += Pick_table[i];     
+  159   1              //}
+  160   1              
+  161   1              //ADresult1 = NUMPIX*10;
+  162   1              // topid_steer->err = (int)(ADresult0-ADresult1)/20;
+  163   1              topid_steer->err =(int)(adc_left_mid-adc_right_mid)/con;//¼ÆËã²îÖµ£¬×ó¼õÓÒ
+  164   1         
+  165   1              //uart_printf(UART_0," topid_steer->err =  %d\n", topid_steer->err);
+  166   1      
+  167   1                             
+  168   1              if(-30>topid_steer->err)//ÓÒÆ«¹ý´ó
+  169   1              {speedflag =2;
+  170   2                  topid_steer->Kp=6;
+  171   2                  topid_steer->Kp_output_val=topid_steer->Kp* topid_steer->err;
+  172   2                  if(speedflag == 1)
+  173   2                  {
+  174   3                      setpoint_left = NORMAL_SPEED+2.5*topid_steer->err;
+  175   3                      setpoint_right = NORMAL_SPEED;
+  176   3                  }
+C251 COMPILER V5.60.0,  pidcc                                                              06/10/23  17:55:10  PAGE 4   
+
+  177   2                  else if(speedflag == 2)
+  178   2                  {
+  179   3                      setpoint_left = CIRCLE_SPEED+6*topid_steer->err;
+  180   3                      setpoint_right = CIRCLE_SPEED;
+  181   3                  }
+  182   2                  else if(speedflag == 5)
+  183   2                  {
+  184   3                    setpoint_right = STOP_SPEED;
+  185   3                      setpoint_left = STOP_SPEED+1*topid_steer->err;
+  186   3                  }
+  187   2              }
+  188   1              
+  189   1              else if(-20>=topid_steer->err && topid_steer->err>=-30)//ÓÒÆ«½Ï´ó
+  190   1              {speedflag =2;
+  191   2                  topid_steer->Kp=5;
+  192   2                  topid_steer->Kp_output_val=topid_steer->Kp*topid_steer->err;
+  193   2                  if(speedflag == 1)
+  194   2                  {
+  195   3                    setpoint_left = NORMAL_SPEED+1*topid_steer->err;
+  196   3                    setpoint_right = NORMAL_SPEED;
+  197   3                  }
+  198   2                  else if(speedflag == 2)
+  199   2                  {
+  200   3                      setpoint_left = CIRCLE_SPEED+6*topid_steer->err;
+  201   3                      setpoint_right = CIRCLE_SPEED;
+  202   3                  }
+  203   2                  else if(speedflag == 5)
+  204   2                  {
+  205   3                    setpoint_right = STOP_SPEED;
+  206   3                      setpoint_left = STOP_SPEED+1*topid_steer->err;
+  207   3                  }
+  208   2              }
+  209   1              else if(-13>topid_steer->err && topid_steer->err>-20)//ÓÒÆ«½ÏÐ¡
+  210   1              {speedflag =2;
+  211   2                  topid_steer->Kp=5;
+  212   2                  topid_steer->Kp_output_val=topid_steer->Kp*topid_steer->err;
+  213   2                  if(speedflag == 1)
+  214   2                  {
+  215   3                    setpoint_left = NORMAL_SPEED+1*topid_steer->err;
+  216   3                    setpoint_right = NORMAL_SPEED;
+  217   3                  }
+  218   2                  else if(speedflag == 2)
+  219   2                  {
+  220   3                      setpoint_left = CIRCLE_SPEED+6*topid_steer->err;
+  221   3                      setpoint_right = CIRCLE_SPEED;
+  222   3                  }
+  223   2                  else if(speedflag == 5)
+  224   2                  {
+  225   3                    setpoint_right = STOP_SPEED;
+  226   3                      setpoint_left = STOP_SPEED+1*topid_steer->err;
+  227   3                  }
+  228   2              } 
+  229   1              else if(-13<=topid_steer->err && topid_steer->err<0)//»ù±¾ÎÞÓÒÆ«
+  230   1              {speedflag =1;
+  231   2                  topid_steer->Kp=1;
+  232   2                  topid_steer->Kp_output_val=topid_steer->Kp*topid_steer->err;
+  233   2                 if(speedflag == 1)
+  234   2                  {
+  235   3                    setpoint_left = setpoint_right = NORMAL_SPEED;
+  236   3                  }
+  237   2                    else if(speedflag == 2)
+  238   2                  {
+  239   3                    setpoint_left = setpoint_right = CIRCLE_SPEED;
+  240   3                  }
+  241   2                 
+  242   2              }
+C251 COMPILER V5.60.0,  pidcc                                                              06/10/23  17:55:10  PAGE 5   
+
+  243   1              else if(0<=topid_steer->err && topid_steer->err<=13)//»ù±¾ÎÞ×óÆ«
+  244   1              {speedflag =1;
+  245   2                  topid_steer->Kp=1;
+  246   2                  topid_steer->Kp_output_val=topid_steer->Kp*topid_steer->err;
+  247   2                 if(speedflag == 1)
+  248   2                  {
+  249   3                    setpoint_left = setpoint_right = NORMAL_SPEED;
+  250   3                  }
+  251   2                 else if(speedflag == 2)
+  252   2                  {
+  253   3                    setpoint_left = setpoint_right = CIRCLE_SPEED;
+  254   3                  }
+  255   2                 
+  256   2              }
+  257   1              else if(13<topid_steer->err && topid_steer->err<20)//×óÆ«½ÏÐ¡
+  258   1              {speedflag =2;
+  259   2                  topid_steer->Kp=5;
+  260   2                  topid_steer->Kp_output_val=topid_steer->Kp*topid_steer->err;
+  261   2                 if(speedflag == 1)
+  262   2                  {
+  263   3                    setpoint_right = NORMAL_SPEED-1*topid_steer->err;
+  264   3                      setpoint_left = NORMAL_SPEED;
+  265   3                  }
+  266   2                 else if(speedflag == 2)
+  267   2                  {
+  268   3                    setpoint_right = CIRCLE_SPEED-6*topid_steer->err;
+  269   3                      setpoint_left = CIRCLE_SPEED;
+  270   3                  }
+  271   2                 else if(speedflag == 5)
+  272   2                  {
+  273   3                    setpoint_right = STOP_SPEED-1*topid_steer->err;
+  274   3                      setpoint_left = STOP_SPEED;
+  275   3                  }
+  276   2              }
+  277   1              else if(20<=topid_steer->err && topid_steer->err<30)//×óÆ«½Ï´ó
+  278   1              {speedflag =2;
+  279   2                  topid_steer->Kp=5;
+  280   2                  topid_steer->Kp_output_val=topid_steer->Kp*topid_steer->err;
+  281   2                  if(speedflag == 1)
+  282   2                  {
+  283   3                    setpoint_right = NORMAL_SPEED-1*topid_steer->err;
+  284   3                    setpoint_left = NORMAL_SPEED;
+  285   3                  }
+  286   2                  else if(speedflag == 2)
+  287   2                  {
+  288   3                    setpoint_right = CIRCLE_SPEED-6*topid_steer->err;
+  289   3                      setpoint_left = CIRCLE_SPEED;
+  290   3                  }
+  291   2                  else if(speedflag == 5)
+  292   2                  {
+  293   3                    setpoint_right = STOP_SPEED-1*topid_steer->err;
+  294   3                      setpoint_left = STOP_SPEED;
+  295   3                  }
+  296   2              }else if(30<=topid_steer->err)//×óÆ«¹ý´ó
+  297   1              {speedflag =2;
+  298   2                  topid_steer->Kp=6;
+  299   2                  topid_steer->Kp_output_val=topid_steer->Kp*topid_steer->err;
+  300   2                  if(speedflag == 1)
+  301   2                  {
+  302   3                    setpoint_right = NORMAL_SPEED-2.5*topid_steer->err;
+  303   3                    setpoint_left = NORMAL_SPEED;
+  304   3                  }
+  305   2                  else if(speedflag == 2)
+  306   2                  {
+  307   3                    setpoint_right = CIRCLE_SPEED-6*topid_steer->err;
+  308   3                    setpoint_left = CIRCLE_SPEED;
+C251 COMPILER V5.60.0,  pidcc                                                              06/10/23  17:55:10  PAGE 6   
+
+  309   3                  }else if(speedflag == 5)
+  310   2                  {
+  311   3                      setpoint_right = STOP_SPEED-1*topid_steer->err;
+  312   3                      setpoint_left = STOP_SPEED;
+  313   3                  }
+  314   2              }
+  315   1              
+  316   1              
+  317   1              if(topid_steer->Kp_output_val<-200)topid_steer->Kp_output_val=-200;//¶ÔKp¾õµÃµÄÊäÈëÖµ½øÐÐÏÞ·ù
+  318   1              if(topid_steer->Kp_output_val>200)topid_steer->Kp_output_val=200;  //¶ÔKp¾õµÃµÄÊäÈëÖµ½øÐÐÏÞ·ù
+  319   1              
+  320   1              //uart_printf(UART_0,"output = %f\n",dir_P_value);
+  321   1              
+  322   1              topid_steer->Kd=20;                                              //¸³ÖµKd
+  323   1              topid_steer->Kd_output_val=topid_steer->Kd*(topid_steer->err-topid_steer->err_last); //¼ÆËã¹ØÓÚKd
+             -µÄÊäÈëÖµ
+  324   1                
+  325   1              topid_steer->output_val=(int)(topid_steer->Kp_output_val+topid_steer->Kd_output_val);   //KdÊäÈëÖ
+             -µ+KpÊäÈëÖµ  ¹¹³É×îÖÕµÄÊäÈëÖµ
+  326   1              topid_steer->err_last=topid_steer->err;                               //½«´Ë´Î¼ÆËãµÄÆ«²î±£´æµ½las
+             -t_errÀï£¬ÒÔ±¸Î¢·ÖµÄÔËËã
+  327   1      
+  328   1              
+  329   1              
+  330   1              toipid_speed_left->target_val=(int)setpoint_left;                                                             //´«¸øËÙ¶È»·
+  331   1              toipid_speed_right->target_val= (int)setpoint_right;  
+  332   1              
+  333   1              PWMSetSteer(1880+topid_steer->output_val);                        //Êä³ö¶æ»ú
+  334   1      }
+  335          
+  336          //ËÙ¶È»·   ´«ÈëÄ¿±êËÙ¶È 
+  337          int speedleft_pid_realize(iPID *toipid_left_speed ,int actual_val_left ){
+  338   1        int error_left;
+  339   1        
+  340   1        error_left=toipid_left_speed->target_val-actual_val_left;
+  341   1        toipid_left_speed->err=error_left;
+  342   1        
+  343   1        if(error_left < 0)
+  344   1          {
+  345   2            toipid_left_speed->Kp = 300;
+  346   2          }
+  347   1          else
+  348   1          {
+  349   2            toipid_left_speed->Kp = 100;
+  350   2          }
+  351   1          
+  352   1          
+  353   1             //ËÀÇø¿ØÖÆ
+  354   1              if( (toipid_left_speed->err>-SPE_DEAD_ZONE) && (toipid_left_speed->err<SPE_DEAD_ZONE ) )
+  355   1          {
+  356   2              toipid_left_speed->err = 0;
+  357   2              toipid_left_speed->integral = 0;
+  358   2              toipid_left_speed->err_last = 0;
+  359   2          }
+  360   1      
+  361   1      
+  362   1              //»ý·Ö·ÖÀë
+  363   1          if(toipid_left_speed->err> -LOC_INTEGRAL_START_ERR && toipid_left_speed->err < LOC_INTEGRAL_START_ERR){
+  364   2              toipid_left_speed->integral += toipid_left_speed->err;  
+  365   2              /*»ý·Ö·¶Î§ÏÞ¶¨£¬·ÀÖ¹»ý·Ö±¥ºÍ*/
+  366   2              if(toipid_left_speed->integral > LOC_INTEGRAL_MAX_VAL)
+  367   2              {
+  368   3                 toipid_left_speed->integral = LOC_INTEGRAL_MAX_VAL;
+  369   3              }
+  370   2              else if(toipid_left_speed->integral < -LOC_INTEGRAL_MAX_VAL)
+  371   2              {
+C251 COMPILER V5.60.0,  pidcc                                                              06/10/23  17:55:10  PAGE 7   
+
+  372   3                  toipid_left_speed->integral= -LOC_INTEGRAL_MAX_VAL;
+  373   3              }
+  374   2            }
+  375   1              
+  376   1            //ËÙ¶ÈÏÞ·ù
+  377   1           if(toipid_left_speed->integral>toipid_left_speed->omax)
+  378   1            toipid_left_speed->integral=toipid_left_speed->omax;
+  379   1          else if(toipid_left_speed->integral<toipid_left_speed->omin)
+  380   1            toipid_left_speed->integral=toipid_left_speed->omin;
+  381   1          
+  382   1          //Êä³ö
+  383   1          toipid_left_speed->output_val=toipid_left_speed->Kp*toipid_left_speed->err+toipid_left_speed->Ki*toipid
+             -_left_speed->integral+toipid_left_speed->Kd*(toipid_left_speed->err-toipid_left_speed->err_last);
+  384   1          toipid_left_speed->err_last= toipid_left_speed->err;
+  385   1          return (int)toipid_left_speed->output_val;
+  386   1      
+  387   1      }
+  388          int speedright_pid_realize(iPID *toipid_right_speed,int actual_val_right){
+  389   1        int error_right;
+  390   1        error_right=toipid_right_speed->target_val-actual_val_right;
+  391   1        toipid_right_speed->err=error_right;
+  392   1        
+  393   1          if(error_right< 0)
+  394   1          {
+  395   2           toipid_right_speed->Kp = 300;
+  396   2          }
+  397   1          else
+  398   1          {
+  399   2           toipid_right_speed->Kp= 100;
+  400   2          }
+  401   1          
+  402   1             //ËÀÇø¿ØÖÆ
+  403   1              if( (toipid_right_speed->err>-SPE_DEAD_ZONE) && (toipid_right_speed->err<SPE_DEAD_ZONE ) )
+  404   1          {
+  405   2              toipid_right_speed->err = 0;
+  406   2              toipid_right_speed->integral = 0;
+  407   2              toipid_right_speed->err_last = 0;
+  408   2          }
+  409   1      
+  410   1      
+  411   1              //»ý·Ö·ÖÀë
+  412   1            if(toipid_right_speed->err> -LOC_INTEGRAL_START_ERR && toipid_right_speed->err < LOC_INTEGRAL_START_ER
+             -R){
+  413   2              toipid_right_speed->integral += toipid_right_speed->err;  
+  414   2              /*»ý·Ö·¶Î§ÏÞ¶¨£¬·ÀÖ¹»ý·Ö±¥ºÍ*/
+  415   2              if(toipid_right_speed->integral > LOC_INTEGRAL_MAX_VAL)
+  416   2              {
+  417   3                 toipid_right_speed->integral = LOC_INTEGRAL_MAX_VAL;
+  418   3              }
+  419   2              else if(toipid_right_speed->integral < -LOC_INTEGRAL_MAX_VAL)
+  420   2              {
+  421   3                  toipid_right_speed->integral= -LOC_INTEGRAL_MAX_VAL;
+  422   3              }
+  423   2          }
+  424   1              
+  425   1            //ËÙ¶ÈÏÞ·ù
+  426   1          if(toipid_right_speed->integral>toipid_right_speed->omax)
+  427   1            toipid_right_speed->integral=toipid_right_speed->omax;
+  428   1          else if(toipid_right_speed->integral<toipid_right_speed->omin)
+  429   1            toipid_right_speed->integral=toipid_right_speed->omin;
+  430   1          
+  431   1          //Êä³ö
+  432   1          toipid_right_speed->output_val=toipid_right_speed->Kp*toipid_right_speed->err+toipid_right_speed->Ki*to
+             -ipid_right_speed->integral+toipid_right_speed->Kd*(toipid_right_speed->err-toipid_right_speed->err_last);
+  433   1          toipid_right_speed->err_last= toipid_right_speed->err;
+  434   1          return (int)toipid_right_speed->output_val;
+C251 COMPILER V5.60.0,  pidcc                                                              06/10/23  17:55:10  PAGE 8   
+
+  435   1      }
+  436          void  speed_pid(){
+  437   1          PWMSetMotor2(speedleft_pid_realize(&ipid_speed_left,ipid_speed_left.input_val),speedright_pid_realize
+             -(&ipid_speed_right,ipid_speed_right.input_val));
+  438   1      }
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =      4465     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =       206     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =        28     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

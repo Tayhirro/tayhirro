@@ -1,0 +1,350 @@
+C251 COMPILER V5.60.0,  pid                                                                06/10/23  15:08:55  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE pid
+OBJECT MODULE PLACED IN .\Out_File\pid.obj
+COMPILER INVOKED BY: D:\keil251\C251\BIN\C251.EXE ..\USER\src\pid.c XSMALL INTR2 WARNINGLEVEL(3) OPTIMIZE(0,SPEED) BROWS
+                    -E INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USE
+                    -R\inc;..\USER\src) DEBUG PRINT(.\Out_File\pid.lst) TABS(2) OBJECT(.\Out_File\pid.obj) 
+
+stmt  level    source
+
+    1          #include "pid.h"
+    2          #include "common.h"
+    3          #include "headfile.h"
+    4          #include "motor.h"
+    5          #include "steer.h"
+    6          int begin_speed = 3000;//初始速度
+    7          int lasterror = 0;//上次误差
+    8          int accerror = 0;//累积误差(intergral)
+    9          //方向环pid
+   10          
+   11          //#define test_port UART_0
+   12          //#define NUMPIX 188
+   13          ///extern uint16 bigbendflag;
+   14          
+   15          
+   16          float in1,out1,in2,out2,lastin1=0,lastin2=0;
+   17          float setpoint1=3000.0;
+   18          float setpoint2=3000.0;
+   19          float pp1=100.0;
+   20          float pp2=100.0;
+   21          float ii1=0.0;
+   22          float ii2=0.0;
+   23          float dd1=1;
+   24          float dd2=1;
+   25          float max_speed=7000;
+   26          float min_speed=-7000;
+   27          float iterm1=0;
+   28          float iterm2=0;
+   29          
+   30          /*void speed_dynamic()
+   31          {
+   32          
+   33          }*/
+   34          
+   35          //spead control 
+   36          /* void pid_compute_new(float in1,float in2)
+   37          { 
+   38              float error1;
+   39            float error2;
+   40            float out1,out2;
+   41            error1=setpoint1-in1;
+   42              iterm1+=error1;
+   43              
+   44              error2=setpoint2-in2;
+   45              iterm2+=error2;
+   46              
+   47              if(error1 < 0)
+   48              {
+   49                p1 = 300;
+   50              }
+   51              else
+   52              {
+   53                p1 = 100;
+   54              }
+   55              
+   56              if(error2 < 0)
+   57              {
+C251 COMPILER V5.60.0,  pid                                                                06/10/23  15:08:55  PAGE 2   
+
+   58                p2 = 300;
+   59              }
+   60              else
+   61              {
+   62                p2 = 100;
+   63              }
+   64              
+   65              if(iterm1>max_speed)
+   66                iterm1=max_speed;
+   67              else if(iterm1<min_speed)
+   68                iterm1=min_speed;
+   69              if(iterm2>max_speed)
+   70                iterm2=max_speed;
+   71              else if(iterm2<min_speed)
+   72                iterm2=min_speed;
+   73              
+   74               out1=pp1*error1+ii1*iterm1-dd1*(in1-lastin1);
+   75               out2=pp2*error2+ii2*iterm2-dd2*(in2-lastin2);
+   76              
+   77              if(out1>max_speed)
+   78                out1=max_speed;
+   79              else if(out1<min_speed)
+   80                out1=min_speed;
+   81              if(out2>max_speed)
+   82                out2=max_speed;
+   83              else if(out2<min_speed)
+   84                out2=min_speed;
+   85              
+   86              lastin1=in1;
+   87              lastin2=in2;
+   88             // uart_printf(UART_0,"out = %f %f \n",out1,out2);
+   89              
+   90              PWMSetMotor2(out1,out2); 
+   91          }
+   92          
+   93          
+   94                
+   95          
+   96                
+   97              
+   98          //电磁控制参数
+   99              
+  100          
+  101          //#define  AD_CH0                ADC0_SE16
+  102          //#define  AD_CH1                ADC1_SE18
+  103          #define  g_HighestSpeed        100                      //编码器读回的定值
+  104          #define  g_LowestSpeed         0                       //编码器读回的定值
+  105          
+  106          
+  107          float  dir_control_P=0;                     // 4         2.7         7  
+  108          float  dir_control_D=0;          // 155        140        100
+  109            
+  110          float     ADresult0=0,ADresult1=0;
+  111          int var[2];
+  112          
+  113          int     dir_error=0,last_dir_error=0;
+  114          float   dir_P_value=0,dir_D_value=0;
+  115          float   g_fDirectionControlOut=0;
+  116          
+  117          int     flag=0,lastflag=0,time=0;
+  118          
+  119          int min(int a,int b)
+  120          {
+  121            return a<b?a:b;
+  122          }
+  123          
+C251 COMPILER V5.60.0,  pid                                                                06/10/23  15:08:55  PAGE 3   
+
+  124          //方向环PID
+  125              
+  126          void ele_direction_control()
+  127          {
+  128                  int i = H-21;
+  129                  ADresult0 = 0;
+  130                  
+  131                  for(;i>H-41;i--)
+  132                  {
+  133                    ADresult0 += Pick_table[i];     
+  134                  }
+  135                  
+  136                  ADresult1 = NUMPIX*10;
+  137                  dir_error = (int)(ADresult0-ADresult1)/20;
+  138                  
+  139             
+  140                  //uart_printf(UART_0,"dir_error =  %d\n",dir_error);
+  141          
+  142                                 
+  143                  if(-30>dir_error)
+  144                  {
+  145                      dir_control_P=5;
+  146                      dir_P_value=dir_control_P*dir_error;
+  147                      if(speedflag == 1)
+  148                      {
+  149                          setpoint1 = NORMAL_SPEED+2.5*dir_error;
+  150                          setpoint2 = NORMAL_SPEED;
+  151                      }
+  152                      else if(speedflag == 2)
+  153                      {
+  154                          setpoint1 = CIRCLE_SPEED+2*dir_error;
+  155                          setpoint2 = CIRCLE_SPEED;
+  156                      }
+  157                      else if(speedflag == 5)
+  158                      {
+  159                        setpoint2 = STOP_SPEED;
+  160                          setpoint1 = STOP_SPEED+1*dir_error;
+  161                      }
+  162                  }
+  163                  else if(-15>=dir_error && dir_error>=-30)
+  164                  {
+  165                      dir_control_P=5;
+  166                      dir_P_value=dir_control_P*dir_error;
+  167                      if(speedflag == 1)
+  168                      {
+  169                        setpoint1 = NORMAL_SPEED+1*dir_error;
+  170                        setpoint2 = NORMAL_SPEED;
+  171                      }
+  172                      else if(speedflag == 2)
+  173                      {
+  174                          setpoint1 = CIRCLE_SPEED+1*dir_error;
+  175                          setpoint2 = CIRCLE_SPEED;
+  176                      }
+  177                      else if(speedflag == 5)
+  178                      {
+  179                        setpoint2 = STOP_SPEED;
+  180                          setpoint1 = STOP_SPEED+1*dir_error;
+  181                      }
+  182                  }
+  183                  else if(-5>dir_error && dir_error>-15)
+  184                  {
+  185                      dir_control_P=5;
+  186                      dir_P_value=dir_control_P*dir_error;
+  187                      if(speedflag == 1)
+  188                      {
+  189                        setpoint1 = NORMAL_SPEED+1*dir_error;
+C251 COMPILER V5.60.0,  pid                                                                06/10/23  15:08:55  PAGE 4   
+
+  190                        setpoint2 = NORMAL_SPEED;
+  191                      }
+  192                      else if(speedflag == 2)
+  193                      {
+  194                          setpoint1 = CIRCLE_SPEED+1*dir_error;
+  195                          setpoint2 = CIRCLE_SPEED;
+  196                      }
+  197                      else if(speedflag == 5)
+  198                      {
+  199                        setpoint2 = STOP_SPEED;
+  200                          setpoint1 = STOP_SPEED+1*dir_error;
+  201                      }
+  202                  } 
+  203                  else if(-5<=dir_error && dir_error<0)
+  204                  {
+  205                      dir_control_P=4;
+  206                      dir_P_value=dir_control_P*dir_error;
+  207                     if(speedflag == 1)
+  208                      {
+  209                        setpoint1 = setpoint2 = NORMAL_SPEED;
+  210                      }
+  211                        else if(speedflag == 2)
+  212                      {
+  213                        setpoint1 = setpoint2 = CIRCLE_SPEED;
+  214                      }
+  215                     
+  216                  }
+  217                  else if(0<=dir_error && dir_error<=5)
+  218                  {
+  219                      dir_control_P=4;
+  220                      dir_P_value=dir_control_P*dir_error;
+  221                     if(speedflag == 1)
+  222                      {
+  223                        setpoint1 = setpoint2 = NORMAL_SPEED;
+  224                      }
+  225                     else if(speedflag == 2)
+  226                      {
+  227                        setpoint1 = setpoint2 = CIRCLE_SPEED;
+  228                      }
+  229                     
+  230                  }
+  231                  else if(5<dir_error && dir_error<15)
+  232                  {
+  233                      dir_control_P=5;
+  234                      dir_P_value=dir_control_P*dir_error;
+  235                     if(speedflag == 1)
+  236                      {
+  237                        setpoint2 = NORMAL_SPEED-1*dir_error;
+  238                          setpoint1 = NORMAL_SPEED;
+  239                      }
+  240                     else if(speedflag == 2)
+  241                      {
+  242                        setpoint2 = CIRCLE_SPEED-1*dir_error;
+  243                          setpoint1 = CIRCLE_SPEED;
+  244                      }
+  245                     else if(speedflag == 5)
+  246                      {
+  247                        setpoint2 = STOP_SPEED-1*dir_error;
+  248                          setpoint1 = STOP_SPEED;
+  249                      }
+  250                  }
+  251                  else if(15<=dir_error && dir_error<30)
+  252                  {
+  253                      dir_control_P=5;
+  254                      dir_P_value=dir_control_P*dir_error;
+  255                      if(speedflag == 1)
+C251 COMPILER V5.60.0,  pid                                                                06/10/23  15:08:55  PAGE 5   
+
+  256                      {
+  257                        setpoint2 = NORMAL_SPEED-1*dir_error;
+  258                        setpoint1 = NORMAL_SPEED;
+  259                      }
+  260                      else if(speedflag == 2)
+  261                      {
+  262                        setpoint2 = CIRCLE_SPEED-1*dir_error;
+  263                          setpoint1 = CIRCLE_SPEED;
+  264                      }
+  265                      else if(speedflag == 5)
+  266                      {
+  267                        setpoint2 = STOP_SPEED-1*dir_error;
+  268                          setpoint1 = STOP_SPEED;
+  269                      }
+  270                  }else if(30<=dir_error)
+  271                  {
+  272                      dir_control_P=5;
+  273                      dir_P_value=dir_control_P*dir_error;
+  274                      if(speedflag == 1)
+  275                      {
+  276                        setpoint2 = NORMAL_SPEED-2.5*dir_error;
+  277                        setpoint1 = NORMAL_SPEED;
+  278                      }
+  279                      else if(speedflag == 2)
+  280                      {
+  281                        setpoint2 = CIRCLE_SPEED-2*dir_error;
+  282                        setpoint1 = CIRCLE_SPEED;
+  283                      }else if(speedflag == 5)
+  284                      {
+  285                        setpoint2 = STOP_SPEED-1*dir_error;
+  286                          setpoint1 = STOP_SPEED;
+  287                      }
+  288                  }
+  289                  
+  290                  
+  291                  if(dir_P_value<-160)dir_P_value=-160;
+  292                  if(dir_P_value>160)dir_P_value=160;
+  293                  
+  294                  //uart_printf(UART_0,"output = %f\n",dir_P_value);
+  295                  
+  296                  dir_control_D=0.1;
+  297                  dir_D_value=dir_control_D*(dir_error-last_dir_error);
+  298                  
+  299                  g_fDirectionControlOut=dir_P_value+dir_D_value; 
+  300                  last_dir_error=dir_error;
+  301          
+  302                  
+  303                  pwm_duty(,(1250-g_fDirectionControlOut));
+  304          }
+  305          */
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =    ------     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =        78     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+C251 COMPILER V5.60.0,  pid                                                                06/10/23  15:08:55  PAGE 6   
+
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =       130     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

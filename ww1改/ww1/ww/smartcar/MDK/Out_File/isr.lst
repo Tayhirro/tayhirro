@@ -1,0 +1,239 @@
+C251 COMPILER V5.60.0,  isr                                                                06/10/23  16:26:30  PAGE 1   
+
+
+C251 COMPILER V5.60.0, COMPILATION OF MODULE isr
+OBJECT MODULE PLACED IN .\Out_File\isr.obj
+COMPILER INVOKED BY: D:\keil251\C251\BIN\C251.EXE ..\USER\src\isr.c XSMALL INTR2 WARNINGLEVEL(3) OPTIMIZE(0,SPEED) BROWS
+                    -E INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\CODE;..\USE
+                    -R\inc;..\USER\src) DEBUG PRINT(.\Out_File\isr.lst) TABS(2) OBJECT(.\Out_File\isr.obj) 
+
+stmt  level    source
+
+    1          ///******************************************************************************************************
+             -***************
+    2          // * COPYRIGHT NOTICE
+    3          // * Copyright (c) 2020,逐飞科技
+    4          // * All rights reserved.
+    5          // * 技术讨论QQ群：一群：179029047(已满)  二群：244861897(已满)  三群：824575535
+    6          // *
+    7          // * 以下所有内容版权均属逐飞科技所有，未经允许不得用于商业用途，
+    8          // * 欢迎各位使用并传播本程序，修改内容时必须保留逐飞科技的版权声明。
+    9          // *
+   10          // * @file          isr
+   11          // * @company       成都逐飞科技有限公司
+   12          // * @author        逐飞科技(QQ790875685)
+   13          // * @version       查看doc内version文件 版本说明
+   14          // * @Software      MDK FOR C251 V5.60
+   15          // * @Target core   STC32G12K128
+   16          // * @Taobao        https://seekfree.taobao.com/
+   17          // * @date          2020-4-14
+   18          // ******************************************************************************************************
+             -**************/
+   19          #include "headfile.h"
+   20          #include "pidcc.h"
+   21          #include "steer.h"
+   22          #include "motor.h"
+   23          uint16 right_speed_in ;
+   24          uint16 left_speed_in ;
+   25          extern int left_steer ;
+   26          extern int right_steer ;
+   27          extern int adc_left_edge,  adc_left_mid,  adc_mid,  adc_right_mid,  adc_right_edge; 
+   28          toiPID toipid_speed_left=&ipid_speed_left;
+   29          toiPID toipid_speed_right=&ipid_speed_right;
+   30          //UART1中断
+   31          void UART1_Isr() interrupt 4
+   32          {
+   33   1          uint8 res;
+   34   1        static uint8 dwon_count;
+   35   1          if(UART1_GET_TX_FLAG)
+   36   1          {
+   37   2              UART1_CLEAR_TX_FLAG;
+   38   2              busy[1] = 0;
+   39   2          }
+   40   1          if(UART1_GET_RX_FLAG)
+   41   1          {
+   42   2              UART1_CLEAR_RX_FLAG;
+   43   2              res = SBUF;
+   44   2              //程序自动下载
+   45   2              if(res == 0x7F)
+   46   2              {
+   47   3                  if(dwon_count++ > 20)
+   48   3                      IAP_CONTR = 0x60;
+   49   3              }
+   50   2              else
+   51   2              {
+   52   3                  dwon_count = 0;
+   53   3              }
+   54   2          }
+   55   1      }
+C251 COMPILER V5.60.0,  isr                                                                06/10/23  16:26:30  PAGE 2   
+
+   56          
+   57          //UART2中断
+   58          void UART2_Isr() interrupt 8
+   59          {
+   60   1          if(UART2_GET_TX_FLAG)
+   61   1        {
+   62   2              UART2_CLEAR_TX_FLAG;
+   63   2          busy[2] = 0;
+   64   2        }
+   65   1          if(UART2_GET_RX_FLAG)
+   66   1        {
+   67   2              UART2_CLEAR_RX_FLAG;
+   68   2          //接收数据寄存器为：S2BUF
+   69   2      
+   70   2        }
+   71   1      }
+   72          
+   73          
+   74          //UART3中断
+   75          void UART3_Isr() interrupt 17
+   76          {
+   77   1          if(UART3_GET_TX_FLAG)
+   78   1        {
+   79   2              UART3_CLEAR_TX_FLAG;
+   80   2          busy[3] = 0;
+   81   2        }
+   82   1          if(UART3_GET_RX_FLAG)
+   83   1        {
+   84   2              UART3_CLEAR_RX_FLAG;
+   85   2          //接收数据寄存器为：S3BUF
+   86   2      
+   87   2        }
+   88   1      }
+   89          
+   90          
+   91          //UART4中断
+   92          void UART4_Isr() interrupt 18
+   93          {
+   94   1          if(UART4_GET_TX_FLAG)
+   95   1        {
+   96   2              UART4_CLEAR_TX_FLAG;
+   97   2          busy[4] = 0;
+   98   2        }
+   99   1          if(UART4_GET_RX_FLAG)
+  100   1        {
+  101   2              UART4_CLEAR_RX_FLAG;
+  102   2      
+  103   2          //接收数据寄存器为：S4BUF;
+  104   2          if(wireless_type == WIRELESS_SI24R1)
+  105   2              {
+  106   3                  wireless_uart_callback();           //无线转串口回调函数
+  107   3              }
+  108   2              else if(wireless_type == WIRELESS_CH9141)
+  109   2              {
+  110   3                  bluetooth_ch9141_uart_callback();   //蓝牙转串口回调函数
+  111   3              }
+  112   2              else if(wireless_type == WIRELESS_CH573)
+  113   2              {
+  114   3                  wireless_ch573_callback();          //CH573无线模块回调函数
+  115   3              }
+  116   2        }
+  117   1      }
+  118          
+  119          #define LED P52
+  120          void INT0_Isr() interrupt 0
+  121          {
+C251 COMPILER V5.60.0,  isr                                                                06/10/23  16:26:30  PAGE 3   
+
+  122   1        LED = 0;  //点亮LED
+  123   1      }
+  124          void INT1_Isr() interrupt 2
+  125          {
+  126   1      
+  127   1      }
+  128          void INT2_Isr() interrupt 10
+  129          {
+  130   1        INT2_CLEAR_FLAG;  //清除中断标志
+  131   1      }
+  132          void INT3_Isr() interrupt 11
+  133          {
+  134   1        INT3_CLEAR_FLAG;  //清除中断标志
+  135   1      }
+  136          
+  137          void INT4_Isr() interrupt 16
+  138          {
+  139   1        INT4_CLEAR_FLAG;  //清除中断标志
+  140   1      }
+  141          void TM0_Isr() interrupt 1   
+  142          {   //right_speed_in =ctimer_count_read(CTIM3_P04);
+  143   1         //left_speed_in =ctimer_count_read(CTIM0_P34);
+  144   1      //   right_speed_in =ctimer_count_read(CTIM3_P04);
+  145   1      //   left_speed_in =ctimer_count_read(CTIM0_P34);
+  146   1      //   toipid_speed_left->input_val= (int)left_speed_in;
+  147   1      //   toipid_speed_right->input_val= (int)right_speed_in;
+  148   1         pid_steers();
+  149   1         protect();
+  150   1         //speed_pid();
+  151   1      }
+  152          void TM1_Isr() interrupt 3     
+  153          {
+  154   1      }
+  155          void TM2_Isr() interrupt 12
+  156          {
+  157   1        TIM2_CLEAR_FLAG;  //清除中断标志
+  158   1      }
+  159          void TM3_Isr() interrupt 19
+  160          {
+  161   1        TIM3_CLEAR_FLAG; //清除中断标志
+  162   1      }
+  163          
+  164          
+  165          void TM4_Isr() interrupt 20
+  166          {
+  167   1        TIM4_CLEAR_FLAG; //清除中断标志
+  168   1      
+  169   1          
+  170   1      //  ccd_collect();   //CCD采集数据
+  171   1      
+  172   1      }
+  173          
+  174          //void  INT0_Isr()  interrupt 0;
+  175          //void  TM0_Isr()   interrupt 1;
+  176          //void  INT1_Isr()  interrupt 2;
+  177          //void  TM1_Isr()   interrupt 3;
+  178          //void  UART1_Isr() interrupt 4;
+  179          //void  ADC_Isr()   interrupt 5;
+  180          //void  LVD_Isr()   interrupt 6;
+  181          //void  PCA_Isr()   interrupt 7;
+  182          //void  UART2_Isr() interrupt 8;
+  183          //void  SPI_Isr()   interrupt 9;
+  184          //void  INT2_Isr()  interrupt 10;
+  185          //void  INT3_Isr()  interrupt 11;
+  186          //void  TM2_Isr()   interrupt 12;
+  187          //void  INT4_Isr()  interrupt 16;
+C251 COMPILER V5.60.0,  isr                                                                06/10/23  16:26:30  PAGE 4   
+
+  188          //void  UART3_Isr() interrupt 17;
+  189          //void  UART4_Isr() interrupt 18;
+  190          //void  TM3_Isr()   interrupt 19;
+  191          //void  TM4_Isr()   interrupt 20;
+  192          //void  CMP_Isr()   interrupt 21;
+  193          //void  I2C_Isr()   interrupt 24;
+  194          //void  USB_Isr()   interrupt 25;
+  195          //void  PWM1_Isr()  interrupt 26;
+  196          //void  PWM2_Isr()  interrupt 27;
+
+
+Module Information          Static   Overlayable
+------------------------------------------------
+  code size            =       396     ------
+  ecode size           =    ------     ------
+  data size            =    ------     ------
+  idata size           =    ------     ------
+  pdata size           =    ------     ------
+  xdata size           =    ------     ------
+  xdata-const size     =    ------     ------
+  edata size           =        14     ------
+  bit size             =    ------     ------
+  ebit size            =    ------     ------
+  bitaddressable size  =    ------     ------
+  ebitaddressable size =    ------     ------
+  far data size        =    ------     ------
+  huge data size       =    ------     ------
+  const size           =    ------     ------
+  hconst size          =        16     ------
+End of Module Information.
+
+
+C251 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
