@@ -15,23 +15,33 @@ int speedflag=1;           //直道、停止、进环判断标志
 fPID pid_steer;
 iPID ipid_speed_left;
 iPID ipid_speed_right;
-void PID_Init(PID PID){
-    PID.kP=0;
-    PID.kPSet=0;;
-    PID.kI=0;;
-    PID.kISet=0;
-    PID.kD=0;
-    PID.kDSet=0;
+void PID_Init(fPID PID){
+    PID.Kp=0;
+    PID.Ki=0;
+    PID.Kd=0;
+
+    PID.Kp_Set=0;
+    PID.Ki_Set=0;
+    PID.Kd_Set=0;
+    PID.target_val=0;
+    PID.Kp_output_val=0;
+    PID.Ki_output_val=0;
+    PID.Kd_output_val=0;
+    PID.output_val=0;
+    PID.input_val=0;
+    PID.ut=0;
+    PID.err=0;
+    PID.err_last=0;
+    PID.err_llast=0;
+    PID.integral=0;
+
+    PID.omin=0;
+    PID.omax=0;
     PID.sumLimit=0;
     PID.utLimit=0;
-    PID.ut=0;
-    PID.preError=0;
-    PID.ppreError=0;
-    PID.sumError=0;
-
 }
 
-void ele_direction_control(fPID* topid_steer,iPID* toipid_speed_left,iPID* toipid_speed_right,float zhongxian,float target)
+void direction_control(fPID* topid_steer,iPID* toipid_speed_left,iPID* toipid_speed_right,float zhongxian,float target)
 {
 
         topid_steer->err =(int)(zhongxian-target);//计算差值，左减右
@@ -40,7 +50,7 @@ void ele_direction_control(fPID* topid_steer,iPID* toipid_speed_left,iPID* toipi
 
 
         if(-30>topid_steer->err)//右偏过大
-        {   speedflag =2;
+        {speedflag =2;
             topid_steer->Kp=6;
             topid_steer->Kp_output_val=topid_steer->Kp* topid_steer->err;
             if(speedflag == 1)
@@ -200,7 +210,7 @@ void ele_direction_control(fPID* topid_steer,iPID* toipid_speed_left,iPID* toipi
 
         topid_steer->output_val=(int)(topid_steer->Kp_output_val+topid_steer->Kd_output_val);   //Kd输入值+Kp输入值  构成最终的输入值
         topid_steer->err_last=topid_steer->err;                               //将此次计算的偏差保存到last_err里，以备微分的运算
-            //位置式pid
+
 
 
                 toipid_speed_left->target_val=(int)setpoint_left;                                                                                                                           //传给速度环
@@ -208,10 +218,11 @@ void ele_direction_control(fPID* topid_steer,iPID* toipid_speed_left,iPID* toipi
 
         PWMSetSteer(1880+topid_steer->output_val);                        //输出舵机
 }
-void PID_SetParameter(PID* PID, float K_p_set,float K_i_set,float K_d_set,float pLimit,float coLimit,float boost){
-    (*PID).kP = K_p_set;
-    (*PID).kI = K_i_set;
-    (*PID).kD = K_d_set;
+
+void PID_SetParameter(fPID* PID, float K_p_set,float K_i_set,float K_d_set,float pLimit,float coLimit,float boost){
+    (*PID).Kp = K_p_set;
+    (*PID).Ki = K_i_set;
+    (*PID).Kd = K_d_set;
     (*PID).pLimit = pLimit;
     (*PID).coLimit = coLimit;
     (*PID).boost = boost;

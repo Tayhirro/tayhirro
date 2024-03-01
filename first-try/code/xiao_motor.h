@@ -58,7 +58,7 @@ void Motor_2SetPIDLimit(float pLimit);
 //ÉèÖÃÐÞÕýÏÞ·ù
 //void Motor_ShowPIDPar(SCREEN_DEVICE screen);
 void Motor_2SetPIDCoLimit(float coLimt);
-float Motor_1PID_Work(float target,float cur);
-float Motor_2PID_Work(float target,float cur);
+float Motor_1PID_control(float target,float cur);
+float Motor_2PID_control(float target,float cur);
 //float Motor_FuzzyP(float kPSet, float target, float cur);
 #endif /* CODE_XIAO_MOTOR_H_ */

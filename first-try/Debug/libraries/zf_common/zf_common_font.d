@@ -18,19 +18,19 @@ libraries/zf_common/zf_common_font.o :	c:/Infineon/AURIX-Studio-1.9.12/tools/Com
 c:/Infineon/AURIX-Studio-1.9.12/tools/Compilers/Tasking_1.1r8/ctc/include/string.h :
 libraries/zf_common/zf_common_font.o :	c:/Infineon/AURIX-Studio-1.9.12/tools/Compilers/Tasking_1.1r8/ctc/include/stdlib.h
 c:/Infineon/AURIX-Studio-1.9.12/tools/Compilers/Tasking_1.1r8/ctc/include/stdlib.h :
-libraries/zf_common/zf_common_font.o :	d:/AURIX/E01_02_buzzer_demo/libraries/infineon_libraries/iLLD/TC26B/Tricore/Cpu/Std/ifx_types.h
-d:/AURIX/E01_02_buzzer_demo/libraries/infineon_libraries/iLLD/TC26B/Tricore/Cpu/Std/ifx_types.h :
-libraries/zf_common/zf_common_font.o :	d:/AURIX/E01_02_buzzer_demo/libraries/infineon_libraries/Infra/Platform/Tricore/Compilers/Compilers.h
-d:/AURIX/E01_02_buzzer_demo/libraries/infineon_libraries/Infra/Platform/Tricore/Compilers/Compilers.h :
-libraries/zf_common/zf_common_font.o :	d:/AURIX/E01_02_buzzer_demo/libraries/infineon_libraries/Configurations/Ifx_Cfg.h
-d:/AURIX/E01_02_buzzer_demo/libraries/infineon_libraries/Configurations/Ifx_Cfg.h :
-libraries/zf_common/zf_common_font.o :	d:/AURIX/E01_02_buzzer_demo/libraries/infineon_libraries/Infra/Platform/Tricore/Compilers/CompilerTasking.h
-d:/AURIX/E01_02_buzzer_demo/libraries/infineon_libraries/Infra/Platform/Tricore/Compilers/CompilerTasking.h :
+libraries/zf_common/zf_common_font.o :	c:/Users/영/Desktop/edition/edition0/libraries/infineon_libraries/iLLD/TC26B/Tricore/Cpu/Std/ifx_types.h
+c:/Users/영/Desktop/edition/edition0/libraries/infineon_libraries/iLLD/TC26B/Tricore/Cpu/Std/ifx_types.h :
+libraries/zf_common/zf_common_font.o :	c:/Users/영/Desktop/edition/edition0/libraries/infineon_libraries/Infra/Platform/Tricore/Compilers/Compilers.h
+c:/Users/영/Desktop/edition/edition0/libraries/infineon_libraries/Infra/Platform/Tricore/Compilers/Compilers.h :
+libraries/zf_common/zf_common_font.o :	c:/Users/영/Desktop/edition/edition0/libraries/infineon_libraries/Configurations/Ifx_Cfg.h
+c:/Users/영/Desktop/edition/edition0/libraries/infineon_libraries/Configurations/Ifx_Cfg.h :
+libraries/zf_common/zf_common_font.o :	c:/Users/영/Desktop/edition/edition0/libraries/infineon_libraries/Infra/Platform/Tricore/Compilers/CompilerTasking.h
+c:/Users/영/Desktop/edition/edition0/libraries/infineon_libraries/Infra/Platform/Tricore/Compilers/CompilerTasking.h :
 libraries/zf_common/zf_common_font.o :	c:/Infineon/AURIX-Studio-1.9.12/tools/Compilers/Tasking_1.1r8/ctc/include/stddef.h
 c:/Infineon/AURIX-Studio-1.9.12/tools/Compilers/Tasking_1.1r8/ctc/include/stddef.h :
-libraries/zf_common/zf_common_font.o :	d:/AURIX/E01_02_buzzer_demo/libraries/infineon_libraries/iLLD/TC26B/Tricore/Cpu/Std/Platform_Types.h
-d:/AURIX/E01_02_buzzer_demo/libraries/infineon_libraries/iLLD/TC26B/Tricore/Cpu/Std/Platform_Types.h :
-libraries/zf_common/zf_common_font.o :	d:/AURIX/E01_02_buzzer_demo/libraries/infineon_libraries/iLLD/TC26B/Tricore/Cpu/Std/Ifx_TypesTasking.h
-d:/AURIX/E01_02_buzzer_demo/libraries/infineon_libraries/iLLD/TC26B/Tricore/Cpu/Std/Ifx_TypesTasking.h :
-libraries/zf_common/zf_common_font.o :	d:/AURIX/E01_02_buzzer_demo/libraries/infineon_libraries/iLLD/TC26B/Tricore/Cpu/Std/PLATFORM_TYPES.H
-d:/AURIX/E01_02_buzzer_demo/libraries/infineon_libraries/iLLD/TC26B/Tricore/Cpu/Std/PLATFORM_TYPES.H :
+libraries/zf_common/zf_common_font.o :	c:/Users/영/Desktop/edition/edition0/libraries/infineon_libraries/iLLD/TC26B/Tricore/Cpu/Std/Platform_Types.h
+c:/Users/영/Desktop/edition/edition0/libraries/infineon_libraries/iLLD/TC26B/Tricore/Cpu/Std/Platform_Types.h :
+libraries/zf_common/zf_common_font.o :	c:/Users/영/Desktop/edition/edition0/libraries/infineon_libraries/iLLD/TC26B/Tricore/Cpu/Std/Ifx_TypesTasking.h
+c:/Users/영/Desktop/edition/edition0/libraries/infineon_libraries/iLLD/TC26B/Tricore/Cpu/Std/Ifx_TypesTasking.h :
+libraries/zf_common/zf_common_font.o :	c:/Users/영/Desktop/edition/edition0/libraries/infineon_libraries/iLLD/TC26B/Tricore/Cpu/Std/PLATFORM_TYPES.H
+c:/Users/영/Desktop/edition/edition0/libraries/infineon_libraries/iLLD/TC26B/Tricore/Cpu/Std/PLATFORM_TYPES.H :
