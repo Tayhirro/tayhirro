@@ -49,9 +49,6 @@ float Elec_P =  400 ;       float Elec_D= 0;       float Elec_I = 0.0;      floa
 //------------------------------
 //电感PD限幅
 float Elec_pLimit=5.0;     float Elec_coLimit=50.0;    float Elec_boost=1;
-
-
-
 //------------------------------电机------------------------------
 //------------------------------
 //电机1PID
@@ -367,9 +364,8 @@ int core0_main(void)
     clock_init();                   // 获取时钟频率<务必保留>
     debug_init();                   // 初始化默认调试串口
     //------------------------------设备初始化------------------------------
-    mt9v03x_init();                                                     //摄像头初始化
+    //mt9v03x_init();                                                     //摄像头初始化
     ips200_init(IPS200_TYPE_PARALLEL8);                                 //屏幕初始化
-    cpu_wait_event_ready();
 //    uart_init(UART_3, 3000000, UART3_TX_P15_6, UART3_RX_P15_7);         //图传对应串口初始化
    // Elec_Init();                                                        //电感初始化
     steer_init();                                                       //舵机初始化
@@ -377,31 +373,29 @@ int core0_main(void)
     Encoder_Init();                                                     //编码器初始化
     dl1a_init();                                                         //TOF初始化
    // Beep_Init();                                                        //蜂鸣器初始化
-    imu660ra_init();                                                    //陀螺仪初始化
+    //imu660ra_init();                                                    //陀螺仪初始化
     //------------------------------设备设置------------------------------
     mt9v03x_set_exposure_time(150);
 
     //------------------------------debug内容初始化------------------------------
     //LED初始化
-    gpio_init(P20_8, GPO, GPIO_HIGH, GPO_PUSH_PULL);
-    gpio_init(P20_9, GPO, GPIO_HIGH, GPO_PUSH_PULL);
+    //gpio_init(P20_8, GPO, GPIO_HIGH, GPO_PUSH_PULL);
+    //gpio_init(P20_9, GPO, GPIO_HIGH, GPO_PUSH_PULL);
     //拨码器初始化
-    gpio_init(P33_12, GPI, GPIO_HIGH, GPI_PULL_UP);             //用于调节ips200上的Show_boost
-    gpio_init(P33_13, GPI, GPIO_HIGH, GPI_PULL_UP);             //用于调节ips200上的Show_direction
+    //gpio_init(P33_12, GPI, GPIO_HIGH, GPI_PULL_UP);
+    //gpio_init(P33_13, GPI, GPIO_HIGH, GPI_PULL_UP);
     //按键初始化
-
-
 
     //------------------------------函数初始化------------------------------
     //Elec_PID_Init();                                                    //电感PID初始化
     Motor_PID_Init();                                                   //电机PID初始化
-    Gyroscope_Init(GYROSCOPE_IMU660RA, 4);
+    //Gyroscope_Init(GYROSCOPE_IMU660RA, 4);
     Show_Init();
 
     //------------------------------中断初始化------------------------------
     //中断功能
     //1. 图像处理
-    pit_ms_init(CCU61_CH0, 10);
+    //pit_ms_init(CCU61_CH0, 10);
     //1. 数据采集
     //      1. tof数据采集
     //      2. 电感数据采集
@@ -413,14 +407,14 @@ int core0_main(void)
     //      1. 蜂鸣器控制
     //4. 状态检测
     //      1. 停车检测
-    pit_ms_init(CCU60_CH0, 4);
+    //pit_ms_init(CCU60_CH0, 4);
     //1. 数据计算
     //      1. 陀螺仪数据积分
 
     //test//
 
 
-    //------------------------------函数设置------------------------------
+/*    //------------------------------函数设置------------------------------
     //Elec_PID_Set(Elec_P, Elec_I, Elec_D, Elec_pLimit, Elec_coLimit, Elec_boost);             //电磁PID设置                                                //差比合差设置
     Motor_1PID_Set(Motor_1P, Motor_1I, Motor_1D, Motor_pLimit, Motor_coLimit, Motor_boost);  //电机1PID设置
     Motor_2PID_Set(Motor_2P, Motor_2I, Motor_2D, Motor_pLimit, Motor_coLimit, Motor_boost);  //电机2PID设置
@@ -450,7 +444,6 @@ int core0_main(void)
     uint8 cornerRightNum_acute = 0;                           //右边线角点个数
     float cornersLeft_acute[IMAGE_LINE_MAX_NUM];              //左边线角度记录
     float cornersRight_acute[IMAGE_LINE_MAX_NUM];             //右边线角度记录
-
 
     //钝角
     uint8 mapLinex_cornerLeft_obtuse[IMAGE_LINE_MAX_NUM];     //左边线角点x坐标
@@ -673,7 +666,7 @@ int core0_main(void)
 
             //------------------------------屏幕相关------------------------------
         }
-    }
+    }*/
 }
 
 

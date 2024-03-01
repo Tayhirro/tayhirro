@@ -84,7 +84,7 @@ void Barrier_Check(void) {
 
 void Barrier_Run(void) {
     if (Barrier_status == BARRIER_BEGIN) {
-     //   Elec_pidStatus = 0;
+        Elec_pidStatus = 0;
         Motor_1Target = Speed_set - 20 + Barrier_speedVarTurnLeft_Motor1;
         Motor_2Target = Speed_set - 20 + Barrier_speedVarTurnLeft_Motor2;
         Barrier_forceAngleTurnLeft_Status = 1;
@@ -120,7 +120,7 @@ void Barrier_Run(void) {
     else if (Barrier_status == BARRIER_TURN_RIGHT) {
         if (Barrier_forceAngleTurnRight_Status == 1) {
             if (fabs(Gyro_x) > Barrier_AngleTurnRight_Thre) {
-                //Elec_pidStatus = 0;
+                Elec_pidStatus = 0;
                 Gyroscope_End(Barrier_measureType);
                 Barrier_forceAngleTurnRight_Status = 0;
                 Motor_1Target = Speed_set - 20;
@@ -133,9 +133,9 @@ void Barrier_Run(void) {
     else if (Barrier_status == BARRIER_END) {
         if (abs(Encoder_sum_Motor2)> Barrier_encoderSumGoStraightEnd_Thre) {
             Encoder_End(ENCODER_MOTOR_2);
-            Motor_1Target = 0;
-            Motor_2Target = 0;
-//            Elec_pidStatus = 1;
+//            Motor_1Target = 0;
+//            Motor_2Target = 0;
+            Elec_pidStatus = 1;
             Barrier_status = BARRIER_NONE;
         }
     }

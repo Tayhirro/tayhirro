@@ -9,8 +9,8 @@
 #include "cpu0_main.h"
 #include "xiao_pid.h"
 //电机PID
-PID Motor_1PID;
-PID Motor_2PID;
+fPID Motor_1PID;
+fPID Motor_2PID;
 //逼近控制
 float Motor_1preTarget;
 float Motor_2preTarget;
@@ -104,27 +104,27 @@ void Motor_PID_Init(void){
  * @return          NULL
  */
 void Motor_1PID_Set(float K_p_set, float K_i_set, float K_d_set,float pLimit, float coLimit, float boost){
-    PID_SetParameter(&Motor_1PID, K_p_set, K_i_set, K_d_set, pLimit, coLimit, boost);
+    //PID_SetParameter(&Motor_1PID, K_p_set, K_i_set, K_d_set, pLimit, coLimit, boost);
 }
 void Motor_2PID_Set(float K_p_set, float K_i_set, float K_d_set,float pLimit, float coLimit, float boost){
-    PID_SetParameter(&Motor_2PID, K_p_set, K_i_set, K_d_set, pLimit, coLimit, boost);
+    //PID_SetParameter(&Motor_2PID, K_p_set, K_i_set, K_d_set, pLimit, coLimit, boost);
 }
 
 void Motor_1SetPIDP(float setP) {
-    Motor_1PID.kP = setP;
-    Motor_1PID.kPSet = setP;
+    Motor_1PID.Kp = setP;
+    Motor_1PID.Kp_Set = setP;
 }
 
 void Motor_1SetPIDI(float setI) {
-    Motor_1PID.kI = setI;
-    Motor_1PID.kISet = setI;
+    Motor_1PID.Ki = setI;
+    Motor_1PID.Ki_Set = setI;
 }
 
 
 void Motor_1SetPIDD(float setD) {
 
-    Motor_1PID.kD = setD;
-    Motor_1PID.kDSet = setD;
+    Motor_1PID.Kd = setD;
+    Motor_1PID.Kd_Set = setD;
 }
 
 //设置积分限制
@@ -139,22 +139,22 @@ void Motor_1SetPIDCoLimit(float coLimt) {
 
 void Motor_2SetPIDP(float setP) {
 
-    Motor_2PID.kP = setP;
-    Motor_2PID.kPSet = setP;
+    Motor_2PID.Kp = setP;
+    Motor_2PID.Kp_Set = setP;
 }
 
 void Motor_2SetPIDI(float setI) {
-    Motor_2PID.kI = setI;
-    Motor_2PID.kISet = setI;
+    Motor_2PID.Ki = setI;
+    Motor_2PID.Ki_Set = setI;
 }
 
 void Motor_2SetPIDD(float setD) {
-    Motor_2PID.kD = setD;
-    Motor_2PID.kDSet = setD;
+    Motor_2PID.Kd = setD;
+    Motor_2PID.Kd_Set = setD;
 }
 void Motor_pidClear(){
-    Motor_1PID.ut=0.0;
-    Motor_2PID.ut=0.0;
+    Motor_1PID.output_val=0.0;
+    Motor_2PID.output_val=0.0;
 }
 //设置积分限制
 void Motor_2SetPIDLimit(float pLimit) {
@@ -171,47 +171,55 @@ void Motor_2SetPIDCoLimit(float coLimt) {
  * @parameter LeftL     目标值
  * @parameter RightL    当前编码器值
  */
-float Motor_1PID_Work(float target,float cur){
-    if(Motor_1Pstatus) Motor_1PID.kP = 0;
-    else Motor_1PID.kP = Motor_1PID.kPSet;
+float Motor_1PID_control(float target,float cur){
+    if(Motor_1Pstatus) Motor_1PID.Kp = 0;
+    else Motor_1PID.Kp = Motor_1PID.Kp_Set;
     if(abs((int)target - (int)Motor_1preTarget) > 30){
         Motor_1Pstatus = 1;
     }
     if(target - cur < 7){
         Motor_1Pstatus = 0;
     }
+    Motor_1PID.err=target-cur;
     Motor_1preTarget = target;
-    Motor_1Puse = Motor_1PID.kP;
-    Motor_1PID.kI = Motor_1PID.kISet;
-    Motor_1PID.kD = Motor_1PID.kDSet;
-    Motor_1Pcor = Motor_1PID.kP*(target-cur-Motor_1PID.preError);
-    Motor_1Icor=Motor_1PID.kI*(target-cur);
-    Motor_1Dcor=Motor_1PID.kD*(target-cur - 2 * Motor_1PID.preError + Motor_1PID.ppreError);
-    Motor_1PID.ut=Motor_1Pcor+Motor_1Icor+Motor_1Dcor+target;
+    Motor_1Puse = Motor_1PID.Kp;
+    Motor_1PID.Ki = Motor_1PID.Ki_Set;
+    Motor_1PID.Kd = Motor_1PID.Kd_Set;
+    Motor_1PID.Kp_output_val = Motor_1PID.Kp*(Motor_1PID.err-Motor_1PID.err_last);
+    Motor_1PID.Ki_output_val=Motor_1PID.Ki*Motor_1PID.err;
+    Motor_1PID.Kd_output_val=Motor_1PID.Kd*(Motor_1PID.err - 2 * Motor_1PID.err_last + Motor_1PID.err_llast);
+    Motor_1PID.ut=Motor_1PID.Kp_output_val+Motor_1PID.Ki_output_val+Motor_1PID.Kd_output_val;
+    Motor_1PID.output_val=Motor_1PID.ut+target;
+    Motor_1PID.err_llast=Motor_1PID.err_last;
+    Motor_1PID.err_last=Motor_1PID.err;
   //  ////PID_SetParameter(&Motor_1PID, target, cur);
-    Motor_SetSpeed(MOTOR_1, (int)Motor_1PID.ut);
-    return Motor_1PID.ut;
+    Motor_SetSpeed(MOTOR_1, (int)Motor_1PID.output_val);
+    return Motor_1PID.output_val;
 }
-float Motor_2PID_Work(float target,float cur){
-    if(Motor_2Pstatus) Motor_2PID.kP = 0;
-    else Motor_2PID.kP = Motor_2PID.kPSet;
+float Motor_2PID_control(float target,float cur){
+    if(Motor_2Pstatus) Motor_2PID.Kp = 0;
+    else Motor_2PID.Kp = Motor_2PID.Kp_Set;
     if(abs((int)target - (int)Motor_2preTarget) > 30){
         Motor_2Pstatus = 1;
     }
     if(target - cur < 7){
         Motor_2Pstatus = 0;
     }
+    Motor_2PID.err=target-cur;
     Motor_2preTarget = target;
-    Motor_2Puse = Motor_2PID.kP;
-    Motor_2PID.kI = Motor_1PID.kISet;
-    Motor_2PID.kD = Motor_1PID.kDSet;
-    Motor_2Pcor=Motor_2PID.kP*(target-cur-Motor_2PID.preError);
-    Motor_2Icor=Motor_2PID.kI*(target-cur);
-    Motor_2Dcor=Motor_2PID.kD*(target-cur - 2 * Motor_2PID.preError + Motor_2PID.ppreError);
-    Motor_2PID.ut=Motor_2Pcor+Motor_2Icor+Motor_2Dcor+target;
+    Motor_2Puse = Motor_2PID.Kp;
+    Motor_2PID.Ki = Motor_1PID.Ki_Set;
+    Motor_2PID.Kd = Motor_1PID.Kd_Set;
+    Motor_2PID.Kp_output_val=Motor_2PID.Kp*(Motor_2PID.err-Motor_2PID.err_last);
+    Motor_2PID.Ki_output_val=Motor_2PID.Ki*Motor_2PID.err;
+    Motor_2PID.Kd_output_val=Motor_2PID.Kd*(Motor_2PID.err - 2 * Motor_2PID.err_last + Motor_2PID.err_llast);
+    Motor_2PID.ut=Motor_2PID.Kp_output_val+Motor_2PID.Ki_output_val+Motor_2PID.Kd_output_val;
+    Motor_2PID.output_val=Motor_2PID.ut+target;
   //  //PID_SetParameter(&Motor_2PID, target, cur);
-    Motor_SetSpeed(MOTOR_2, (int)Motor_2PID.ut);
-    return Motor_2PID.ut;
+    Motor_2PID.err_llast=Motor_2PID.err_last;
+    Motor_2PID.err_last=Motor_2PID.err;
+    Motor_SetSpeed(MOTOR_2, (int)Motor_2PID.output_val);
+    return Motor_2PID.output_val;
 }
 //float Motor_FuzzyP(float kPSet, float target, float cur) {
 //    Motor_ERROR_MAX = 2.5*Speed_set*Speed_diff;

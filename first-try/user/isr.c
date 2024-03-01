@@ -37,7 +37,7 @@
 #include "isr.h"
 #include "xiao_pid.h"
 // **************************** PIT中断函数 ****************************
-IFX_INTERRUPT(cc60_pit_ch0_isr,0, CCU6_0_CH0_ISR_PRIORITY)
+IFX_INTERRUPT(cc60_pit_ch0_isr, 0, CCU6_0_CH0_ISR_PRIORITY)
 {
     interrupt_global_enable(0);                     // 开启中断嵌套
     pit_clear_flag(CCU60_CH0);
@@ -60,8 +60,8 @@ IFX_INTERRUPT(cc60_pit_ch0_isr,0, CCU6_0_CH0_ISR_PRIORITY)
     //ele_direction_control(fPID* topid_steer,iPID* toipid_speed_left,iPID* toipid_speed_right,float zhongxian,float target)
 //    //电机PID
     if(Motor_pidStatus == 1){
-        Motor_1cor=Motor_1PID_Work(setpoint_left, (float)Encoder_1Data);
-        Motor_2cor=Motor_2PID_Work(setpoint_right, (float)Encoder_2Data);
+        Motor_1cor=Motor_1PID_control(setpoint_left, (float)Encoder_1Data);
+        Motor_2cor=Motor_2PID_control(setpoint_right, (float)Encoder_2Data);
     }
     //编码器积分
     Encoder_Count();

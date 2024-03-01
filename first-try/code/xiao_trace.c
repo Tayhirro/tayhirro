@@ -20,8 +20,8 @@ uint8 Trace_aimLine = 30;                       //ÖÐÏßÏòÉÏÕÒµÄµÚn¸öµã×÷ÎªÄ¿±êÇ°Õ
 float Trace_lineWeight[] = {0.5, 0.3, 0.2};     //´¦ÀíÖÐÏßÊ±ºòÈýÐÐ¼ÆËãµÄÈ¨ÖØ
 //------------------------------------------------------------
 //PIDÏà¹Ø
-PID Trace_cameraLeftPID;                       //×ó±ßÏß»ñÈ¡µÄÖÐÏßµÄPID
-PID Trace_cameraRightPID;                      //ÓÒ±ßÏß»ñÈ¡µÄÖÐÏßµÄPID
+fPID Trace_cameraLeftPID;                       //×ó±ßÏß»ñÈ¡µÄÖÐÏßµÄPID
+fPID Trace_cameraRightPID;                      //ÓÒ±ßÏß»ñÈ¡µÄÖÐÏßµÄPID
 
 
 //==============================µç´ÅÑ°¼£Ïà¹Ø==============================
@@ -125,14 +125,14 @@ void Trace_PID_Set(float K_p_set, float K_d_set, float coLimit, float boost, TRA
 float Trace_Run() {
     //----------------------------------------
     //µç´ÅÑ°¼£
-    if (Trace_traceType == TRACE_Elec) {
+    /*if (Trace_traceType == TRACE_Elec) {
         return 0;
-    }
+    }*/
     //----------------------------------------
     //ÉãÏñÍ·Ñ°×óÏß
-    else if (Trace_traceType == TRACE_Camera_LEFT) {
+     if (Trace_traceType == TRACE_Camera_LEFT) {
         Trace_GetAngelError();
-        Trace_PID_Set(Trace_cameraLeftPID.kPSet, Trace_cameraLeftPID.kDSet, Trace_cameraLeftPID.utLimit, 1.0, Trace_traceType);
+        Trace_PID_Set(Trace_cameraLeftPID.Kp_Set, Trace_cameraLeftPID.Kd_Set, Trace_cameraLeftPID.utLimit, 1.0, Trace_traceType);
      //   PID_PostionalPID(&Trace_cameraLeftPID, 0, Trace_angleError);
         return Trace_cameraLeftPID.ut;
     }
@@ -140,7 +140,7 @@ float Trace_Run() {
     //ÉãÏñÍ·Ñ°ÓÒÏß
     else if (Trace_traceType == TRACE_Camera_RIGHT) {
         Trace_GetAngelError();
-        Trace_PID_Set(Trace_cameraRightPID.kPSet, Trace_cameraRightPID.kDSet, Trace_cameraRightPID.utLimit, 1.0, Trace_traceType);
+        Trace_PID_Set(Trace_cameraRightPID.Kp_Set, Trace_cameraRightPID.Kd_Set, Trace_cameraRightPID.utLimit, 1.0, Trace_traceType);
        // PID_PostionalPID(&Trace_cameraRightPID, 0, Trace_angleError);
         return Trace_cameraRightPID.ut;
     }
@@ -154,14 +154,14 @@ void Trace_SetPIDP(float setP, TRACE_TYPE traceType) {
     //------------------------------
     //ÉèÖÃÑ°×ó±ßÏßÊ±ºòµÄP²ÎÊý
     if (traceType == TRACE_Camera_LEFT) {
-        Trace_cameraLeftPID.kP = setP;
-        Trace_cameraLeftPID.kPSet = setP;
+        Trace_cameraLeftPID.Kp = setP;
+        Trace_cameraLeftPID.Kp_Set = setP;
     }
     //------------------------------
     //ÉèÖÃÑ°ÓÒ±ßÏßÊ±ºòµÄP²ÎÊý
     else if (traceType == TRACE_Camera_RIGHT) {
-        Trace_cameraRightPID.kP = setP;
-        Trace_cameraRightPID.kPSet = setP;
+        Trace_cameraRightPID.Kp = setP;
+        Trace_cameraRightPID.Kp_Set = setP;
 
     }
     else if (traceType == TRACE_Elec) {
@@ -174,14 +174,14 @@ void Trace_SetPIDI(float setI, TRACE_TYPE traceType) {
     //------------------------------
     //ÉèÖÃÑ°×ó±ßÏßÊ±ºòµÄI²ÎÊý
     if (traceType == TRACE_Camera_LEFT) {
-        Trace_cameraLeftPID.kI = setI;
-        Trace_cameraLeftPID.kISet = setI;
+        Trace_cameraLeftPID.Ki = setI;
+        Trace_cameraLeftPID.Ki_Set = setI;
     }
     //------------------------------
     //ÉèÖÃÑ°ÓÒ±ßÏßÊ±ºòµÄI²ÎÊý
     else if (traceType == TRACE_Camera_RIGHT) {
-        Trace_cameraRightPID.kI = setI;
-        Trace_cameraRightPID.kISet = setI;
+        Trace_cameraRightPID.Ki = setI;
+        Trace_cameraRightPID.Ki_Set = setI;
     }
     else if (traceType == TRACE_Elec) {
 
@@ -191,15 +191,15 @@ void Trace_SetPIDD(float setD, TRACE_TYPE traceType) {
     //------------------------------
     //ÉèÖÃÑ°×ó±ßÏßÊ±ºòµÄD²ÎÊý
     if (traceType == TRACE_Camera_LEFT) {
-        Trace_cameraLeftPID.kD = setD;
-        Trace_cameraLeftPID.kDSet = setD;
+        Trace_cameraLeftPID.Kd = setD;
+        Trace_cameraLeftPID.Kd_Set = setD;
 
     }
     //------------------------------
     //ÉèÖÃÑ°ÓÒ±ßÏßÊ±ºòµÄD²ÎÊý
     else if (traceType == TRACE_Camera_RIGHT) {
-        Trace_cameraRightPID.kD = setD;
-        Trace_cameraRightPID.kDSet = setD;
+        Trace_cameraRightPID.Kd = setD;
+        Trace_cameraRightPID.Kd_Set = setD;
     }
     else if (traceType == TRACE_Elec) {
 

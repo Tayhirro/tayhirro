@@ -13,7 +13,7 @@ uint8 P1x;  uint8 P2x;
 
 uint8 Show_paramStatus[5] = {1,1,1,1,1};
 uint8 Show_direction = 1;
-uint8 Show_boost = 1;       //boost是用于
+uint8 Show_boost = 1;
 /**
  * @brief 显示功能初始化
  * @return NULL
