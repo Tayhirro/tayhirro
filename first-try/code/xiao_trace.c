@@ -8,11 +8,11 @@
 #include "xiao_pid.h"
 //------------------------------------------------------------
 //基本变量
-TRACE_TYPE Trace_traceType = TRACE_Elec;
+TRACE_TYPE Trace_traceType = TRACE_Camera_MID;
 //==============================摄像头寻迹相关==============================
 //------------------------------------------------------------
 //中线标准值相关
-uint8 Trace_middleStandard = 94;                //摄像头锁定的中点所在的列(基本上就是在IMAGE_WIDTH / 2 中间左右浮动)
+uint8 dleStandard = 94;                //摄像头锁定的中点所在的列(基本上就是在IMAGE_WIDTH / 2 中间左右浮动)
 //------------------------------------------------------------
 //中线巡线处理
 float Trace_angleError = 0.0;                   //角度误差
@@ -80,6 +80,15 @@ static void Trace_GetAngelError() {
                         + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
                         + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
     }
+    else if (Trace_traceType == TRACE_Camera_MID) {
+            Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsRightc[bf_clip(Trace_aimLine, 0, Image_rptsRightcNum - 1)][0]
+                            + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
+                            + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0]
+                            + Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
+                            + Trace_lineWeight[1] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
+                            + Trace_lineWeight[2] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];
+            Trace_angleError/=2.0;
+        }
 }
 
 /*
@@ -113,7 +122,7 @@ void Trace_PID_Set(float K_p_set, float K_d_set, float coLimit, float boost, TRA
     }
     //------------------------------
     //电磁寻迹的PID
-    else if (traceType == TRACE_Elec) {
+    else if (traceType == TRACE_Camera_MID) {
 
     }
 }
@@ -125,10 +134,12 @@ void Trace_PID_Set(float K_p_set, float K_d_set, float coLimit, float boost, TRA
  */
 float Trace_Run() {
     //----------------------------------------
-    //电磁寻迹
-    /*if (Trace_traceType == TRACE_Elec) {
+    //
+    if (Trace_traceType == TRACE_Camera_MID) {
+        Trace_GetAngelError();
+        direction_control(pid_steer,0,0,Trace_angleError,94);
         return 0;
-    }*/
+    }
     //----------------------------------------
     //摄像头寻左线
      if (Trace_traceType == TRACE_Camera_LEFT) {
@@ -168,7 +179,7 @@ void Trace_SetPIDP(float setP, TRACE_TYPE traceType) {
         Trace_cameraRightPID.Kp_Set = setP;
 
     }
-    else if (traceType == TRACE_Elec) {
+    else if (traceType == TRACE_Camera_MID) {
 
     }
 }
@@ -187,7 +198,7 @@ void Trace_SetPIDI(float setI, TRACE_TYPE traceType) {
         Trace_cameraRightPID.Ki = setI;
         Trace_cameraRightPID.Ki_Set = setI;
     }
-    else if (traceType == TRACE_Elec) {
+    else if (traceType == TRACE_Camera_MID) {
 
     }
 }
@@ -205,7 +216,7 @@ void Trace_SetPIDD(float setD, TRACE_TYPE traceType) {
         Trace_cameraRightPID.Kd = setD;
         Trace_cameraRightPID.Kd_Set = setD;
     }
-    else if (traceType == TRACE_Elec) {
+    else if (traceType == TRACE_Camera_MID) {
 
     }
 }
@@ -220,7 +231,7 @@ void Trace_SetPIDSumLimit(float sumLimit, TRACE_TYPE traceType) {
     else if (traceType == TRACE_Camera_RIGHT) {
         Trace_cameraRightPID.sumLimit = sumLimit;
     }
-    else if (traceType == TRACE_Elec) {
+    else if (traceType == TRACE_Camera_MID) {
 
     }
 }
@@ -235,7 +246,7 @@ void Trace_SetPIDCoLimit(float coLimit, TRACE_TYPE traceType) {
     else if (traceType == TRACE_Camera_RIGHT) {
         Trace_cameraRightPID.utLimit = coLimit;
     }
-    else if (traceType == TRACE_Elec) {
+    else if (traceType == TRACE_Camera_MID) {
 
     }
 }
