@@ -12,7 +12,7 @@ int CIRCLE_SPEED=0;
 float setpoint_left=1800.0; // setpoint_left -> left 左边标准速度    setpoint_right -> right  右边标准速度
 float setpoint_right=1800.0;
 int speedflag=1;           //直道、停止、进环判断标志
-fPID pid_steer;
+fPID* pid_steer;
 iPID ipid_speed_left;
 iPID ipid_speed_right;
 void PID_Init(fPID PID){
@@ -41,6 +41,35 @@ void PID_Init(fPID PID){
     PID.utLimit=0;
 }
 
+void fPID_Init(fPID* PID){
+    PID->Kp=0;
+    PID->Ki=0;
+    PID->Kd=0;
+
+    PID->Kp_Set=0;
+    PID->Ki_Set=0;
+    PID->Kd_Set=0;
+    PID->target_val=0;
+    PID->Kp_output_val=0;
+    PID->Ki_output_val=0;
+    PID->Kd_output_val=0;
+    PID->output_val=0;
+    PID->input_val=0;
+    PID->ut=0;
+    PID->err=0;
+    PID->err_last=0;
+    PID->err_llast=0;
+    PID->integral=0;
+
+    PID->omin=0;
+    PID->omax=0;
+    PID->sumLimit=0;
+    PID->utLimit=0;
+}
+
+void Steer_PID_Init(void){
+    fPID_Init(pid_steer);
+}
 void direction_control(fPID* topid_steer,iPID* toipid_speed_left,iPID* toipid_speed_right,float zhongxian,float target)
 {
 

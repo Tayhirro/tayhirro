@@ -57,6 +57,7 @@ IFX_INTERRUPT(cc60_pit_ch0_isr,0, CCU6_0_CH0_ISR_PRIORITY)
 //        Motor_2Target=Speed -Elec_cor;
 //    }
     //¶æ»úpid
+    Trace_Run();
     //ele_direction_control(fPID* topid_steer,iPID* toipid_speed_left,iPID* toipid_speed_right,float zhongxian,float target)
 //    //µç»úPID
     if(Motor_pidStatus == 1){

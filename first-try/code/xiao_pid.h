@@ -58,9 +58,9 @@ typedef struct pidcc_controller_float fPID,*tofPID;
 typedef struct pidcc_controller_int iPID,*toiPID;
 extern iPID ipid_speed_left;
 extern iPID ipid_speed_right;
-extern fPID pid_steer;
+extern fPID* pid_steer;
 extern void direction_control(fPID* topid_steer,iPID* toipid_speed_left,iPID* toipid_speed_right,float zhongxian,float target);
-
+extern void Steer_PID_Init(void);
 extern float setpoint_left; // setpoint_left -> left 左边标准速度    setpoint_right -> right  右边标准速度
 extern float setpoint_right;
 

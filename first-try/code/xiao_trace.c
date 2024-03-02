@@ -5,6 +5,7 @@
  *      Author: Jayden_NaN
  */
 #include "xiao_trace.h"
+#include "xiao_pid.h"
 //------------------------------------------------------------
 //基本变量
 TRACE_TYPE Trace_traceType = TRACE_Elec;
@@ -132,7 +133,9 @@ float Trace_Run() {
     //摄像头寻左线
      if (Trace_traceType == TRACE_Camera_LEFT) {
         Trace_GetAngelError();
-        Trace_PID_Set(Trace_cameraLeftPID.Kp_Set, Trace_cameraLeftPID.Kd_Set, Trace_cameraLeftPID.utLimit, 1.0, Trace_traceType);
+        direction_control(pid_steer,0,0,Trace_angleError,94);
+
+      //  Trace_PID_Set(Trace_cameraLeftPID.Kp_Set, Trace_cameraLeftPID.Kd_Set, Trace_cameraLeftPID.utLimit, 1.0, Trace_traceType);
      //   PID_PostionalPID(&Trace_cameraLeftPID, 0, Trace_angleError);
         return Trace_cameraLeftPID.ut;
     }
@@ -140,7 +143,8 @@ float Trace_Run() {
     //摄像头寻右线
     else if (Trace_traceType == TRACE_Camera_RIGHT) {
         Trace_GetAngelError();
-        Trace_PID_Set(Trace_cameraRightPID.Kp_Set, Trace_cameraRightPID.Kd_Set, Trace_cameraRightPID.utLimit, 1.0, Trace_traceType);
+        direction_control(pid_steer,0,0,Trace_angleError,94);
+        //Trace_PID_Set(Trace_cameraRightPID.Kp_Set, Trace_cameraRightPID.Kd_Set, Trace_cameraRightPID.utLimit, 1.0, Trace_traceType);
        // PID_PostionalPID(&Trace_cameraRightPID, 0, Trace_angleError);
         return Trace_cameraRightPID.ut;
     }

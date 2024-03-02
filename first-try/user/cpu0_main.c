@@ -395,6 +395,7 @@ int core0_main(void)
     //------------------------------函数初始化------------------------------
     //Elec_PID_Init();                                                    //电感PID初始化
     Motor_PID_Init();                                                   //电机PID初始化
+    Steer_PID_Init();
     Gyroscope_Init(GYROSCOPE_IMU660RA, 4);
     Show_Init();
 

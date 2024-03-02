@@ -128,33 +128,33 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := edition0
+BUILD_ARTIFACT_NAME := first-try
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 SECONDARY_SIZE += \
-edition0.siz \
+first-try.siz \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: edition0.elf secondary-outputs
+main-build: first-try.elf secondary-outputs
 
 # Tool invocations
-edition0.elf: $(OBJS) makefile $(OPTIONAL_TOOL_DEPS)
+first-try.elf: $(OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: TASKING Linker'
-	cctc --lsl-file="../Lcf_Tasking_Tricore_Tc.lsl" -Wl-Oc -Wl-OL -Wl-Ot -Wl-Ox -Wl-Oy "C:\Users\¿µ\Desktop\edition\edition0\libraries\zf_device\zf_device_config.a" -Wl--map-file="edition0.map" -Wl-mc -Wl-mf -Wl-mi -Wl-mk -Wl-ml -Wl-mm -Wl-md -Wl-mr -Wl-mu --no-warnings= -Wl--error-limit=42 --fp-model=3 -lrt --lsl-core=vtc --exceptions --strict --anachronisms --force-c++ -Ctc26xb -o"edition0.elf" -Wl-o"edition0.hex:IHEX" $(OBJS)
+	cctc --lsl-file="../Lcf_Tasking_Tricore_Tc.lsl" -Wl-Oc -Wl-OL -Wl-Ot -Wl-Ox -Wl-Oy "C:\Users\¿µ\Desktop\smartcar code\tayhirro\first-try\libraries\zf_device\zf_device_config.a" -Wl--map-file="first-try.map" -Wl-mc -Wl-mf -Wl-mi -Wl-mk -Wl-ml -Wl-mm -Wl-md -Wl-mr -Wl-mu --no-warnings= -Wl--error-limit=42 --fp-model=3 -lrt --lsl-core=vtc --exceptions --strict --anachronisms --force-c++ -Ctc26xb -o"first-try.elf" -Wl-o"first-try.hex:IHEX" $(OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-edition0.siz: edition0.elf makefile $(OPTIONAL_TOOL_DEPS)
+first-try.siz: first-try.elf makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Invoking: Print Size'
-	elfsize  "edition0.elf"
+	elfsize  "first-try.elf"
 	@echo 'Finished building: $@'
 	@echo ' '
 
