@@ -79,6 +79,7 @@ uint8 Image_rptsLeftNum;                                //×ó±ßÏßÈ¥»û±ä+ÄæÍ¸ÊÓ±ä»
 uint8 Image_rptsRightNum;                               //ÓÒ±ßÏßÈ¥»û±ä+ÄæÍ¸ÊÓ±ä»»ÏñËØµã¸öÊý
 uint8 Image_rptsLeftrNum = 0;                           //×ó±ßÏßÊµ¼ÊÓÐÓÃµÄµãµÄ¸öÊý
 uint8 Image_rptsRightrNum = 0;                          //ÓÒ±ßÏßÊµ¼ÊÓÐÓÃµÄµãµÄ¸öÊý
+uint8 localThressss;
 //------------------------------
 //×óÓÒ±ßÏßÈ¥ÄæÍ¸ÊÓ(¾ÍÊÇ È¥»û±ä + ÄæÍ¸ÊÓ -> È¥»û±ä)
 uint8 Image_invRptsLeft[IMAGE_LINE_MAX_NUM][2];         //×ó±ßÏßÈ¥»û±ä×ø±ê´æ´¢
@@ -99,7 +100,7 @@ uint8 Image_rptsRightbNum;                              //Èý½ÇÂË²¨ºóµÄÓÒ±ßÏß³¤¶È
 
 //------------------------------
 //µÈ¾à²ÉÑùÏà¹Ø
-const float Image_sampleDist = 0.01;                    //µÈ¾à²ÉÓÃ²ÉÑùµÄ¾àÀë
+const float Image_sampleDist = 0.03;                    //µÈ¾à²ÉÓÃ²ÉÑùµÄ¾àÀë
 uint8 Image_rptsLefts[IMAGE_LINE_MAX_NUM][2];           //µÈ¾à²ÉÑùºóµÄ×ó±ßÏß×ø±ê´æ´¢
 uint8 Image_rptsRights[IMAGE_LINE_MAX_NUM][2];          //µÈ¾à²ÉÑùºóµÄÓÒ±ßÏß×ø±ê´æ´¢
 uint8 Image_rptsLefts_Bak[IMAGE_LINE_MAX_NUM][2];       //µÈ¾à²ÉÑùºóµÄ×ó±ßÏß×ø±ê´æ´¢ - ±¸·Ý
@@ -328,7 +329,7 @@ static void Image_FindLine_LeftHand_Adaptive(uint8* image, uint8 block_size, int
         }
         localThres /= block_size * block_size;
         localThres -= clip_value;
-
+        localThressss=localThres;
         //×öãÐÖµÅÐ¶Ï
         uint8 frontValue = IMAGE_AT(image, x + Image_dir_front[dir][0], y + Image_dir_front[dir][1]);
         uint8 frontLeftValue = IMAGE_AT(image, x + Image_dir_frontLeft[dir][0], y + Image_dir_frontLeft[dir][1]);
@@ -392,7 +393,7 @@ static void Image_FindLine_RightHand_Adaptive(uint8* image, int block_size, int 
         }
         localThres /= block_size * block_size;
         localThres -= clip_value;
-
+        localThressss=localThres;
         //×öãÐÖµÅÐ¶Ï
         uint8 frontValue = IMAGE_AT(image, x + Image_dir_front[dir][0], y + Image_dir_front[dir][1]);
         uint8 frontRightValue = IMAGE_AT(image, x + Image_dir_frontRight[dir][0], y + Image_dir_frontRight[dir][1]);
@@ -458,7 +459,7 @@ void Image_BlurPoints(uint8 pts_in[][2], uint8 lineNum, uint8 pts_out[][2], uint
  * @parameter num1      ´ý´¦ÀíÏßµÄ³¤¶È
  * @parameter pts_out   Êý¾ÝÊä³öÊý×é
  * @parameter num2      Êä³öÊý×é³¤¶ÈÏÞ·ù
- * @parameter dist      Êµ¼Ê¾àÀë(µ¥Î»Îªm)
+ * @parameter dist      ²ÉÑùÖ®ºóµãÓëµãÖ®¼äµÄ¾àÀë(µ¥Î»Îªm)
  * @example
  */
 
@@ -590,6 +591,83 @@ void Image_TrackRightLine(uint8 pts_in[][2], uint8 num, uint8 pts_out[][2], uint
     }
 }
 
+void Image_Handle_LeftLine(uint8 *image,uint8 x,uint8 y,uint8 thre) {
+        //ÃÔ¹¬·¨ÕÒ×ó±ßÏß,Ê¹ÓÃthre
+    uint8 step=0;
+    uint8 dir = 0, turn = 0;
+    while(step<Image_iptsLeftNum&&turn<4&&x>0&&x<IMAGE_WIDTH-1&&y>0&&y<IMAGE_HEIGHT-1){
+        uint8 frontValue = IMAGE_AT(image, x + Image_dir_front[dir][0], y + Image_dir_front[dir][1]);
+        uint8 frontLeftValue = IMAGE_AT(image, x + Image_dir_frontLeft[dir][0], y + Image_dir_frontLeft[dir][1]);
+        if (frontValue < thre) {
+            //Ç°·½ÊÇºÚÉ«"Ç½±Ú" -- ÏòÓÒ×ª
+            //·½Ïò¸Ä±ä,¼ÇÂ¼×ªÏòÒ»´Î
+            //ÏòÓÒ×ªÊÇ Ë³Ê±Õë - ËùÒÔÒª(+1)%4´¦Àí
+            dir = (dir + 1) % 4;
+            ++turn;
+        }
+        else if (frontLeftValue < thre){
+            //Ç°·½ÊÇ°×É«,µ«ÊÇ×óÇ°·½ÊÇ"ºÚÉ«" - ÕâÖÖÇé¿ö¾ÍÊÇÖ±µÀ×ß
+            x += Image_dir_front[dir][0];
+            y += Image_dir_front[dir][1];
+            Image_iptsLeft[step][0] = x;
+            Image_iptsLeft[step][1] = y;
+            turn = 0;
+            ++step;
+        }
+        else {
+            //Ç°·½ÊÇ°×É«,Í¬Ê±×óÇ°·½Ò²ÊÇ"°×É«" - ÕâÖÖÇé¿öÏÂËµÃ÷ÐèÒªÏò×ó×ªÍä"ÌùÇ½×ß"
+            x += Image_dir_frontLeft[dir][0];
+            y += Image_dir_frontLeft[dir][1];
+            //Ïò×ó×ªÊÇ ÄæÊ±Õë - ËùÒÔÒª(+3)%4´¦Àí (»òÕßËµ(-1)%4´¦Àí)
+            dir = (dir + 3) % 4;
+            Image_iptsLeft[step][0] = x;
+            Image_iptsLeft[step][1] = y;
+            ++step;
+            turn = 0;
+        }
+    }
+    Image_iptsLeftNum=step;
+}
+
+void Image_Handle_RightLine(uint8 *image,uint8 x,uint8 y,uint8 thre){
+    uint8 x2 = x;
+    uint8 y2 = y;
+    uint8 step=0;
+    uint8 dir = 0, turn = 0;
+    while(step<Image_iptsRightNum&&turn<4&&x2>0&&x2<IMAGE_WIDTH-1&&y2>0&&y2<IMAGE_HEIGHT-1){
+        uint8 frontValue = IMAGE_AT(image, x2 + Image_dir_front[dir][0], y2 + Image_dir_front[dir][1]);
+        uint8 frontRightValue = IMAGE_AT(image, x2 + Image_dir_frontRight[dir][0], y2 + Image_dir_frontRight[dir][1]);
+        if (frontValue < thre) {
+            //Ç°·½ÊÇºÚÉ«"Ç½±Ú" -- Ïò×ó×ª
+            //·½Ïò¸Ä±ä,¼ÇÂ¼×ªÏòÒ»´Î
+            //Ïò×ó×ªÊÇ Ë³Ê±Õë - ËùÒÔÒª(+3)%4´¦Àí(»òÕßËµ(-1)%4´¦Àí)
+            dir = (dir + 3) % 4;
+            ++turn;
+        }
+        else if (frontRightValue < thre){
+            //Ç°·½ÊÇ°×É«,Í¬Ê±ÊÇÓÒÇ°·½ÊÇ"ºÚÉ«" - ÕâÖÖÇé¿ö¾ÍÊÇÖ±µÀ×ß
+            x2 += Image_dir_front[dir][0];
+            y2 += Image_dir_front[dir][1];
+            Image_iptsRight[step][0] = x2;
+            Image_iptsRight[step][1] = y2;
+            turn = 0;
+        }
+        else {
+            //Ç°·½ÊÇ°×É«,µ«ÊÇÓÒÇ°·½Ò²ÊÇ"°×É«" - ÕâÖÖÇé¿öÏÂËµÃ÷ÐèÒªÏòÓÒ×ªÍä"ÌùÇ½×ß"
+            x2 += Image_dir_frontRight[dir][0];
+            y2 += Image_dir_frontRight[dir][1];
+            //ÏòÓÒ×ªÊÇ Ë³Ê±Õë - ËùÒÔÒª(+1)%4´¦Àí
+            dir = (dir + 1) % 4;
+            Image_iptsRight[step][0] = x2;
+            Image_iptsRight[step][1] = y2;
+            turn = 0;
+        }
+    }
+    Image_iptsRightNum=step;
+}
+
+
+
 /*
  * @brief               Í¼Ïñ´¦Àí,°üÀ¨±ßÔµÌáÈ¡,È¥»û±ä+ÄæÍ¸ÊÓ,ÂË²¨,µÈ¾à²ÉÑù,¼ÆËã½Ç¶È,¼ÆËãÖÐÏß
  * @parameter image     ÐèÒª´¦ÀíµÄÍ¼Æ¬
@@ -597,7 +675,6 @@ void Image_TrackRightLine(uint8 pts_in[][2], uint8 num, uint8 pts_out[][2], uint
  */
 void Image_Process(uint8* image) {
     Image_Process_Status = 0;
-
     //----------------------------------------
     //Ô­Í¼ÕÒ×óÓÒ±ßÏß
     //----------------------------------------
@@ -609,14 +686,14 @@ void Image_Process(uint8* image) {
             Image_iptsLeft_Bak[i][1] = Image_iptsLeft[i][1];
         }
     }
-
+    image_thre=Image_Processing_OtsuGetThresh(image);
     //ÕÒ×ó±ßÏß
     Image_iptsLeftNum = sizeof(Image_iptsLeft) / sizeof(Image_iptsLeft[0]);
     uint8 x1 = image_begin_x;
     uint8 y1 = image_begin_y;
     for (; x1 > 0; --x1) if (IMAGE_AT(image, x1 - 1, y1) < image_thre) break;           //²éÕÒ±ß½çÉÏµÄµÚÒ»¸öµã
     if (IMAGE_AT(image, x1, y1) >= image_thre){//Ã»ÓÐµ½±ß½ç¾ÍÕý³£´¦Àí
-        Image_FindLine_LeftHand_Adaptive(image, image_block_size, image_block_clip_value, x1, y1);
+        Image_Handle_LeftLine(image, x1, y1, image_thre);
     }
     else
         Image_iptsLeftNum = 0;                                                          //±ß½çµÄ»°¾ÍÊÇ0ÁË
@@ -640,6 +717,10 @@ void Image_Process(uint8* image) {
         Image_FindLine_RightHand_Adaptive(image, image_block_size, image_block_clip_value, x2, y2);
     else
         Image_iptsRightNum = 0;                                                                  //±ß½çµÄ»°¾ÍÊÇ0ÁË
+
+
+
+    Image_Processing_OtsuGetThresh(image);
 
 
 
@@ -774,6 +855,7 @@ void Image_Init(void) {
         Image_threSum += Image_Processing_OtsuGetThresh(mt9v03x_image[0]);
     }
     image_thre = Image_threSum / Image_threCnt_Thre;
+    system_delay_ms(10000);
 }
 
 void Image_FindCorners(void) {

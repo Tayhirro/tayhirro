@@ -49,6 +49,10 @@ uint8 Circle_ElecID[6] = {5, 2, 6,          //电感在Elec_data数据中的ID号
  */
 
 //------------------------------检测环岛部分------------------------------
+
+
+
+
 //----------------------------------------
 //电磁  -  环岛阈值处理
 int16 Circle_middleElecDiff_Thre = 0;               //中间两颗电感的差值阈值
@@ -60,6 +64,10 @@ int16 Circle_leftElec_Back_Thre = 0;                //后左侧电感的阈值
 int16 Circle_rightElec_Back_Thre = 0;               //后右侧电感的阈值
 
 //----------------------------------------
+
+
+
+
 //电磁  - 环岛大于阈值次数计数 (sc - satisfy condition)
 uint8 Circle_elecLeft_scCnt = 0;                    //环岛判断电磁部分满足次数 - 左环岛
 const uint8 Circle_elecLeft_scCnt_Thre = 0;         //环岛判断电磁满足次数阈值(次数大于阈值就判断预入环)
@@ -69,6 +77,10 @@ uint8 Circle_elecRight_scCnt = 0;                   //环岛判断电磁部分满足次数 -
 const uint8 Circle_elecRight_scCnt_Thre = 0;        //环岛判断电磁满足次数阈值(次数大于阈值就判断预入环)
 uint8 Circle_elecRight_nscCnt = 0;                  //环岛判断电磁部分不满足次数
 const uint8 Circle_elecRight_nscCnt_Thre = 5;       //环岛判断电磁不满足次数阈值(次数小于阈值就判断非环岛)
+
+
+
+
 
 //----------------------------------------
 //摄像头 - 环岛大于阈值次数计数 (sc - satisfy condition)

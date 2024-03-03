@@ -28,3 +28,11 @@ float bf_fmin(float x, float y) {
 float bf_fmax(float x, float y) {
     return x > y ? x : y;
 }
+int difference_sum( uint8 a,uint8 b )
+{
+ if(a+b==0)
+ {
+   return 0;
+ }
+  return (a-b)*300/(a+b);
+}

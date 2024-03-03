@@ -36,6 +36,7 @@
 #include "isr_config.h"
 #include "isr.h"
 #include "xiao_pid.h"
+
 // **************************** PITÖÐ¶Ïº¯Êý ****************************
 IFX_INTERRUPT(cc60_pit_ch0_isr,0, CCU6_0_CH0_ISR_PRIORITY)
 {
@@ -94,8 +95,6 @@ IFX_INTERRUPT(cc61_pit_ch0_isr, 0, CCU6_1_CH0_ISR_PRIORITY)
     pit_clear_flag(CCU61_CH0);
     if (mt9v03x_finish_flag == 1) {
        Image_Process(mt9v03x_image[0]);
-      // ips200_show_string(100, 100, "%111");
-      // ips200_show_int(100,120,Image_Process_Status,2);
         Image_Process_Status = 1;
     }
 }

@@ -592,6 +592,7 @@ int core0_main(void)
                         }
                     }
                 }
+
                 //----------------------------------------
                 //显示边线和逆透视变换后的边线
                 Image_ShowLine(0, 0, IMAGE_IPS200, IMAGE_ORIGIN);
@@ -600,8 +601,8 @@ int core0_main(void)
 
                 //----------------------------------------
                 //显示原图和逆透视变换后的图
-    //            ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
-    //            ips200_show_gray_image(0, 130, mapImage[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
+                ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
+                ips200_show_gray_image(0, 130, mapImage[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
 
                 //------------------------------元素判断------------------------------
                 //车库处理
@@ -609,13 +610,13 @@ int core0_main(void)
 
                 //--------------------环岛--------------------
                 //角点判断
-     //           Image_FindCorners();
+        //         Image_FindCorners();
     //            L角点判断
-     //           Image_LCornerCheck();
+                Image_LCornerCheck();
                 //环岛检测
-      //          Circle_CheckCamera();
+                Circle_CheckCamera();
                 //环岛处理
-               // Circle_RunElec(CIRCLE_ENTRY_ENCODER);
+                Circle_RunElec(CIRCLE_ENTRY_ENCODER);
 
 
 
@@ -662,7 +663,8 @@ int core0_main(void)
                 }
 
                 ips200_show_int(0, 200, Encoder_sum_Motor1, 6);
-
+                ips200_show_int(100,200,localThressss,3);
+                ips200_show_int(100,220,image_thre,3);
                 //----------------------------------------
                 //数据归0
                 cornerLeftNum_obtuse = 0;

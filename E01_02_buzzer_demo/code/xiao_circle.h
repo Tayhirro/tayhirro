@@ -48,7 +48,7 @@ typedef enum {
     CIRCLE_ENTRY_ENCODER = 0x00,                  //编码器积分
     CIRCLE_ENTRY_ELEC_THRE = 0x01,                //阈值判断
     CIRCLE_ENTRY_CAMERA = 0x02,                   //摄像头判断
-}CIRCLE_PRE_ENTRY_METHOD;
+}CIRCLE_PRE_ENTRY_METHOD;                       //预入环判断
 
 //------------------------------外部接口------------------------------
 extern CIRCLE_STATUS Circle_status;

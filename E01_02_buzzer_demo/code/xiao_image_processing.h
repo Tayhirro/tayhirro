@@ -115,7 +115,7 @@ extern uint8 image_begin_x;                                    //边线处理的起始x
 extern uint8 image_begin_y;                                    //边线处理起始的y坐标
 extern uint8 image_block_size;                                 //区域二值化的区域边长
 extern uint8 image_block_clip_value;                           //修正的经验参数(一般为2~5)
-
+extern uint8 localThressss;
 
 
 typedef enum {
