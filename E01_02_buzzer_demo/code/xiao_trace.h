@@ -16,7 +16,7 @@
 
 //==============================需要使用到的枚举==============================
 typedef enum {
-    TRACE_Elec = 0x01,              //使用电磁寻迹
+    TRACE_Camera_MID = 0x01,              //
     TRACE_Camera_LEFT = 0x02,      //使用摄像头寻左线
     TRACE_Camera_RIGHT = 0x03,     //使用摄像头寻右线
 }TRACE_TYPE;

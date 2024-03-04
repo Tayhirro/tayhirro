@@ -65,7 +65,8 @@ float Motor_2P = 100 ;      float Motor_2I = 2.52 ;       float Motor_2D = 0   ;
 float Motor_2Puse;         float Motor_2Pcor=0.0;      float Motor_2Icor=0.0;       float Motor_2Dcor=0.0;
 //------------------------------
 //电机限幅
-float Motor_pLimit=0;    float Motor_coLimit=10000;   float Motor_boost=3.5;
+//float Motor_pLimit=0;    float Motor_coLimit=10000;   float Motor_boost=3.5;
+float Motor_pLimit=3000;    float Motor_coLimit=10000;   float Motor_boost=1.0;
 
 //------------------------------摄像头------------------------------
 //------------------------------
@@ -73,13 +74,15 @@ float Motor_pLimit=0;    float Motor_coLimit=10000;   float Motor_boost=3.5;
 float Camera_leftP = 2.0;     float Camera_leftI = 0.0;     float Camera_leftD = 0.0;   float Camera_leftCor = 0.0;
 //摄像头PID(右边线找到的中线)
 float Camera_rightP = 2.0;     float Camera_rightI = 0.0;     float Camera_rightD = 0.0;   float Camera_rightCor = 0.0;
+//摄像头PID(（左+右）/2)
+float Camera_midP = 2.0;     float Camera_midI = 0.0;     float Camera_midD = 0.0;   float Camera_midCor = 0.0;
 //------------------------------
 //摄像头PD限幅(左边线找到的中线)
 float Camera_leftPLimit=5.0;     float Camera_leftCoLimit=50.0;    float Camera_leftBoost=1;
 //摄像头PD限幅(右边线找到的中线)
 float Camera_rightPLimit=5.0;     float Camera_rightCoLimit=50.0;    float Camera_rightBoost=1;
-
-
+//
+float Camera_midPLimit=5.0;     float Camera_midCoLimit=50.0;    float Camera_midBoost=1;
 //------------------------------状态机------------------------------
 //PID工作状态机
 uint8 Elec_pidStatus = 0;           //电磁PID工作状态机
@@ -427,6 +430,9 @@ int core0_main(void)
     //Elec_PID_Set(Elec_P, Elec_I, Elec_D, Elec_pLimit, Elec_coLimit, Elec_boost);             //电磁PID设置                                                //差比合差设置
       Motor_1PID_Set(Motor_1P, Motor_1I, Motor_1D, Motor_pLimit, Motor_coLimit, Motor_boost);  //电机1PID设置
       Motor_2PID_Set(Motor_2P, Motor_2I, Motor_2D, Motor_pLimit, Motor_coLimit, Motor_boost);  //电机2PID设置
+      Steer_PID_Left_Set( Camera_leftP,  Camera_leftI,  Camera_leftD, Camera_leftPLimit,  Camera_leftCoLimit,  Camera_leftBoost);       //左边找中线的舵机PID设置
+      Steer_PID_Right_Set( Camera_rightP,  Camera_rightI,  Camera_rightD, Camera_rightPLimit,  Camera_rightCoLimit, Camera_rightBoost); //右边找中线的舵机PID设置
+      Steer_PID_Mid_Set( Camera_midP,  Camera_midI,  Camera_midD, Camera_midPLimit,  Camera_midCoLimit,  Camera_midBoost);              //左边加右边找中线的舵机PID设置
     //Beep_SetTweetTime(500, 4);
 
     //------------------------------变量------------------------------

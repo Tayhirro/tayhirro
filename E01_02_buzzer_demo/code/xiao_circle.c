@@ -880,6 +880,9 @@ static void Circle_RunCamera() {
             none_right_line = 0;
         }
     }
+    else{
+        Trace_traceType = TRACE_Camera_MID;
+    }
 }
 
 static void Circle_RunBoth() {

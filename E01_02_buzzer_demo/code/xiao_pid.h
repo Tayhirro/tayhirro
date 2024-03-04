@@ -70,13 +70,19 @@ typedef struct pidcc_controller_float fPID,*tofPID;
 typedef struct pidcc_controller_int iPID,*toiPID;
 extern iPID ipid_speed_left;
 extern iPID ipid_speed_right;
-extern fPID* pid_steer;
+//extern fPID* pid_steer;
+extern fPID* pid_steer_left;
+extern fPID* pid_steer_right;
+extern fPID* pid_steer_mid;
 extern void direction_control(fPID* topid_steer,iPID* toipid_speed_left,iPID* toipid_speed_right,float zhongxian,float target);
 extern void Steer_PID_Init(void);
 extern float setpoint_left; // setpoint_left -> left 左边标准速度    setpoint_right -> right  右边标准速度
 extern float setpoint_right;
-
-void PID_Init(fPID PID);
-void PID_SetParameter(fPID* PID, float K_p_set,float K_i_set,float K_d_set,float pLimit,float coLimit,float boost);
+extern void Steer_PID_Left_Set(float K_p_set, float K_i_set, float K_d_set,float pLimit, float coLimit, float boost);
+extern void Steer_PID_Right_Set(float K_p_set, float K_i_set, float K_d_set,float pLimit, float coLimit, float boost);
+extern void Steer_PID_Mid_Set(float K_p_set, float K_i_set, float K_d_set,float pLimit, float coLimit, float boost);
+extern void PID_Init_Motor1(fPID PID);
+extern void PID_Init_Motor2(fPID PID);
+extern void PID_SetParameter(fPID* PID, float K_p_set,float K_i_set,float K_d_set,float pLimit,float coLimit,float boost);
 
 #endif /* CODE_XIAO_PID_H_ */

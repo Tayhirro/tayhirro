@@ -12,10 +12,12 @@ int CIRCLE_SPEED=0;
 float setpoint_left=1800.0; // setpoint_left -> left 左边标准速度    setpoint_right -> right  右边标准速度
 float setpoint_right=1800.0;
 int speedflag=1;           //直道、停止、进环判断标志
-fPID* pid_steer;
+fPID* pid_steer_left;
+fPID* pid_steer_right;
+fPID* pid_steer_mid;
 iPID ipid_speed_left;
 iPID ipid_speed_right;
-void PID_Init(fPID PID){
+void PID_Init_Motor1(fPID PID){
     PID.Kp=0;
     PID.Ki=0;
     PID.Kd=0;
@@ -40,6 +42,30 @@ void PID_Init(fPID PID){
     PID.boost=0;
 }
 
+void PID_Init_Motor2(fPID PID){
+    PID.Kp=0;
+    PID.Ki=0;
+    PID.Kd=0;
+    PID.ut=0;
+
+    PID.Kp_Set=0;
+    PID.Ki_Set=0;
+    PID.Kd_Set=0;
+    PID.target_val=0;
+    PID.Kp_output_val=0;
+    PID.Ki_output_val=0;
+    PID.Kd_output_val=0;
+    PID.output_val=0;
+    PID.input_val=0;
+    PID.err=0;
+    PID.err_last=0;
+    PID.err_llast=0;
+    PID.integral=0;
+
+    PID.sumLimit=0;
+    PID.utLimit=0;
+    PID.boost=0;
+}
 void fPID_Init(fPID* PID){
     PID->Kp=0;
     PID->Ki=0;
@@ -68,12 +94,23 @@ void fPID_Init(fPID* PID){
 }
 
 void Steer_PID_Init(void){
-    fPID_Init(&pid_steer);
+    fPID_Init(pid_steer_left);
+    fPID_Init(pid_steer_right);
+    fPID_Init(pid_steer_mid);
+}
+void Steer_PID_Left_Set(float K_p_set, float K_i_set, float K_d_set,float pLimit, float coLimit, float boost){
+    PID_SetParameter(pid_steer_left, K_p_set, K_i_set, K_d_set, pLimit, coLimit, boost);
+}
+void Steer_PID_Right_Set(float K_p_set, float K_i_set, float K_d_set,float pLimit, float coLimit, float boost){
+    PID_SetParameter(pid_steer_right, K_p_set, K_i_set, K_d_set, pLimit, coLimit, boost);
+}
+void Steer_PID_Mid_Set(float K_p_set, float K_i_set, float K_d_set,float pLimit, float coLimit, float boost){
+    PID_SetParameter(pid_steer_mid, K_p_set, K_i_set, K_d_set, pLimit, coLimit, boost);
 }
 void direction_control(fPID* topid_steer,iPID* toipid_speed_left,iPID* toipid_speed_right,float zhongxian,float target)
 {
 
-        topid_steer->err =(int)(zhongxian-target);//计算差值，左减右
+        topid_steer->err =zhongxian-target;//计算差值，左减右
 
         //uart_printf(UART_0," topid_steer->err =  %d\n", topid_steer->err);
 
