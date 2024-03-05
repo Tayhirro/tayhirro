@@ -340,9 +340,9 @@ void Circle_RunElec(CIRCLE_PRE_ENTRY_METHOD entryMethod) {
             }
         }
         //2.预入环使用电感阈值进行判断
-        else if (entryMethod == CIRCLE_ENTRY_ELEC_THRE) {
+       // else if (entryMethod == CIRCLE_ENTRY_ELEC_THRE) {
 
-        }
+       // }
         //3.预入环使用摄像头进行判断
         else if (entryMethod == CIRCLE_ENTRY_CAMERA) {
 
@@ -719,6 +719,9 @@ void Circle_RunElec(CIRCLE_PRE_ENTRY_METHOD entryMethod) {
         }
     }
 }
+
+
+
 
 /*
  * @brief               在环岛进行寻迹(使用摄像头)

@@ -29,6 +29,9 @@ typedef enum {
 extern CROSS_STATUS Cross_status;
 
 
+extern int16 Circle_encoderLeft_Thre;            //左环岛编码器阈值         -       步进:100
+extern int16 Circle_encoderRight_Thre;           //右环岛编码器阈值         -       步进:100
+
 
 
 //------------------------------_处理数据_------------------------------

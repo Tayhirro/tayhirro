@@ -616,7 +616,7 @@ int core0_main(void)
                 //环岛检测
                 Circle_CheckCamera();
                 //环岛处理
-                Circle_RunElec(CIRCLE_ENTRY_ENCODER);
+                Circle_RunCamera();
 
 
 
