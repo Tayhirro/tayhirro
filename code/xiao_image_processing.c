@@ -630,13 +630,11 @@ void Image_Handle_LeftLine(uint8 *image,uint8 x,uint8 y,uint8 thre) {
 }
 
 void Image_Handle_RightLine(uint8 *image,uint8 x,uint8 y,uint8 thre){
-    uint8 x2 = x;
-    uint8 y2 = y;
     uint8 step=0;
     uint8 dir = 0, turn = 0;
-    while(step<Image_iptsRightNum&&turn<4&&x2>0&&x2<IMAGE_WIDTH-1&&y2>0&&y2<IMAGE_HEIGHT-1){
-        uint8 frontValue = IMAGE_AT(image, x2 + Image_dir_front[dir][0], y2 + Image_dir_front[dir][1]);
-        uint8 frontRightValue = IMAGE_AT(image, x2 + Image_dir_frontRight[dir][0], y2 + Image_dir_frontRight[dir][1]);
+    while(step<Image_iptsRightNum&&turn<4&&x>0&&x<IMAGE_WIDTH-1&&y>0&&y<IMAGE_HEIGHT-1){
+        uint8 frontValue = IMAGE_AT(image, x + Image_dir_front[dir][0], y + Image_dir_front[dir][1]);
+        uint8 frontRightValue = IMAGE_AT(image, x + Image_dir_frontRight[dir][0], y + Image_dir_frontRight[dir][1]);
         if (frontValue < thre) {
             //前方是黑色"墙壁" -- 向左转
             //方向改变,记录转向一次
@@ -646,20 +644,22 @@ void Image_Handle_RightLine(uint8 *image,uint8 x,uint8 y,uint8 thre){
         }
         else if (frontRightValue < thre){
             //前方是白色,同时是右前方是"黑色" - 这种情况就是直道走
-            x2 += Image_dir_front[dir][0];
-            y2 += Image_dir_front[dir][1];
-            Image_iptsRight[step][0] = x2;
-            Image_iptsRight[step][1] = y2;
+            x += Image_dir_front[dir][0];
+            y += Image_dir_front[dir][1];
+            Image_iptsRight[step][0] = x;
+            Image_iptsRight[step][1] = y;
+            ++step;
             turn = 0;
         }
         else {
             //前方是白色,但是右前方也是"白色" - 这种情况下说明需要向右转弯"贴墙走"
-            x2 += Image_dir_frontRight[dir][0];
-            y2 += Image_dir_frontRight[dir][1];
+            x += Image_dir_frontRight[dir][0];
+            y += Image_dir_frontRight[dir][1];
             //向右转是 顺时针 - 所以要(+1)%4处理
             dir = (dir + 1) % 4;
-            Image_iptsRight[step][0] = x2;
-            Image_iptsRight[step][1] = y2;
+            Image_iptsRight[step][0] = x;
+            Image_iptsRight[step][1] = y;
+            ++step;
             turn = 0;
         }
     }
@@ -714,7 +714,7 @@ void Image_Process(uint8* image) {
     uint8 y2 = image_begin_y;
     for (; x2 < IMAGE_WIDTH - 1; ++x2) if (IMAGE_AT(image, x2 + 1, y1) < image_thre) break;     //查找边界上的第一个点
     if (IMAGE_AT(image, x2, y2) >= image_thre)                                                  //没有到边界就正常处理
-        Image_FindLine_RightHand_Adaptive(image, image_block_size, image_block_clip_value, x2, y2);
+        Image_Handle_RightLine(image, x2, y2, image_thre);
     else
         Image_iptsRightNum = 0;                                                                  //边界的话就是0了
 
