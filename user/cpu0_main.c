@@ -50,22 +50,23 @@ float Elec_P =  400 ;       float Elec_D= 0;       float Elec_I = 0.0;      floa
 //电感PD限幅
 float Elec_pLimit=5.0;     float Elec_coLimit=50.0;    float Elec_boost=1;
 
-//--------------------------------------------------------------
+
 
 //------------------------------电机------------------------------
 //------------------------------
 //电机1PID
 //float Motor_1P = 145.8 ;      float Motor_1I = 3.6 ;       float Motor_1D = 0;     float Motor_1Target=0;      float Motor_1cor=0.0;
-float Motor_1P = 100 ;      float Motor_1I = 2.52 ;       float Motor_1D = 0;     float Motor_1Target=0;      float Motor_1cor=0.0;
+float Motor_1P = 100 ;      float Motor_1I = 2.52 ;       float Motor_1D = 0;     float Motor_1Target=800;      float Motor_1cor=0.0;
 float Motor_1Puse;         float Motor_1Pcor=0.0;      float Motor_1Icor=0.0;       float Motor_1Dcor=0.0;
 //------------------------------
 //电机2PID
 //float Motor_2P = 192.375 ;      float Motor_2I = 14.175 ;       float Motor_2D = 0   ;     float Motor_2Target=0;       float Motor_2cor=0.0;
-float Motor_2P = 100 ;      float Motor_2I = 2.52 ;       float Motor_2D = 0   ;     float Motor_2Target=0;       float Motor_2cor=0.0;
+float Motor_2P = 100 ;      float Motor_2I = 2.52 ;       float Motor_2D = 0   ;     float Motor_2Target=800;       float Motor_2cor=0.0;
 float Motor_2Puse;         float Motor_2Pcor=0.0;      float Motor_2Icor=0.0;       float Motor_2Dcor=0.0;
 //------------------------------
 //电机限幅
-float Motor_pLimit=0;    float Motor_coLimit=10000;   float Motor_boost=3.5;
+//float Motor_pLimit=0;    float Motor_coLimit=10000;   float Motor_boost=3.5;
+float Motor_pLimit=3000;    float Motor_coLimit=10000;   float Motor_boost=1.0;
 
 //------------------------------摄像头------------------------------
 //------------------------------
@@ -73,12 +74,15 @@ float Motor_pLimit=0;    float Motor_coLimit=10000;   float Motor_boost=3.5;
 float Camera_leftP = 2.0;     float Camera_leftI = 0.0;     float Camera_leftD = 0.0;   float Camera_leftCor = 0.0;
 //摄像头PID(右边线找到的中线)
 float Camera_rightP = 2.0;     float Camera_rightI = 0.0;     float Camera_rightD = 0.0;   float Camera_rightCor = 0.0;
+//摄像头PID(（左+右）/2)
+float Camera_midP = 2.0;     float Camera_midI = 0.0;     float Camera_midD = 0.0;   float Camera_midCor = 0.0;
 //------------------------------
 //摄像头PD限幅(左边线找到的中线)
-float Camera_leftPLimit=5.0;     float Camera_leftCoLimit=50.0;    float Camera_leftBoost=1;
+float Camera_leftPLimit=80.0;     float Camera_leftCoLimit=50.0;    float Camera_leftBoost=1;
 //摄像头PD限幅(右边线找到的中线)
-float Camera_rightPLimit=5.0;     float Camera_rightCoLimit=50.0;    float Camera_rightBoost=1;
-
+float Camera_rightPLimit=80.0;     float Camera_rightCoLimit=50.0;    float Camera_rightBoost=1;
+//
+float Camera_midPLimit=30.0;     float Camera_midCoLimit=50.0;    float Camera_midBoost=1;
 
 //------------------------------状态机------------------------------
 //PID工作状态机
@@ -98,7 +102,7 @@ SHOW_MODE_enum Show_list[5]={Page1,Page2,Page3,Page4,Page5};        //需要显示的
 //==============================差比和差==============================
 //------------------------------
 //差比和差
-float Elec_A = 10 ;       float Elec_B = 5 ;       float Elec_C = 10 ;
+//float Elec_A = 10 ;       float Elec_B = 5 ;       float Elec_C = 10 ;
 //------------------------------
 //积分
 uint16 Encoder_sum;
@@ -108,9 +112,10 @@ uint16 Show_openStatus = 1;
 
 //------------------------------_处理数据_------------------------------
 uint8 Barrier_Judege_Status = 1;
+
+uint8 inv[2]={0,0};
 //------------------------------_处理数据_------------------------------
 //------------------------------------------------------------
-uint8 inv[2]={0,0};
 //调试测试用
 #if XIAO_DEBUG
 //==============================透视变换表==============================
@@ -358,10 +363,9 @@ uint8 inv_map_y[120][188]={0,0,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,3
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 
 };
-
 #endif
 double H[3][3] ={{-0.218597,0.164510,0.526444},{-0.012728,0.019089,-6.710670},{-0.000207,0.001860,-0.207453}};
-#define LED_20_8
+#define LED_20_8    P20_8
 #define LED_20_9    P20_9
 void Camera_GetInverse(uint8 x, uint8 y, uint8 inv[2]) {
     uint8 inv_x = (uint8) ((H[0][0] * x
@@ -474,22 +478,24 @@ int core0_main(void)
     cpu_wait_event_ready();
 //    uart_init(UART_3, 3000000, UART3_TX_P15_6, UART3_RX_P15_7);         //图传对应串口初始化
    // Elec_Init();                                                        //电感初始化
-   // seekfree_assistant_interface_init(SEEKFREE_ASSISTANT_DEBUG_UART);
+
     Show_Init();
 
     steer_init();                                                       //舵机初始化
     Motor_Init();                                                       //电机初始化
+    //Motor_SetSpeed(MOTOR_1,2000);
+      //        Motor_SetSpeed(MOTOR_2,2000);
     Encoder_Init();                                                     //编码器初始化
-   // dl1a_init();                                                         //TOF初始化
-    //Beep_Init();                                                        //蜂鸣器初始化
-    imu660ra_init();                                                    //陀螺仪初始化
+    //dl1a_init();                                                         //TOF初始化
+   // Beep_Init();                                                        //蜂鸣器初始化
+    //imu660ra_init();                                                    //陀螺仪初始化
     //------------------------------设备设置------------------------------
     mt9v03x_set_exposure_time(150);
 
     //------------------------------debug内容初始化------------------------------
     //LED初始化
-    gpio_init(P20_8, GPO, GPIO_HIGH, GPO_PUSH_PULL);
-    gpio_init(P20_9, GPO, GPIO_HIGH, GPO_PUSH_PULL);
+    //gpio_init(P20_8, GPO, GPIO_HIGH, GPO_PUSH_PULL);
+    //gpio_init(P20_9, GPO, GPIO_HIGH, GPO_PUSH_PULL);
     //拨码器初始化
     gpio_init(P33_12, GPI, GPIO_HIGH, GPI_PULL_UP);             //用于调节ips200上的Show_boost
     gpio_init(P33_13, GPI, GPIO_HIGH, GPI_PULL_UP);             //用于调节ips200上的Show_direction
@@ -499,10 +505,10 @@ int core0_main(void)
 
     //------------------------------函数初始化------------------------------
     //Elec_PID_Init();                                                    //电感PID初始化
-   // Motor_PID_Init();
+    //Motor_PID_Init();
    //电机PID初始化
-    //Steer_PID_Init();
-    Gyroscope_Init(GYROSCOPE_IMU660RA, 4);
+    Steer_PID_Init();
+    //Gyroscope_Init(GYROSCOPE_IMU660RA, 4);
     //------------------------------中断初始化------------------------------
     //中断功能
     //1. 图像处理
@@ -527,13 +533,16 @@ int core0_main(void)
 
     //------------------------------函数设置------------------------------
     //Elec_PID_Set(Elec_P, Elec_I, Elec_D, Elec_pLimit, Elec_coLimit, Elec_boost);             //电磁PID设置                                                //差比合差设置
-   //   Motor_1PID_Set(Motor_1P, Motor_1I, Motor_1D, Motor_pLimit, Motor_coLimit, Motor_boost);  //电机1PID设置
-   //   Motor_2PID_Set(Motor_2P, Motor_2I, Motor_2D, Motor_pLimit, Motor_coLimit, Motor_boost);  //电机2PID设置
-    //Beep_SetTweetTime(500, 4);
+         //Motor_1PID_Set(Motor_1P, Motor_1I, Motor_1D, Motor_pLimit, Motor_coLimit, Motor_boost);  //电机1PID设置
+         //Motor_2PID_Set(Motor_2P, Motor_2I, Motor_2D, Motor_pLimit, Motor_coLimit, Motor_boost);  //电机2PID设置
+         Steer_PID_Left_Set( Camera_leftP,  Camera_leftI,  Camera_leftD, Camera_leftPLimit,  Camera_leftCoLimit,  Camera_leftBoost);       //左边找中线的舵机PID设置
+         Steer_PID_Right_Set( Camera_rightP,  Camera_rightI,  Camera_rightD, Camera_rightPLimit,  Camera_rightCoLimit, Camera_rightBoost); //右边找中线的舵机PID设置
+         Steer_PID_Mid_Set( Camera_midP,  Camera_midI,  Camera_midD, Camera_midPLimit,  Camera_midCoLimit,  Camera_midBoost);              //左边加右边找中线的舵机PID设置
+       //Beep_SetTweetTime(500, 4);
 
     //------------------------------变量------------------------------
     //摄像头逆透视
-    uint8 mapImage[120][188]={0};               //进行逆透视变换后的图像
+    uint8 mapImage[MT9V03X_H][MT9V03X_W];               //进行逆透视变换后的图像
     //图传边线传输
     uint8 mapLinex_Left[IMAGE_LINE_MAX_NUM];            //左边线x坐标
     uint8 mapLiney_Left[IMAGE_LINE_MAX_NUM];            //左边线y坐标
@@ -572,8 +581,6 @@ int core0_main(void)
     //----------------------------------------
     cpu_wait_event_ready();         // 等待所有核心初始化完毕
    //Beep_Tweet();
-   // Image_Init();
- // seekfree_assistant_camera_information_config(SEEKFREE_ASSISTANT_MT9V03X,mapImage[0] , MT9V03X_W, MT9V03X_H);
     while (TRUE)
     {
         Show_openStatus=0;
@@ -581,14 +588,21 @@ int core0_main(void)
             Show_Switch(Show_list, 3);
         }
         if (mt9v03x_finish_flag == 1) {
-                                   Image_Process(mt9v03x_image[0]);
-                                   Image_Process_inv(mapImage[0]);
-                                   Image_Process_Status = 1;
-                                   Image_Process_Status_inv=1;
-                               }
+                                           Image_Process(mt9v03x_image[0]);
+                                           Image_Process_inv(mapImage[0]);
+                                           Image_Process_Status = 1;
+                                           Image_Process_Status_inv=1;
+                                       }
+        Motor_SetSpeed(MOTOR_1,2000);
+         Motor_SetSpeed(MOTOR_2,2000);
         //------------------------------出入库处理------------------------------
-        Motor_pidStatus = 1;
-
+        //Motor_pidStatus = 0;
+        //ips200_show_float(0, 0, Encoder_1Data, 3, 3);
+        //ips200_show_float(0, 60, Encoder_sum_Motor1, 5, 3);
+        //ips200_show_float(0, 120, Encoder_2Data, 3, 3);
+         ips200_show_string(0, 200, "Trace_angleError:");ips200_show_float(150, 200, Trace_angleError, 3, 3);
+         ips200_show_string(0, 250, "Trace_angleErrorTher:");ips200_show_float(150, 250, Trace_angleErrorTher, 3, 3);
+         ips200_show_string(0, 300, "Trace_aimLine:");ips200_show_float(150, 300, Trace_aimLine, 3, 3);
         //if (Grage_isDeparture == 0) {
         //    Grage_Departure_Check();
         //}
@@ -600,7 +614,7 @@ int core0_main(void)
             //------------------------------控制------------------------------                    //
             //------------------------------                                                    //
             //静态保护                                                                             //
-      /*      if (Encoder_1Data != 0 || Encoder_2Data != 0) {                                     //
+            /*if (Encoder_1Data != 0 || Encoder_2Data != 0) {                                     //
                 Motor_pidStatus = 1;                                                            //
                 Show_openStatus = 0;                                                            //
             }                                                                                   //
@@ -610,7 +624,7 @@ int core0_main(void)
                 Motor_2cor = 0.0;                                                               //
                 Motor_pidStatus = 0;                                                            //
                 Show_openStatus = 1;                                                            //
-           */                                                                                     //
+            }   */                                                                               //
                                                                                                 //
         //    }                                                                                 //
 
@@ -624,186 +638,187 @@ int core0_main(void)
     //        Show_Switch(Show_list, 3);
 
 
+
             //------------------------------图像处理------------------------------
-            if (Image_Process_Status == 1&&Image_Process_Status_inv== 1) {
-                //----------------------------------------
-                //清除之前的显示
+        if (Image_Process_Status == 1&&Image_Process_Status_inv== 1) {
+                        //----------------------------------------
+                        //清除之前的显示
 
-                Image_ShowLine(0, 0, IMAGE_IPS200, IMAGE_CLEAR_ORIGIN);
-                Image_ShowLine(0, 130, IMAGE_IPS200, IMAGE_CLEAR_MAPPING);
+                        Image_ShowLine(0, 0, IMAGE_IPS200, IMAGE_CLEAR_ORIGIN);
+                        Image_ShowLine(0, 130, IMAGE_IPS200, IMAGE_CLEAR_MAPPING);
 
-                //----------------------------------------
-                //对图像进行逆透视变换
-                for (uint8 y =0; y < IMAGE_HEIGHT/2; ++y) {
-                    for (uint8 x = 0; x < IMAGE_WIDTH; ++x) {
-                       if (inv_map_x[y][x] == 0 || inv_map_y[y][x] == 0) {
-                           mapImage[y][x] = 0;
-                           continue;
+                        //----------------------------------------
+                        //对图像进行逆透视变换
+                        for (uint8 y =0; y < IMAGE_HEIGHT/2; ++y) {
+                            for (uint8 x = 0; x < IMAGE_WIDTH; ++x) {
+                               if (inv_map_x[y][x] == 0 || inv_map_y[y][x] == 0) {
+                                   mapImage[y][x] = 0;
+                                   continue;
+                               }
+                                mapImage[y][x] = mt9v03x_image[inv_map_y[y][x]][inv_map_x[y][x]];
+                            }
+                        }   //上半部分
+                        for (uint8 y =IMAGE_HEIGHT/2; y < IMAGE_HEIGHT; ++y) {
+                            for (uint8 x = 0; x < IMAGE_WIDTH; ++x) {
+                                Camera_GetInverse(x, y,inv);
+        //                       if (inv_map_x[y][x] == 0 || inv_map_y[y][x] == 0) {
+        //                           mapImage[y][x] = 0;
+        //                           continue;
+        //                       }
+                                if(inv[0]==0||inv[1]==0){mapImage[y][x] = 0;continue;}
+                                mapImage[y][x] = mt9v03x_image[inv[1]][inv[0]];
+                            }
+                        }   //上半部分
+                        for(uint8 y1=90;y1<IMAGE_HEIGHT;++y1){
+                            for(uint8 x1=0;x1<IMAGE_WIDTH;++x1){
+                                mapImage[y1][x1]=0;
+                            }
+                        }
+                        //----------------------------------------
+
+                        //边线提取
+                        //左边线提取
+                        for (uint8 i = 0; i < Image_rptsLeftsNum; ++i) {
+                            mapLinex_Left[i] = Image_rptsLefts[i][0];
+                            mapLiney_Left[i] = Image_rptsLefts[i][1];
+                        }
+                        //右边线提取
+                        for (uint8 i = 0; i < Image_rptsRightsNum; ++i) {
+                            mapLinex_Right[i] = Image_rptsRights[i][0];
+                            mapLiney_Right[i] = Image_rptsRights[i][1];
+                        }
+                        //中线提取
+                        for (uint8 i = 0; i < Image_rptsLeftcNum; ++i) {
+                            mapLinex_midLeft[i] = Image_rptsLeftc[i][0];
+                            mapLiney_midLeft[i] = Image_rptsLeftc[i][1];
+                        }
+                        for (uint8 i = 0; i < Image_rptsRightcNum; ++i) {
+                            mapLinex_midRight[i] = Image_rptsRightc[i][0];
+                            mapLiney_midRight[i] = Image_rptsRightc[i][1];
+                        }
+
+                        //角点提取
+                        for (uint8 i = 0; i < Image_rptsLeftanNum; ++i) {
+                            if (Image_rptsLeftan[i] != 0) {
+                                if (Image_rptsLeftan[i] >= 90.0) {
+                                    mapLinex_cornerLeft_obtuse[cornerLeftNum_obtuse] = Image_rptsLefts[i][0];
+                                    mapLiney_cornerLeft_obtuse[cornerLeftNum_obtuse] = Image_rptsLefts[i][1];
+                                    cornersLeft_obtuse[cornerLeftNum_acute] = Image_rptsLeftan[i];
+                                    ++cornerLeftNum_obtuse;
+                                }
+                                else if (Image_rptsLeftan[i] < -90.0 && Image_rptsLeftan[i] > -120.0) {
+                                    mapLinex_cornerLeft_acute[cornerLeftNum_acute] = Image_rptsLefts[i][0];
+                                    mapLiney_cornerLeft_acute[cornerLeftNum_acute] = Image_rptsLefts[i][1];
+                                    cornersLeft_acute[cornerLeftNum_acute] = Image_rptsLeftan[i];
+                                    ++cornerLeftNum_acute;
+                                }
+                            }
                        }
-                        mapImage[y][x] = mt9v03x_image[inv_map_y[y][x]][inv_map_x[y][x]];
-                    }
-                }   //上半部分
-                for (uint8 y =IMAGE_HEIGHT/2; y < IMAGE_HEIGHT; ++y) {
-                    for (uint8 x = 0; x < IMAGE_WIDTH; ++x) {
-                        Camera_GetInverse(x, y,inv);
-//                       if (inv_map_x[y][x] == 0 || inv_map_y[y][x] == 0) {
-//                           mapImage[y][x] = 0;
-//                           continue;
-//                       }
-                        if(inv[0]==0||inv[1]==0){mapImage[y][x] = 0;continue;}
-                        mapImage[y][x] = mt9v03x_image[inv[1]][inv[0]];
-                    }
-                }   //上半部分
-                for(uint8 y1=90;y1<IMAGE_HEIGHT;++y1){
-                    for(uint8 x1=0;x1<IMAGE_WIDTH;++x1){
-                        mapImage[y1][x1]=0;
-                    }
-                }
-                //----------------------------------------
-
-                //边线提取
-                //左边线提取
-                for (uint8 i = 0; i < Image_rptsLeftsNum; ++i) {
-                    mapLinex_Left[i] = Image_rptsLefts[i][0];
-                    mapLiney_Left[i] = Image_rptsLefts[i][1];
-                }
-                //右边线提取
-                for (uint8 i = 0; i < Image_rptsRightsNum; ++i) {
-                    mapLinex_Right[i] = Image_rptsRights[i][0];
-                    mapLiney_Right[i] = Image_rptsRights[i][1];
-                }
-                //中线提取
-                for (uint8 i = 0; i < Image_rptsLeftcNum; ++i) {
-                    mapLinex_midLeft[i] = Image_rptsLeftc[i][0];
-                    mapLiney_midLeft[i] = Image_rptsLeftc[i][1];
-                }
-                for (uint8 i = 0; i < Image_rptsRightcNum; ++i) {
-                    mapLinex_midRight[i] = Image_rptsRightc[i][0];
-                    mapLiney_midRight[i] = Image_rptsRightc[i][1];
-                }
-
-                //角点提取
-                for (uint8 i = 0; i < Image_rptsLeftanNum; ++i) {
-                    if (Image_rptsLeftan[i] != 0) {
-                        if (Image_rptsLeftan[i] >= 90.0) {
-                            mapLinex_cornerLeft_obtuse[cornerLeftNum_obtuse] = Image_rptsLefts[i][0];
-                            mapLiney_cornerLeft_obtuse[cornerLeftNum_obtuse] = Image_rptsLefts[i][1];
-                            cornersLeft_obtuse[cornerLeftNum_acute] = Image_rptsLeftan[i];
-                            ++cornerLeftNum_obtuse;
+                        for (uint8 i = 0; i < Image_rptsRightanNum; ++i) {
+                            if (Image_rptsRightan[i] != 0) {
+                                if (Image_rptsRightan[i] >= 90.0) {
+                                    mapLinex_cornerRight_obtuse[cornerRightNum_obtuse] = Image_rptsRights[i][0];
+                                    mapLiney_cornerRight_obtuse[cornerRightNum_obtuse] = Image_rptsRights[i][1];
+                                    cornersRight_obtuse[cornerRightNum_obtuse] = Image_rptsRightan[i];
+                                    ++cornerRightNum_obtuse;
+                                }
+                                else if (Image_rptsRightan[i] < 90.0) {
+                                    mapLinex_cornerRight_acute[cornerRightNum_acute] = Image_rptsRights[i][0];
+                                    mapLiney_cornerRight_acute[cornerRightNum_acute] = Image_rptsRights[i][1];
+                                    cornersRight_acute[cornerRightNum_acute] = Image_rptsRightan[i];
+                                    ++cornerRightNum_acute;
+                                }
+                            }
                         }
-                        else if (Image_rptsLeftan[i] < -90.0 && Image_rptsLeftan[i] > -120.0) {
-                            mapLinex_cornerLeft_acute[cornerLeftNum_acute] = Image_rptsLefts[i][0];
-                            mapLiney_cornerLeft_acute[cornerLeftNum_acute] = Image_rptsLefts[i][1];
-                            cornersLeft_acute[cornerLeftNum_acute] = Image_rptsLeftan[i];
-                            ++cornerLeftNum_acute;
+
+                        //----------------------------------------
+                        //显示边线和逆透视变换后的边线
+                        Image_ShowLine(0, 0, IMAGE_IPS200, IMAGE_ORIGIN);
+                        Image_ShowLine(0, 130, IMAGE_IPS200, IMAGE_MAPPING);
+                        Image_ShowLine(0, 130, IMAGE_IPS200, IMAGE_MIDLINE_RIGHT);
+                        //----------------------------------------
+                        //显示原图和逆透视变换后的图
+                        ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
+                        ips200_show_gray_image(0, 130,mapImage[0] , MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
+
+                        //------------------------------元素判断------------------------------
+                        //车库处理
+                        //Grage_Storage_Check(GRAGE_CAMERA);
+
+                        //--------------------环岛-----十字---------------
+                        //角点判断
+                        Image_FindCorners();
+            //            L角点判断
+            //            Image_LCornerCheck();
+                          // Image_FindConers2();
+                        //十字检测
+                        //Cross_CheckCamera();
+                        //环岛检测
+             //           Circle_CheckCamera();
+                        //环岛处理
+             //           Circle_RunCamera();
+
+
+
+
+
+                        //------------------------------图传相关------------------------------
+                        //----------------------------------------
+                        //使用图传 - 边线传输
+
+
+           //             sendline_clear(1, MT9V03X_W, MT9V03X_H);
+           //             sendline2(3, mapLinex_Left, mapLiney_Left, Image_rptsLeftsNum);
+           //             sendline2(2, mapLinex_Right, mapLiney_Right, Image_rptsRightsNum);
+
+
+            //            put_int32(60, Image_rptsLeftsNum);
+            //            put_int32(61, Image_rptsRightsNum);
+
+            //            sendline2(4, mapLinex_midLeft, mapLiney_midLeft, Image_rptsLeftcNum);
+                        //--------------------------------------------------------------------------
+                        if (Image_LptLeft_Found) {
+                            Image_ShowCorner(Image_rptsLefts[Image_LptLeft_rptsLefts_id][0], 130 + Image_rptsLefts[Image_LptLeft_rptsLefts_id][1], RGB565_BLUE);
                         }
+                        if (Image_LptRight_Found) {
+                            Image_ShowCorner(Image_rptsRights[Image_LptRight_rptsRights_id][0], 130 + Image_rptsRights[Image_LptRight_rptsRights_id][1], RGB565_RED);
+                        }
+
+                        //锐角用BLUE
+        //                for (uint8 i = 0; i < cornerLeftNum_acute; ++i) {
+        //    //                sendpoint(4, mapLinex_cornerLeft_acute[i], mapLiney_cornerLeft_acute[i], 2);
+        //                    Image_ShowCorner(mapLinex_cornerLeft_acute[i], 130 + mapLiney_cornerLeft_acute[i], RGB565_BLUE);
+        //                }
+        //                for (uint8 i = 0; i < cornerRightNum_acute; ++i) {
+        //                    Image_ShowCorner(mapLinex_cornerRight_acute[i], 130 + mapLiney_cornerRight_acute[i], RGB565_BLUE);
+        //    //                sendpoint(4, mapLinex_cornerRight_acute[i], mapLiney_cornerRight_acute[i], 2);
+        //                }
+        //                for (uint8 i = 0; i < cornerLeftNum_obtuse; ++i) {
+        //    //                sendpoint(4, mapLinex_cornerLeft_obtuse[i], 130 + mapLiney_cornerLeft_obtuse[i], 5);
+        //                    Image_ShowCorner(mapLinex_cornerLeft_obtuse[i], mapLiney_cornerLeft_obtuse[i], RGB565_RED);
+        //                }
+        //                for (uint8 i = 0; i < cornerRightNum_obtuse; ++i) {
+        //    //                sendpoint(4, mapLinex_cornerRight_obtuse[i], 130 + mapLiney_cornerRight_obtuse[i], 5);
+        //                    Image_ShowCorner(mapLinex_cornerRight_obtuse[i], mapLiney_cornerRight_obtuse[i], RGB565_RED);
+        //                }
+
+
+                       // ips200_show_int(0, 200, Encoder_sum_Motor1, 6);
+                       // ips200_show_int(100,200,localThressss,3);
+                       // ips200_show_int(100,220,image_thre,3);
+                        //----------------------------------------
+                        //数据归0
+        //                cornerLeftNum_obtuse = 0;
+        //                cornerLeftNum_acute = 0;
+        //                cornerRightNum_obtuse = 0;
+        //                cornerRightNum_acute = 0;
+                        //    seekfree_assistant_camera_send();
+                            mt9v03x_finish_flag = 0;
+
+                        Image_Process_Status = 0;
+                        Image_Process_Status_inv= 0;
+
                     }
-               }
-                for (uint8 i = 0; i < Image_rptsRightanNum; ++i) {
-                    if (Image_rptsRightan[i] != 0) {
-                        if (Image_rptsRightan[i] >= 90.0) {
-                            mapLinex_cornerRight_obtuse[cornerRightNum_obtuse] = Image_rptsRights[i][0];
-                            mapLiney_cornerRight_obtuse[cornerRightNum_obtuse] = Image_rptsRights[i][1];
-                            cornersRight_obtuse[cornerRightNum_obtuse] = Image_rptsRightan[i];
-                            ++cornerRightNum_obtuse;
-                        }
-                        else if (Image_rptsRightan[i] < 90.0) {
-                            mapLinex_cornerRight_acute[cornerRightNum_acute] = Image_rptsRights[i][0];
-                            mapLiney_cornerRight_acute[cornerRightNum_acute] = Image_rptsRights[i][1];
-                            cornersRight_acute[cornerRightNum_acute] = Image_rptsRightan[i];
-                            ++cornerRightNum_acute;
-                        }
-                    }
-                }
-
-                //----------------------------------------
-                //显示边线和逆透视变换后的边线
-                Image_ShowLine(0, 0, IMAGE_IPS200, IMAGE_ORIGIN);
-                Image_ShowLine(0, 130, IMAGE_IPS200, IMAGE_MAPPING);
-                Image_ShowLine(0, 130, IMAGE_IPS200, IMAGE_MIDLINE_RIGHT);
-                //----------------------------------------
-                //显示原图和逆透视变换后的图
-                ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
-                ips200_show_gray_image(0, 130,mapImage[0] , MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
-
-                //------------------------------元素判断------------------------------
-                //车库处理
-                //Grage_Storage_Check(GRAGE_CAMERA);
-
-                //--------------------环岛-----十字---------------
-                //角点判断
-                Image_FindCorners();
-    //            L角点判断
-    //            Image_LCornerCheck();
-                  // Image_FindConers2();
-                //十字检测
-                //Cross_CheckCamera();
-                //环岛检测
-     //           Circle_CheckCamera();
-                //环岛处理
-     //           Circle_RunCamera();
-
-
-
-
-
-                //------------------------------图传相关------------------------------
-                //----------------------------------------
-                //使用图传 - 边线传输
-
-
-   //             sendline_clear(1, MT9V03X_W, MT9V03X_H);
-   //             sendline2(3, mapLinex_Left, mapLiney_Left, Image_rptsLeftsNum);
-   //             sendline2(2, mapLinex_Right, mapLiney_Right, Image_rptsRightsNum);
-
-
-    //            put_int32(60, Image_rptsLeftsNum);
-    //            put_int32(61, Image_rptsRightsNum);
-
-    //            sendline2(4, mapLinex_midLeft, mapLiney_midLeft, Image_rptsLeftcNum);
-                //--------------------------------------------------------------------------
-                if (Image_LptLeft_Found) {
-                    Image_ShowCorner(Image_rptsLefts[Image_LptLeft_rptsLefts_id][0], 130 + Image_rptsLefts[Image_LptLeft_rptsLefts_id][1], RGB565_BLUE);
-                }
-                if (Image_LptRight_Found) {
-                    Image_ShowCorner(Image_rptsRights[Image_LptRight_rptsRights_id][0], 130 + Image_rptsRights[Image_LptRight_rptsRights_id][1], RGB565_RED);
-                }
-
-                //锐角用BLUE
-//                for (uint8 i = 0; i < cornerLeftNum_acute; ++i) {
-//    //                sendpoint(4, mapLinex_cornerLeft_acute[i], mapLiney_cornerLeft_acute[i], 2);
-//                    Image_ShowCorner(mapLinex_cornerLeft_acute[i], 130 + mapLiney_cornerLeft_acute[i], RGB565_BLUE);
-//                }
-//                for (uint8 i = 0; i < cornerRightNum_acute; ++i) {
-//                    Image_ShowCorner(mapLinex_cornerRight_acute[i], 130 + mapLiney_cornerRight_acute[i], RGB565_BLUE);
-//    //                sendpoint(4, mapLinex_cornerRight_acute[i], mapLiney_cornerRight_acute[i], 2);
-//                }
-//                for (uint8 i = 0; i < cornerLeftNum_obtuse; ++i) {
-//    //                sendpoint(4, mapLinex_cornerLeft_obtuse[i], 130 + mapLiney_cornerLeft_obtuse[i], 5);
-//                    Image_ShowCorner(mapLinex_cornerLeft_obtuse[i], mapLiney_cornerLeft_obtuse[i], RGB565_RED);
-//                }
-//                for (uint8 i = 0; i < cornerRightNum_obtuse; ++i) {
-//    //                sendpoint(4, mapLinex_cornerRight_obtuse[i], 130 + mapLiney_cornerRight_obtuse[i], 5);
-//                    Image_ShowCorner(mapLinex_cornerRight_obtuse[i], mapLiney_cornerRight_obtuse[i], RGB565_RED);
-//                }
-
-
-               // ips200_show_int(0, 200, Encoder_sum_Motor1, 6);
-               // ips200_show_int(100,200,localThressss,3);
-               // ips200_show_int(100,220,image_thre,3);
-                //----------------------------------------
-                //数据归0
-//                cornerLeftNum_obtuse = 0;
-//                cornerLeftNum_acute = 0;
-//                cornerRightNum_obtuse = 0;
-//                cornerRightNum_acute = 0;
-                //    seekfree_assistant_camera_send();
-                    mt9v03x_finish_flag = 0;
-
-                Image_Process_Status = 0;
-                Image_Process_Status_inv= 0;
-
-            }
 
             //------------------------------元素处理------------------------------
             //--------------------障碍--------------------
@@ -819,7 +834,7 @@ int core0_main(void)
             //------------------------------屏幕相关------------------------------
         }
 
-    //}
+
 
 }
 

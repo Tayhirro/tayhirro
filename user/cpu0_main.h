@@ -102,12 +102,6 @@ extern float Motor_1Pcor;      extern float Motor_1Icor;       extern float Moto
 extern float Motor_2Pcor;      extern float Motor_2Icor;       extern float Motor_2Dcor;
 extern float Elec_A;    extern float Elec_B;    extern float Elec_C;
 
-
-
-//-----------------------------
-extern double H[3][3] ;
-void Camera_GetInverse(uint8 x, uint8 y, uint8 inv[2]);
-void Image_FindCorners(void);
 //-----------------------------
 //摄像头PID(左边线找到的中线)
 extern float Camera_leftP;     extern float Camera_leftI;     extern float Camera_leftD;   extern float Camera_leftCor;

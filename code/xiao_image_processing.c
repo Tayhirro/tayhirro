@@ -1538,7 +1538,7 @@ void Image_GetAngle(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen) {
                 }
 //                ips200_show_float(ips200_width_max - 50, ips200_height_max - 20, Image_rptsLeftan[cornerIndex], 3, 4);
             }
-            else if (screen == IMAGE_TFT180) {
+            /*else if (screen == IMAGE_TFT180) {
                 int8 half = Image_angleBlockLen / 2;
                 for (int8 i = -half; i <= half; ++i) {
                     for (int8 j = -half; j <= half; ++j) {
@@ -1546,7 +1546,7 @@ void Image_GetAngle(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen) {
                     }
                 }
                 tft180_show_float(tft180_width_max - 50, tft180_height_max - 20, Image_rptsLeftan[cornerIndex], 3, 4);
-            }
+            }*/
         }
         else if (Image_lineSeclet == 1) {
             if (screen == IMAGE_IPS200) {
@@ -1558,7 +1558,7 @@ void Image_GetAngle(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen) {
                 }
 //                ips200_show_float(ips200_width_max - 50, ips200_height_max - 20, Image_rptsLeftan[cornerIndex], 3, 4);
             }
-            else if (screen == IMAGE_TFT180) {
+            /*else if (screen == IMAGE_TFT180) {
                 int8 half = Image_angleBlockLen / 2;
                 for (int8 i = -half; i <= half; ++i) {
                     for (int8 j = -half; j <= half; ++j) {
@@ -1566,7 +1566,7 @@ void Image_GetAngle(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen) {
                     }
                 }
                 tft180_show_float(tft180_width_max - 50, tft180_height_max - 20, Image_rptsLeftan[cornerIndex], 3, 4);
-            }
+            }*/
         }
     }
 }

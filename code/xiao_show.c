@@ -808,3 +808,17 @@ uint8 Show_PID_Motor2(uint8 x, uint8 y, uint8 zoomx, uint8 zoomy) {
         return (2 + 6) * zoomy + y;
     }
 }
+
+/**
+ * @brief               显示电机2PID相关数据
+ * @parameter x         坐标x方向的起点
+ * @parameter y         坐标y方向的起点
+ * @parameter zoomx     x方向间隔
+ * @parameter zoomy     y方向间隔
+ * @return uint8        下一模块的起点y坐标
+ */
+void Show_Attitude_Angle(uint8 x, uint8 y,float pitch ,float roll,float yaw){
+    ips200_show_string(x, y , "Pitch:");ips200_show_float(x + 12 , y , pitch, 3, 3);
+    ips200_show_string(x, y+4 , "Roll:");ips200_show_float(x + 12 , y+4 , roll, 3, 3);
+    ips200_show_string(x, y+8 , "Yaw:");ips200_show_float(x + 12 , y+8 , yaw, 3, 3);
+}

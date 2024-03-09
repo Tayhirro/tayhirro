@@ -8,7 +8,7 @@
 #include "xiao_pid.h"
 //------------------------------------------------------------
 //基本变量
-TRACE_TYPE Trace_traceType = TRACE_Elec;
+TRACE_TYPE Trace_traceType = TRACE_Camera_MID;
 //==============================摄像头寻迹相关==============================
 //------------------------------------------------------------
 //中线标准值相关
@@ -23,9 +23,9 @@ float Trace_lineWeight[] = {0.5, 0.3, 0.2};     //处理中线时候三行计算的权重
 
 //------------------------------------------------------------
 //PID相关
-fPID Trace_cameraLeftPID;                       //左边线获取的中线的PID
-fPID Trace_cameraRightPID;                      //右边线获取的中线的PID
-
+//fPID Trace_cameraLeftPID;                       //左边线获取的中线的PID
+//fPID Trace_cameraRightPID;                      //右边线获取的中线的PID
+//fPID Trace_cameraMidPID;                       //左+右获取的中线的PID
 
 //==============================电磁寻迹相关==============================
 
@@ -72,7 +72,13 @@ static void Trace_GetAngelError() {
 
     //------------------------------
     //获取误差
-    if (Trace_traceType == TRACE_Camera_LEFT) {
+    if (Trace_traceType == TRACE_Camera_MID) {
+           Trace_angleError = Trace_lineWeight[0] * (float)Image_centerLine[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
+                           + Trace_lineWeight[1] * (float)Image_centerLine[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
+                           + Trace_lineWeight[2] * (float)Image_centerLine[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];
+
+       }
+    else if (Trace_traceType == TRACE_Camera_LEFT) {
         Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
                         + Trace_lineWeight[1] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
                         + Trace_lineWeight[2] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];
@@ -104,20 +110,21 @@ void Trace_PIDInit() {
  */
 void Trace_PID_Set(float K_p_set, float K_d_set, float coLimit, float boost, TRACE_TYPE traceType) {
     //------------------------------
+    //寻摄像头左边线+右边线找到的中线的PID
+    if (traceType == TRACE_Camera_MID) {
+            PID_SetParameter(Trace_cameraMidPID, K_p_set, 0, K_d_set, 0, coLimit, boost);
+        }
     //寻摄像头左边线找到的中线的PID
-    if (traceType == TRACE_Camera_LEFT) {
-        PID_SetParameter(&Trace_cameraLeftPID, K_p_set, 0, K_d_set, 0, coLimit, boost);
+
+    else if (traceType == TRACE_Camera_LEFT) {
+        PID_SetParameter(Trace_cameraLeftPID, K_p_set, 0, K_d_set, 0, coLimit, boost);
     }
     //------------------------------
     //寻摄像头右边线找到的中线的PID
     else if (traceType == TRACE_Camera_RIGHT) {
-        PID_SetParameter(&Trace_cameraRightPID, K_p_set, 0, K_d_set, 0, coLimit, boost);
+        PID_SetParameter(Trace_cameraRightPID, K_p_set, 0, K_d_set, 0, coLimit, boost);
     }
-    //------------------------------
-    //电磁寻迹的PID
-    else if (traceType == TRACE_Elec) {
 
-    }
 }
 
 
@@ -128,16 +135,25 @@ void Trace_PID_Set(float K_p_set, float K_d_set, float coLimit, float boost, TRA
 float Trace_Run() {
     //----------------------------------------
     //电磁寻迹
-    /*if (Trace_traceType == TRACE_Elec) {
+    /*if (Trace_traceType == TRACE_Camera_MID) {
         return 0;
     }*/
     //----------------------------------------
+    //摄像头左加右寻中线
+    if (Trace_traceType == TRACE_Camera_MID) {
+           Trace_GetAngelError();
+           direction_control(Trace_cameraMidPID,Trace_angleError,94);
+
+           //Trace_PID_Set(Trace_cameraLeftPID.Kp_Set, Trace_cameraLeftPID.Kd_Set, Trace_cameraLeftPID.utLimit, 1.0, Trace_traceType);
+           //PID_PostionalPID(&Trace_cameraLeftPID, 0, Trace_angleError);
+           return Trace_cameraMidPID.output_val;
+       }
     //摄像头寻左线
      if (Trace_traceType == TRACE_Camera_LEFT) {
         Trace_GetAngelError();
-        direction_control(pid_steer,0,0,Trace_angleError,94);
+        direction_control(Trace_cameraLeftPID,Trace_angleError,94);
 
-        Trace_PID_Set(Trace_cameraLeftPID.Kp_Set, Trace_cameraLeftPID.Kd_Set, Trace_cameraLeftPID.utLimit, 1.0, Trace_traceType);
+        //Trace_PID_Set(Trace_cameraLeftPID.Kp_Set, Trace_cameraLeftPID.Kd_Set, Trace_cameraLeftPID.utLimit, 1.0, Trace_traceType);
         //PID_PostionalPID(&Trace_cameraLeftPID, 0, Trace_angleError);
         return Trace_cameraLeftPID.output_val;
     }
@@ -145,8 +161,8 @@ float Trace_Run() {
     //摄像头寻右线
     else if (Trace_traceType == TRACE_Camera_RIGHT) {
         Trace_GetAngelError();
-        direction_control(pid_steer,0,0,Trace_angleError,94);
-        Trace_PID_Set(Trace_cameraRightPID.Kp_Set, Trace_cameraRightPID.Kd_Set, Trace_cameraRightPID.utLimit, 1.0, Trace_traceType);
+        direction_control(Trace_cameraRightPID,Trace_angleError,94);
+        //Trace_PID_Set(Trace_cameraRightPID.Kp_Set, Trace_cameraRightPID.Kd_Set, Trace_cameraRightPID.utLimit, 1.0, Trace_traceType);
         //PID_PostionalPID(&Trace_cameraRightPID, 0, Trace_angleError);
         return Trace_cameraRightPID.output_val;
     }
@@ -170,7 +186,7 @@ void Trace_SetPIDP(float setP, TRACE_TYPE traceType) {
         Trace_cameraRightPID.Kp_Set = setP;
 
     }
-    else if (traceType == TRACE_Elec) {
+    else if (traceType == TRACE_Camera_MID) {
 
     }
 }
@@ -189,7 +205,7 @@ void Trace_SetPIDI(float setI, TRACE_TYPE traceType) {
         Trace_cameraRightPID.Ki = setI;
         Trace_cameraRightPID.Ki_Set = setI;
     }
-    else if (traceType == TRACE_Elec) {
+    else if (traceType == TRACE_Camera_MID) {
 
     }
 }
@@ -207,7 +223,7 @@ void Trace_SetPIDD(float setD, TRACE_TYPE traceType) {
         Trace_cameraRightPID.Kd = setD;
         Trace_cameraRightPID.Kd_Set = setD;
     }
-    else if (traceType == TRACE_Elec) {
+    else if (traceType == TRACE_Camera_MID) {
 
     }
 }
@@ -222,7 +238,7 @@ void Trace_SetPIDSumLimit(float sumLimit, TRACE_TYPE traceType) {
     else if (traceType == TRACE_Camera_RIGHT) {
         Trace_cameraRightPID.sumLimit = sumLimit;
     }
-    else if (traceType == TRACE_Elec) {
+    else if (traceType == TRACE_Camera_MID) {
 
     }
 }
@@ -237,7 +253,7 @@ void Trace_SetPIDCoLimit(float coLimit, TRACE_TYPE traceType) {
     else if (traceType == TRACE_Camera_RIGHT) {
         Trace_cameraRightPID.utLimit = coLimit;
     }
-    else if (traceType == TRACE_Elec) {
+    else if (traceType == TRACE_Camera_MID) {
 
     }
 }

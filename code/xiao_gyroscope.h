@@ -54,6 +54,16 @@ extern float Acc_corrX;        //加速度x值 - 加速度
 extern float Acc_corrY;        //加速度y值 - 加速度
 extern float Acc_corrZ;        //加速度z值 - 加速度
 
+extern float pitch;
+extern float yaw;
+extern float roll;
+
+#define G           9.80665f                // m/s^2
+#define RadtoDeg    57.324841f              //弧度到角度 (弧度 * 180/3.1415)
+#define DegtoRad    0.0174533f              //角度到弧度 (角度 * 3.1415/180)
+
+
+
 //------------------------------函数------------------------------
 void Gyroscope_Init(GYROSCOPE_TYPE device, uint16 time);
 void Gyroscope_Begin(GYROSCOPE_MEASURE_TYPE measureType);
@@ -61,6 +71,10 @@ void Gyroscope_End(GYROSCOPE_MEASURE_TYPE measureType);
 void Gyroscope_GetData(void);
 void Gyroscope_Conut(void);
 void Gyroscope_Clear(GYROSCOPE_MEASURE_TYPE measureType);
+
+//解算姿态角
+void Prepare_Data(void);
+void IMUupdate(float gx, float gy, float gz, float ax, float ay, float az);
 
 
 #endif /* CODE_XIAO_GYROSCOPE_H_ */

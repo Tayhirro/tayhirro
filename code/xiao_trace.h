@@ -16,7 +16,7 @@
 
 //==============================需要使用到的枚举==============================
 typedef enum {
-    TRACE_Elec = 0x01,              //使用电磁寻迹
+    TRACE_Camera_MID = 0x01,              //使用电磁寻迹
     TRACE_Camera_LEFT = 0x02,      //使用摄像头寻近处左线
     TRACE_Camera_RIGHT = 0x03,     //使用摄像头寻近处右线
     TRACE_Camera_Near=0x04,
@@ -36,4 +36,10 @@ void Trace_SetPIDI(float setP, TRACE_TYPE traceType);
 void Trace_SetPIDD(float setP, TRACE_TYPE traceType);
 void Trace_SetPIDSumLimit(float sumLimit, TRACE_TYPE traceType);
 void Trace_SetPIDCoLimit(float coLimit, TRACE_TYPE traceType);
+extern float Trace_angleError;
+extern float Trace_angleErrorTher ;               //角度误差阈值
+extern uint8 Trace_aimLine ;
+extern fPID Trace_cameraLeftPID;                       //左边线获取的中线的PID
+extern fPID Trace_cameraRightPID;                      //右边线获取的中线的PID
+extern fPID Trace_cameraMidPID;                       //左+右获取的中线的PID
 #endif /* CODE_XIAO_TRACE_H_ */
