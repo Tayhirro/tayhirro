@@ -572,7 +572,7 @@ int core0_main(void)
     //----------------------------------------
     cpu_wait_event_ready();         // 等待所有核心初始化完毕
    //Beep_Tweet();
-    Image_Init();
+   // Image_Init();
  // seekfree_assistant_camera_information_config(SEEKFREE_ASSISTANT_MT9V03X,mapImage[0] , MT9V03X_W, MT9V03X_H);
     while (TRUE)
     {

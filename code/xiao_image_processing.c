@@ -223,11 +223,11 @@ uint16 Image_GrageJudge_Thre = 10000;                   //车库判断的编码器积分距
 
 //------------------------------调试参数处理------------------------------
 //用于调试的参数(为了作区分,这里的标头起始字母用小写处理, 同时使用下划线命名法)
-uint8 image_thre = 120;                                  //边线处理的初始阈值
+uint8 image_thre = 140;                                  //边线处理的初始阈值
 uint8 image_begin_x = IMAGE_WIDTH / 2;                  //边线处理的起始x坐标偏离中心的距离
 uint8 image_begin_y = IMAGE_HEIGHT - 30;                //边线处理起始的y坐标
-uint8 image_block_size = 5;                             //区域二值化的区域边长
-uint8 image_block_clip_value = 3;                       //修正的经验参数(一般为2~5)
+uint8 image_block_size = 7;                             //区域二值化的区域边长
+uint8 image_block_clip_value = 1;                       //修正的经验参数(一般为2~5)
 
 /*
  * @brief               获取图像数据
@@ -852,6 +852,7 @@ void Image_getcenterLine(){
            }
 }
 void  Image_Process_inv(uint8* image_inv){
+    image_thre=Image_Processing_OtsuGetThresh(image_inv);
     Image_Process_Status_inv= 0;
     if (Image_isUsefulData_Status) {
             Image_rptsLeftNum_Bak = Image_rptsLeftNum;
@@ -865,9 +866,9 @@ void  Image_Process_inv(uint8* image_inv){
        // image_thre=Image_Processing_OtsuGetThresh(image_inv);
        Image_rptsLeftNum = sizeof(Image_rptsLeft) / sizeof(Image_rptsLeft[0]);
        uint8 rx1 = image_begin_x;
-       uint8 ry1 = image_begin_y-23;
-       for (; rx1 > 0; --rx1) if (IMAGE_AT(image_inv, rx1 - 1, ry1) < image_thre-20) break;           //查找边界上的第一个点
-       if (IMAGE_AT(image_inv, rx1, ry1) >= image_thre+10){//没有到边界就正常处理
+       uint8 ry1 = image_begin_y-10;
+       for (; rx1 > 0; --rx1) if (IMAGE_AT(image_inv, rx1 - 1, ry1) < image_thre) break;           //查找边界上的第一个点
+       if (IMAGE_AT(image_inv, rx1, ry1) >= image_thre){//没有到边界就正常处理
            Image_FindLine_LeftHand_Adaptive_inv(image_inv,image_block_size,image_block_clip_value, rx1,ry1);
        }
        else
@@ -878,9 +879,9 @@ void  Image_Process_inv(uint8* image_inv){
        //找右边线
        Image_rptsRightNum = sizeof(Image_rptsRight) / sizeof(Image_rptsRight[0]);
        uint8 rx2 = image_begin_x;
-       uint8 ry2 = image_begin_y-23;
-       for (; rx2 < IMAGE_WIDTH - 1; ++rx2) if (IMAGE_AT(image_inv, rx2 + 1, ry2) < image_thre-20) break;     //查找边界上的第一个点
-       if (IMAGE_AT(image_inv, rx2, ry2) >= image_thre+10)                                                  //没有到边界就正常处理
+       uint8 ry2 = image_begin_y-10;
+       for (; rx2 < IMAGE_WIDTH - 1; ++rx2) if (IMAGE_AT(image_inv, rx2 + 1, ry2) < image_thre) break;     //查找边界上的第一个点
+       if (IMAGE_AT(image_inv, rx2, ry2) >= image_thre)                                                  //没有到边界就正常处理
            Image_FindLine_RightHand_Adaptive_inv(image_inv,image_block_size,image_block_clip_value, rx2,ry2);
        else
            Image_rptsRightNum = 0;
@@ -997,7 +998,6 @@ void Image_Process(uint8* image) {
             Image_iptsLeft_Bak[i][1] = Image_iptsLeft[i][1];
         }
     }
-    //image_thre=Image_Processing_OtsuGetThresh(image);
 
     //找左边线
     Image_iptsLeftNum = sizeof(Image_iptsLeft) / sizeof(Image_iptsLeft[0]);
