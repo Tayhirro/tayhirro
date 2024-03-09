@@ -20,7 +20,7 @@ typedef enum {
     TRACE_Camera_LEFT = 0x02,      //使用摄像头寻近处左线
     TRACE_Camera_RIGHT = 0x03,     //使用摄像头寻近处右线
     TRACE_Camera_Near=0x04,
-    TRACE_Camera_Far=0x05
+    TRACE_Camera_Far_Both=0x05
 }TRACE_TYPE;
 
 //==============================外部变量接口==============================

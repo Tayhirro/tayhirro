@@ -17,10 +17,11 @@
 typedef enum {
     CROSS_NONE = 0x00,
     CROSS_BEGIN = 0x01,
-    CROSS_IN = 0x02,
-    CROSS_RUNNING = 0x03,
-    CROSS_OUT = 0x04,
-    CROSS_END = 0x05,
+    CROSS_RUNNING = 0x02,
+    CROSS_IN = 0x03,
+    CROSS_IN2 =0x04,
+    CROSS_BEGIN2=0x05,
+    CROSS_RUNNING2=0x06
 }CROSS_STATUS;
 
 

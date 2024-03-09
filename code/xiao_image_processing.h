@@ -34,57 +34,88 @@
 #define IMAGE_WIDTH             (SCC8660_W)
 #endif
 
-#define IMAGE_LINE_MAX_NUM (90)         //Í¼Æ¬±ßÏßÏñËØµã×î´ó¸öÊı
+#define IMAGE_LINE_MAX_NUM (130)         //Í¼Æ¬±ßÏßÏñËØµã×î´ó¸öÊı
 //------------------------------------------------------------
 //ËùÓĞ×´Ì¬»ú
 extern uint8 Image_Process_Status;
+extern uint8 Image_Process_Status_inv;
 //------------------------------------------------------------
 //»ù±¾Êı¾İ
 //1. Ô­Í¼×óÓÒ±ßÏß
 //2. ±ßÏß×óÓÒÊı¾İ
-extern uint8   Image_iptsLeft[90][2];           //×ó±ßÏß×ø±ê´æ´¢ - 0´ú±íx×ø±ê,1´ú±íy×ø±ê
-extern uint8   Image_iptsRight[90][2];          //ÓÒ±ßÏß×ø±ê´æ´¢
+extern uint8   Image_iptsLeft[130][2];           //×ó±ßÏß×ø±ê´æ´¢ - 0´ú±íx×ø±ê,1´ú±íy×ø±ê
+extern uint8   Image_iptsRight[130][2];          //ÓÒ±ßÏß×ø±ê´æ´¢
 extern uint8   Image_iptsLeftNum;               //×ó±ßÏßÏñËØµã¸öÊı
 extern uint8   Image_iptsRightNum;              //ÓÒ±ßÏßÏñËØµã¸öÊı
+
+
 //ÄæÍ¸ÊÓ±ä»»ÇúÏß
-extern uint8 Image_rptsLeft[90][2];             //×ó±ßÏßÈ¥»û±ä+ÄæÍ¸ÊÓ±ä»»×ø±ê´æ´¢
-extern uint8 Image_rptsRight[90][2];            //ÓÒ±ßÏßÈ¥»û±ä+ÄæÍ¸ÊÓ±ä»»×ø±ê´æ´¢
+extern uint8 Image_rptsLeft[130][2];             //×ó±ßÏßÈ¥»û±ä+ÄæÍ¸ÊÓ±ä»»×ø±ê´æ´¢
+extern uint8 Image_rptsRight[130][2];            //ÓÒ±ßÏßÈ¥»û±ä+ÄæÍ¸ÊÓ±ä»»×ø±ê´æ´¢
 extern uint8 Image_rptsLeftNum;                 //×ó±ßÏßÈ¥»û±ä+ÄæÍ¸ÊÓ±ä»»ÏñËØµã¸öÊı
 extern uint8 Image_rptsRightNum;                //ÓÒ±ßÏßÈ¥»û±ä+ÄæÍ¸ÊÓ±ä»»ÏñËØµã¸öÊı
+
+
+
 //------------------------------
 //µã¼¯Èı½ÇÂË²¨Ïà¹Ø
 extern const uint8 Image_linerBlurKernel;       //Èı½ÇÂË²¨Ê±ºòµÄÇø¿é±ß³¤
-extern uint8 Image_rptsLeftb[90][2];            //Èı½ÇÂË²¨ºóµÄ×ó±ßÏß×ø±ê´æ´¢
-extern uint8 Image_rptsRightb[90][2];           //Èı½ÇÂË²¨ºóµÄÓÒ±ßÏß×ø±ê´æ´¢
+extern uint8 Image_rptsLeftb[130][2];            //Èı½ÇÂË²¨ºóµÄ×ó±ßÏß×ø±ê´æ´¢
+extern uint8 Image_rptsRightb[130][2];           //Èı½ÇÂË²¨ºóµÄÓÒ±ßÏß×ø±ê´æ´¢
 extern uint8 Image_rptsLeftbNum;                //Èı½ÇÂË²¨ºóµÄ×ó±ßÏß³¤¶È
 extern uint8 Image_rptsRightbNum;               //Èı½ÇÂË²¨ºóµÄÓÒ±ßÏß³¤¶È
+//µã¼¯Èı½ÇÂË²¨Ïà¹Ø
+extern uint8 Image_iptsLeftb[130][2];            //Èı½ÇÂË²¨ºóµÄ×ó±ßÏß×ø±ê´æ´¢
+extern uint8 Image_iptsRightb[130][2];           //Èı½ÇÂË²¨ºóµÄÓÒ±ßÏß×ø±ê´æ´¢
+extern uint8 Image_iptsLeftbNum;                //Èı½ÇÂË²¨ºóµÄ×ó±ßÏß³¤¶È
+extern uint8 Image_iptsRightbNum;               //Èı½ÇÂË²¨ºóµÄÓÒ±ßÏß³¤¶È
 //------------------------------
 //µÈ¾à²ÉÑùÏà¹Ø
 extern const float Image_sampleDist;           //µÈ¾à²ÉÓÃ²ÉÑùµÄ¾àÀë
-extern uint8 Image_rptsLefts[90][2];           //µÈ¾à²ÉÑùºóµÄ×ó±ßÏß×ø±ê´æ´¢
-extern uint8 Image_rptsRights[90][2];          //µÈ¾à²ÉÑùºóµÄÓÒ±ßÏß×ø±ê´æ´¢
+extern uint8 Image_rptsLefts[130][2];           //µÈ¾à²ÉÑùºóµÄ×ó±ßÏß×ø±ê´æ´¢
+extern uint8 Image_rptsRights[130][2];          //µÈ¾à²ÉÑùºóµÄÓÒ±ßÏß×ø±ê´æ´¢
 extern uint8 Image_rptsLeftsNum;               //µÈ¾à²ÉÑùºóµÄ×ó±ßÏß³¤¶È
 extern uint8 Image_rptsRightsNum;              //µÈ¾à²ÉÑùºóµÄÓÒ±ßÏß³¤¶È
+//µÈ¾à²ÉÑùÏà¹Ø
+extern uint8 Image_iptsLefts[130][2];           //µÈ¾à²ÉÑùºóµÄ×ó±ßÏß×ø±ê´æ´¢
+extern uint8 Image_iptsRights[130][2];          //µÈ¾à²ÉÑùºóµÄÓÒ±ßÏß×ø±ê´æ´¢
+extern uint8 Image_iptsLeftsNum;               //µÈ¾à²ÉÑùºóµÄ×ó±ßÏß³¤¶È
+extern uint8 Image_iptsRightsNum;              //µÈ¾à²ÉÑùºóµÄÓÒ±ßÏß³¤¶È
 //------------------------------
 //±ßÏß¾Ö²¿½Ç¶È±ä»¯ÂÊÏà¹Ø
 extern const float Image_angleDist;             //¼ÆËã±ßÏß×ª½ÇÊ±,Èı¸ö¼ÆËãµãµÄ¾àÀë
-extern float Image_rptsLefta[90];               //×ó±ßÏß¶ÔÓ¦µã´¦µÄ½Ç¶È´óĞ¡
-extern float Image_rptsRighta[90];              //ÓÒ±ßÏß¶ÔÓ¦µã´¦µÄ½Ç¶È´óĞ¡
+extern float Image_rptsLefta[130];               //×ó±ßÏß¶ÔÓ¦µã´¦µÄ½Ç¶È´óĞ¡
+extern float Image_rptsRighta[130];              //ÓÒ±ßÏß¶ÔÓ¦µã´¦µÄ½Ç¶È´óĞ¡
 extern uint8 Image_rptsLeftaNum;                //×ó±ßÏßµãµÄ¸öÊı
 extern uint8 Image_rptsRightaNum;               //ÓÒ±ßÏßµãµÄ¸öÊı
+//±ßÏß¾Ö²¿½Ç¶È±ä»¯ÂÊÏà¹Ø
+extern float Image_iptsLefta[130];               //×ó±ßÏß¶ÔÓ¦µã´¦µÄ½Ç¶È´óĞ¡
+extern float Image_iptsRighta[130];              //ÓÒ±ßÏß¶ÔÓ¦µã´¦µÄ½Ç¶È´óĞ¡
+extern uint8 Image_iptsLeftaNum;                //×ó±ßÏßµãµÄ¸öÊı
+extern uint8 Image_iptsRightaNum;               //ÓÒ±ßÏßµãµÄ¸öÊı
+
 //------------------------------
 //½Ç¶È±ä»¯ÂÊ·Ç¼«´óÒÖÖÆÏà¹Ø
-extern float Image_rptsLeftan[90];              //×ó±ßÏßÇøÓò×î´ó½Ç´æ´¢
-extern float Image_rptsRightan[90];             //ÓÒ±ßÏßÇøÓò×î´ó½Ç´æ´¢
+extern float Image_rptsLeftan[130];              //×ó±ßÏßÇøÓò×î´ó½Ç´æ´¢
+extern float Image_rptsRightan[130];             //ÓÒ±ßÏßÇøÓò×î´ó½Ç´æ´¢
 extern uint8 Image_rptsLeftanNum;               //×ó±ßÏßµãµÄ¸öÊı
 extern uint8 Image_rptsRightanNum;              //ÓÒ±ßÏßµãµÄ¸öÊı
 //------------------------------
+extern float Image_iptsLeftan[130];              //×ó±ßÏßÇøÓò×î´ó½Ç´æ´¢
+extern float Image_iptsRightan[130];             //ÓÒ±ßÏßÇøÓò×î´ó½Ç´æ´¢
+extern uint8 Image_iptsLeftanNum;               //×ó±ßÏßµãµÄ¸öÊı
+extern uint8 Image_iptsRightanNum;              //ÓÒ±ßÏßµãµÄ¸öÊı
+//------------------------------
 //×óÓÒ±äÏß¸ú×ÙÏà¹Ø
-extern uint8 Image_rptsLeftc[90][2];            //×ó±ßÏß¸ú×ÙµÃµ½µÄÖĞÏßÊı¾İ
-extern uint8 Image_rptsRightc[90][2];           //ÓÒ±ßÏß¸ú×ÙµÃµ½µÄÖĞÏßÊı¾İ
+extern uint8 Image_rptsLeftc[130][2];            //×ó±ßÏß¸ú×ÙµÃµ½µÄÖĞÏßÊı¾İ
+extern uint8 Image_rptsRightc[130][2];           //ÓÒ±ßÏß¸ú×ÙµÃµ½µÄÖĞÏßÊı¾İ
 extern uint8 Image_rptsLeftcNum;                //×ó±ßÏß¸ú×ÙµÃµ½µÄÖĞÏßµÄÏß³¤
 extern uint8 Image_rptsRightcNum;               //ÓÒ±ßÏß¸ú×ÙµÃµ½µÄÖĞÏßµÄÏß³¤
-
+//----------------------------------
+extern uint8 Image_centerLine[IMAGE_LINE_MAX_NUM][2];
+extern uint8 Image_centerLineNum;          //ÖĞÏß³¤¶È
+extern uint8 Image_centerLine_Bak[IMAGE_LINE_MAX_NUM][2];
+extern uint8 Image_centerLineNum_Bak;
 
 //------------------------------½ÇµãÑ°ÕÒÏà¹Ø------------------------------
 //------------------------------
@@ -117,6 +148,7 @@ extern uint8 image_block_size;                                 //ÇøÓò¶şÖµ»¯µÄÇøÓ
 extern uint8 image_block_clip_value;                           //ĞŞÕıµÄ¾­Ñé²ÎÊı(Ò»°ãÎª2~5)
 extern uint8 localThressss;
 
+extern uint8 Image_threCnt_Thre;
 
 typedef enum {
     IMAGE_IPS200 = 0x00,
@@ -150,10 +182,11 @@ void Image_Init(void);
 uint8 Image_Processing_OtsuGetThresh(const uint8* image);
 void Image_ShowLine(uint16 beg_x, uint16 beg_y, IMAGE_SCREEN screen, IMAGE_SHOW_TYPE showType);
 void Image_Process(uint8* image);
+void Image_Process_inv(uint8* image_inv);
 void Image_GetAngleInit(void);
 void Image_GetAngle(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen);
 void Image_ShowCorners(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen);
-void Image_FindCorners(void);
+//void Image_FindCorners(void);
 uint8 IMAGE_AT(uint8* image, int16 x, int16 y);
 void Image_ShowCorner(uint8 x, uint8 y, rgb565_color_enum color);
 void Image_LCornerCheck(void);
