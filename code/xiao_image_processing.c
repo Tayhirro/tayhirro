@@ -55,11 +55,7 @@ uint8 Image_disPictureCnt = 0;                      //丢弃图片的数量计数
 const uint8 Image_disPictureCnt_Thre = 10;          //丢弃图片的数量阈值
 uint16 Image_threSum = 0;                           //图片阈值积分
 uint8 Image_threCnt_Thre = 10;                      //用来计算大津法的图片数量
-<<<<<<< HEAD
 uint8 clip_middle=5;
-=======
-
->>>>>>> bee737bac262e60efb81e3b385a6f0dcb27b3c26
 
 //------------------------------图片处理相关------------------------------
 //------------------------------
