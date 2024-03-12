@@ -55,7 +55,7 @@ uint8 Image_disPictureCnt = 0;                      //¶ªÆúÍ¼Æ¬µÄÊýÁ¿¼ÆÊý
 const uint8 Image_disPictureCnt_Thre = 10;          //¶ªÆúÍ¼Æ¬µÄÊýÁ¿ãÐÖµ
 uint16 Image_threSum = 0;                           //Í¼Æ¬ãÐÖµ»ý·Ö
 uint8 Image_threCnt_Thre = 10;                      //ÓÃÀ´¼ÆËã´ó½ò·¨µÄÍ¼Æ¬ÊýÁ¿
-uint8 clip_middle=5;
+
 
 //------------------------------Í¼Æ¬´¦ÀíÏà¹Ø------------------------------
 //------------------------------
@@ -192,11 +192,7 @@ uint8 Image_cornerNumRight = 0;                         //½Çµã¸öÊý
 uint8 Image_YptLeft_rptsLefts_id;                       //×ó±ßÏßY½Çµãid
 uint8 Image_YptRight_rptsRights_id;                     //ÓÒ±ßÏßY½Çµãid
 bool  Image_YptLeft_Found;                              //×ó±ßÏßY½ÇµãÕÒµ½ÅÐ¶¨
-bool  Image_YptRight_Found;
-//ÓÒ±ßÏßY½ÇµãÕÒµ½ÅÐ
-bool  Image_HptLeft_Found;
-bool  Image_HptRight_Found;
-uint8 Image_HptLeft_rptsLefts_id;
+bool  Image_YptRight_Found;                             //ÓÒ±ßÏßY½ÇµãÕÒµ½ÅÐ¶Ï
 //------------------------------
 //L½Çµã
 uint8 Image_LptLeft_rptsLefts_id;                       //×ó±ßÏßL½Çµãid
@@ -225,16 +221,11 @@ bool Image_LjudgeFinish = 0;                            //L½ÇµãÔªËØÅÐ¶ÏÍê³É×´Ì¬»
 IMAGE_LCORNER_JUDGE Image_LCornerJude_Status = IMAGE_LCORNER_NONE;           //L½ÇµãÅÐ¶Ï
 uint16 Image_GrageJudge_Thre = 10000;                   //³µ¿âÅÐ¶ÏµÄ±àÂëÆ÷»ý·Ö¾àÀë
 
-//---------------------------ÔªËØÅÐ¶Ï±äÁ¿--------------------------------
-uint8 none_leftshift_line=0;
-uint8 none_rightshift_line=0;
-
-
 //------------------------------µ÷ÊÔ²ÎÊý´¦Àí------------------------------
 //ÓÃÓÚµ÷ÊÔµÄ²ÎÊý(ÎªÁË×÷Çø·Ö,ÕâÀïµÄ±êÍ·ÆðÊ¼×ÖÄ¸ÓÃÐ¡Ð´´¦Àí, Í¬Ê±Ê¹ÓÃÏÂ»®ÏßÃüÃû·¨)
 uint8 image_thre = 140;                                  //±ßÏß´¦ÀíµÄ³õÊ¼ãÐÖµ
 uint8 image_begin_x = IMAGE_WIDTH / 2;                  //±ßÏß´¦ÀíµÄÆðÊ¼x×ø±êÆ«ÀëÖÐÐÄµÄ¾àÀë
-uint8 image_begin_y = IMAGE_HEIGHT -10;                //±ßÏß´¦ÀíÆðÊ¼µÄy×ø±ê
+uint8 image_begin_y = IMAGE_HEIGHT - 30;                //±ßÏß´¦ÀíÆðÊ¼µÄy×ø±ê
 uint8 image_block_size = 7;                             //ÇøÓò¶þÖµ»¯µÄÇøÓò±ß³¤
 uint8 image_block_clip_value = 1;                       //ÐÞÕýµÄ¾­Ñé²ÎÊý(Ò»°ãÎª2~5)
 
@@ -871,16 +862,6 @@ void  Image_Process_inv(uint8* image_inv){
                 Image_rptsRight_Bak[i][1] = Image_rptsLeft[i][1];
             }
         }
-    //-------------------×´Ì¬»ú-------------------
-
-
-    if(Trace_Status==TRACE_CROSS){
-        if(Trace_traceType==TRACE_Camera_Far){image_begin_y=IMAGE_HEIGHT-70;}
-        if(Trace_traceType==TRACE_Camera_Near){image_begin_y=IMAGE_HEIGHT-10;}
-    }
-
-
-    //-------------------×´Ì¬»ú------------------
     //ÕÒ×ó±ßÏß
        // image_thre=Image_Processing_OtsuGetThresh(image_inv);
        Image_rptsLeftNum = sizeof(Image_rptsLeft) / sizeof(Image_rptsLeft[0]);
@@ -890,20 +871,21 @@ void  Image_Process_inv(uint8* image_inv){
        if (IMAGE_AT(image_inv, rx1, ry1) >= image_thre){//Ã»ÓÐµ½±ß½ç¾ÍÕý³£´¦Àí
            Image_FindLine_LeftHand_Adaptive_inv(image_inv,image_block_size,image_block_clip_value, rx1,ry1);
        }
-       else{
+       else
            Image_rptsLeftNum = 0;                                                          //±ß½çµÄ»°¾ÍÊÇ0ÁË
-       }
+
+
        //----------------------------------------
        //ÕÒÓÒ±ßÏß
        Image_rptsRightNum = sizeof(Image_rptsRight) / sizeof(Image_rptsRight[0]);
        uint8 rx2 = image_begin_x;
-       uint8 ry2 = image_begin_y-30;
+       uint8 ry2 = image_begin_y-10;
        for (; rx2 < IMAGE_WIDTH - 1; ++rx2) if (IMAGE_AT(image_inv, rx2 + 1, ry2) < image_thre) break;     //²éÕÒ±ß½çÉÏµÄµÚÒ»¸öµã
        if (IMAGE_AT(image_inv, rx2, ry2) >= image_thre)                                                  //Ã»ÓÐµ½±ß½ç¾ÍÕý³£´¦Àí
            Image_FindLine_RightHand_Adaptive_inv(image_inv,image_block_size,image_block_clip_value, rx2,ry2);
-       else{
+       else
            Image_rptsRightNum = 0;
-       }
+
        for (uint8 i = 1; i < Image_rptsLeftNum - 1; ++i) {
                if (Image_rptsLeft[i + 1][0] != 0 || Image_rptsLeft[i + 1][1] != 0) {
                    Image_rptsLeft[i][0] = Image_rptsLeft[i + 1][0];
@@ -987,9 +969,9 @@ void  Image_Process_inv(uint8* image_inv){
            }
            //----------------------------------------
            //ÕÒ×óÓÒÖÐÏß
-           Image_TrackLeftLine(Image_rptsLefts, Image_rptsLeftsNum, Image_rptsLeftc, (uint8)round(Image_angleDist / Image_sampleDist), Image_pixelPreMeter * Image_roadWidth / 2-clip_middle);
+           Image_TrackLeftLine(Image_rptsLefts, Image_rptsLeftsNum, Image_rptsLeftc, (uint8)round(Image_angleDist / Image_sampleDist), Image_pixelPreMeter * Image_roadWidth / 2+5);
            Image_rptsLeftcNum = Image_rptsLeftsNum;
-           Image_TrackRightLine(Image_rptsRights, Image_rptsRightsNum, Image_rptsRightc, (uint8)round(Image_angleDist / Image_sampleDist), Image_pixelPreMeter * Image_roadWidth / 2+clip_middle);
+           Image_TrackRightLine(Image_rptsRights, Image_rptsRightsNum, Image_rptsRightc, (uint8)round(Image_angleDist / Image_sampleDist), Image_pixelPreMeter * Image_roadWidth / 2-5);
            Image_rptsRightcNum = Image_rptsRightsNum;
        if (Image_isUsefulData_Status== 0) {
            Image_isUsefulData_Status = 1;
@@ -1016,16 +998,6 @@ void Image_Process(uint8* image) {
             Image_iptsLeft_Bak[i][1] = Image_iptsLeft[i][1];
         }
     }
-    //-----------------------------------------
-
-
-    if(Trace_Status==TRACE_CROSS){
-        if(Trace_traceType==TRACE_Camera_Far){image_begin_y=IMAGE_HEIGHT-70;}
-        if(Trace_traceType==TRACE_Camera_Near){image_begin_y=IMAGE_HEIGHT-10;}
-    }
-
-
-    //-----------------------------------------
 
     //ÕÒ×ó±ßÏß
     Image_iptsLeftNum = sizeof(Image_iptsLeft) / sizeof(Image_iptsLeft[0]);
@@ -1064,11 +1036,9 @@ void Image_Process(uint8* image) {
                 Image_iptsRight_Bak[i][0] = Image_iptsRight[i][0];
                 Image_iptsRight_Bak[i][1] = Image_iptsRight[i][1];
             }
-        }//±ß½çµÄ»°¾ÍÊÇ0ÁË
-   if(Trace_Status==TRACE_CENTERLINENEAR||Trace_Status==TRACE_CENTERLINEFAR&&pid_type==PID_ORIGIN){
+        }                                                          //±ß½çµÄ»°¾ÍÊÇ0ÁË
     Image_getcenterLine();
-   }
-    // Image_Processing_OtsuGetThresh(image);
+   // Image_Processing_OtsuGetThresh(image);
         //¶ÔÊý¾Ý½øÐÐÈý½ÇÂË²¨
 //        //×ó±ßÏß
 //        Image_BlurPoints(Image_iptsLeft, Image_iptsLeftNum, Image_iptsLeftb, Image_linerBlurKernel);
@@ -1568,7 +1538,7 @@ void Image_GetAngle(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen) {
                 }
 //                ips200_show_float(ips200_width_max - 50, ips200_height_max - 20, Image_rptsLeftan[cornerIndex], 3, 4);
             }
-            else if (screen == IMAGE_TFT180) {
+            /*else if (screen == IMAGE_TFT180) {
                 int8 half = Image_angleBlockLen / 2;
                 for (int8 i = -half; i <= half; ++i) {
                     for (int8 j = -half; j <= half; ++j) {
@@ -1576,7 +1546,7 @@ void Image_GetAngle(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen) {
                     }
                 }
                 tft180_show_float(tft180_width_max - 50, tft180_height_max - 20, Image_rptsLeftan[cornerIndex], 3, 4);
-            }
+            }*/
         }
         else if (Image_lineSeclet == 1) {
             if (screen == IMAGE_IPS200) {
@@ -1588,7 +1558,7 @@ void Image_GetAngle(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen) {
                 }
 //                ips200_show_float(ips200_width_max - 50, ips200_height_max - 20, Image_rptsLeftan[cornerIndex], 3, 4);
             }
-            else if (screen == IMAGE_TFT180) {
+            /*else if (screen == IMAGE_TFT180) {
                 int8 half = Image_angleBlockLen / 2;
                 for (int8 i = -half; i <= half; ++i) {
                     for (int8 j = -half; j <= half; ++j) {
@@ -1596,7 +1566,7 @@ void Image_GetAngle(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen) {
                     }
                 }
                 tft180_show_float(tft180_width_max - 50, tft180_height_max - 20, Image_rptsLeftan[cornerIndex], 3, 4);
-            }
+            }*/
         }
     }
 }
@@ -1667,12 +1637,12 @@ void Image_LCornerCheck(void) {
         }
     }
     else if (Image_LCornerJude_Status == IMAGE_LCORNER_BEGIN_RIGHT) {
-//        if (abs(Encoder_sum_Motor2) < Circle_encoderRight_Thre) {
-////            if (Image_LineIsClosed(0) == true && Image_LineIsClosed(1) == true) {
-////                Image_LCornerJude_Status = IMAGE_LCORNER_IS_GRAGE_RIGHT;
-////                gpio_set_level(P20_8, GPIO_LOW);
-////            }
-//        }
+        if (abs(Encoder_sum_Motor2) < Circle_encoderRight_Thre) {
+            if (Image_LineIsClosed(0) == true && Image_LineIsClosed(1) == true) {
+                Image_LCornerJude_Status = IMAGE_LCORNER_IS_GRAGE_RIGHT;
+                gpio_set_level(P20_8, GPIO_LOW);
+            }
+        }
         //»·µº
         if (abs(Encoder_sum_Motor2) > Image_GrageJudge_Thre) {
             Image_LCornerJude_Status = IMAGE_LCORNER_IS_CIRCLE_RIGHT;
@@ -1701,30 +1671,16 @@ void Image_LCornerCheck(void) {
         Image_LCornerJude_Status = IMAGE_LCORNER_NONE;
         if (Circle_status == CIRCLE_NONE) {
             Circle_status = CIRCLE_LEFT_BEGIN;
-            Trace_Status=TRACE_CIRCLE;
             //Beep_Tweet();
         }
     }
     //»·µº¿ªÊ¼×´Ì¬»ú
-    else if (Image_LCornerJude_Status == IMAGE_LCORNER_IS_CIRCLE_RIGHT) {
+    else if (Image_LCornerJude_Status == IMAGE_LCORNER_IS_GRAGE_RIGHT) {
         Image_LCornerJude_Status = IMAGE_LCORNER_NONE;
         if (Circle_status == CIRCLE_NONE) {
             Circle_status = CIRCLE_RIGHT_BEGIN;
-            Trace_Status=TRACE_CIRCLE;
             //Beep_Tweet();
         }
 
-    }
-}
-void check_shiftroad(void){
-    if (Image_rptsLeftsNum < 0.2 / Image_sampleDist) {++none_leftshift_line;}
-    if(none_leftshift_line>=3){Trace_Status=TRACE_LEFTLOST;none_leftshift_line=0;}
-    if (Image_rptsRightsNum < 0.2 / Image_sampleDist){++none_rightshift_line;}
-    if(none_rightshift_line>=3){Trace_Status=TRACE_RIGHTLOST;none_rightshift_line=0;}
-}
-void handle_shiftroad(void){
-    if(Trace_Status==TRACE_LEFTLOST){
-    }
-    if(Trace_Status==TRACE_RIGHTLOST){
     }
 }

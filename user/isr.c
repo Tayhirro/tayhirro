@@ -43,11 +43,11 @@ IFX_INTERRUPT(cc60_pit_ch0_isr,0, CCU6_0_CH0_ISR_PRIORITY)
     interrupt_global_enable(0);                     // 开启中断嵌套
     pit_clear_flag(CCU60_CH0);
     //--------------------数据采集--------------------
-   // dl1a_get_distance();                          //tof数据采集
+    //dl1a_get_distance();                          //tof数据采集
    // Elec_Once();                                    //电感数据采集
     Encoder_SpeedRead();                            //编码器数据采集
     //对陀螺仪进行数据采集
-    Gyroscope_Conut();
+    //Gyroscope_Conut();
     //--------------------数据处理--------------------
     //电磁PID
 //    if (Elec_pidStatus == 1){
@@ -58,17 +58,15 @@ IFX_INTERRUPT(cc60_pit_ch0_isr,0, CCU6_0_CH0_ISR_PRIORITY)
 //        Motor_2Target=Speed -Elec_cor;
 //    }
     //舵机pid
-   // if(1){
-    Trace_Run();
-  //  }
+   // Trace_Run();
     //ele_direction_control(fPID* topid_steer,iPID* toipid_speed_left,iPID* toipid_speed_right,float zhongxian,float target)
 //    //电机PID
-  //  if(Motor_pidStatus == 1){
-  //      Motor_1cor=Motor_1PID_control(setpoint_left, (float)Encoder_1Data);
-  //      Motor_2cor=Motor_2PID_control(setpoint_right, (float)Encoder_2Data);
-  // }
+    //if(Motor_pidStatus == 1){
+    //    Motor_1cor=Motor_1PID_control(Motor_1Target, (float)Encoder_1Data);
+    //    Motor_2cor=Motor_2PID_control(Motor_2Target, (float)Encoder_2Data);
+    //}
     //编码器积分
-   Encoder_Count();
+    Encoder_Count();
 
     //--------------------蜂鸣器控制--------------------
 //    if (Beep_status == 0 && Beep_count < Beep_countThre) {
@@ -96,6 +94,7 @@ IFX_INTERRUPT(cc61_pit_ch0_isr, 0, CCU6_1_CH0_ISR_PRIORITY)
     interrupt_global_enable(0);                     // 开启中断嵌套
     pit_clear_flag(CCU61_CH0);
     if (mt9v03x_finish_flag == 1) {
+       Image_Process(mt9v03x_image[0]);
         Image_Process_Status = 1;
     }
 }

@@ -14,7 +14,9 @@
 
 CROSS_STATUS Cross_status=CROSS_NONE;
 int16 Cross_encoderLeft_Thre = 15500;              //左轮编码器积分阈值
+int16 Cross_encoderLeft_Thre2 = 15500;              //左轮编码器积分阈值
 int16 Cross_encoderRight_Thre = 15500;             //右轮编码器积分阈值
+int16 Cross_encoderRight_Thre2 = 15500;             //右轮编码器积分阈值
 uint8 Cross_forceAngle_Status = 0;             //十字路口强制打角状态机
 //----------------------------------------
 uint8 Cross_SteerVar    =   -13;    //打角值
@@ -56,152 +58,14 @@ GYROSCOPE_MEASURE_TYPE Cross_measureType = GYROSCOPE_GYRO_X;
 
 void Cross_CheckCamera(void) {
     //十字
-    if (Trace_Status==TRACE_CENTERLINENEAR&&Cross_status == CROSS_NONE && Image_LptLeft_Found && Image_LptRight_Found) {
+    if (Cross_status == CROSS_NONE && !Image_LptLeft_Found && !Image_LptRight_Found) {
         //测试代码
         Cross_status = CROSS_BEGIN;
-        Trace_Status = TRACE_CROSS;
         Encoder_Begin(ENCODER_MOTOR_1);
 //        put_int32(70, 1);
         gpio_set_level(P20_8, GPIO_LOW);
         gpio_set_level(P20_9, GPIO_LOW);
     }
-}
-
-
-
-//---------------------Cross巡线---编码器积分和陀螺仪
-//void Cross_RunCamera2(){
-//    if (Cross_status == CROSS_BEGIN) {
-//            Trace_traceType = TRACE_Camera_Near;
-//    }
-//
-//}
-void Cross_RunGyscopAndEncoder(){
-    if (Cross_status == CROSS_BEGIN) {
-        Trace_Status=TRACE_CROSS;
-        Trace_traceType = TRACE_Camera_Near;
-
-
-                //当两侧角点较近的时候，开启running模式//或者丢线时
-               // if(Image_LptLeft_Found&&Image_LptRight_Found){
-                  // Cross_status = CROSS_RUNNING;
-                  // Trace_traceType = TRACE_Camera_Far_Both;
-                //}
-                   if (Image_rptsLeftsNum < 0.2 / Image_sampleDist) ++none_left_line_cross;
-                                if (Image_rptsLeftsNum <0.2/ Image_sampleDist) ++none_right_line_cross;
-                                    if (none_left_line_cross>2&&none_right_line_cross>2) {
-                                        none_left_line_cross = 0;
-                                        none_right_line_cross = 0;
-                                        Cross_status = CROSS_RUNNING;
-                                        Trace_traceType = TRACE_Camera_Far_Both;
-                                        Gyroscope_Begin(Cross_measureType);     //开启陀螺仪
-                                    }
-            //------------------------------------------------------------------------------------
-            //------------------------------------------------------------------------------------
-                        //循迹初始行向上移动
-            //------------------------------------------------------------------------------------
-            //------------------------------------------------------------------------------------
-            //------------------------------------------------------------------------------------
-               //
-        }
-                //当角点较近时，切换CROSS_RUNNING模式  //此时进行同时近线远线搜索，远线主导搜索//或者编码器积分//或者陀螺仪积分//或者同时辅助
-                else if (Cross_status == CROSS_RUNNING) {
-                              //近处搜寻到线
-                            if(Image_rptsLeftsNum > 0.2 / Image_sampleDist&&Image_rptsRightsNum > 0.2 / Image_sampleDist||abs(Encoder_sum_Motor1)>Cross_encoderRight_Thre){  //可以修改||
-                                Encoder_End(ENCODER_MOTOR_1);
-                                Encoder_Clear(ENCODER_MOTOR_1);
-                                Trace_traceType=TRACE_Camera_Near;      //只寻近线
-                                Cross_status=CROSS_IN;
-                            }
-
-
-
-
-                                //----------------------------------------
-                }
-
-                else if(Cross_status==CROSS_IN){        //进入十字路口的弯道部分
-                                                //陀螺仪方式来判断是否到达最终阶段
-                                        if (Cross_measureType == GYROSCOPE_GYRO_X) {
-                                                                               if (fabs(Gyro_x) > Cross_angleEntry_Thre) {
-                                                                                   //进入环岛
-                                                                                   Cross_forceAngle_Status = 0;
-                                                                                   Elec_pidStatus = 1;
-                                                                                   Cross_status = CROSS_IN2;
-
-
-                                                                                   Cross_Steer_Angle=Cross_Targetangle+Cross_SteerVar;  //参数传递//会更改
-
-
-                                                                                   Gyroscope_End(Cross_measureType);
-                                                                                   Gyroscope_Clear(Cross_measureType);
-                                                                                   Gyroscope_Begin(Cross_measureType);
-                                                                               }
-                                                                           }
-                                                                           else if (Cross_measureType == GYROSCOPE_GYRO_Y) {
-                                                                               if (fabs(Gyro_y) > Cross_angleEntry_Thre) {
-                                                                                   //进入环岛
-                                                                                   Cross_forceAngle_Status = 0;
-                                                                                   Elec_pidStatus = 1;
-                                                                                   Cross_status = CROSS_IN2;
-                                                                                   Gyroscope_End(Cross_measureType);
-                                                                                   Gyroscope_Clear(Cross_measureType);
-                                                                                   Gyroscope_Begin(Cross_measureType);
-                                                                               }
-                                                                           }
-                                                                           else if (Cross_measureType == GYROSCOPE_GYRO_Z) {
-                                                                               if (fabs(Gyro_z) > Cross_angleEntry_Thre) {
-                                                                                   //进入环岛
-                                                                                   Cross_forceAngle_Status = 0;
-                                                                                   Elec_pidStatus = 1;
-                                                                                   Speed_set = 30;
-                                                                                   Cross_status = CROSS_IN2;
-                                                                                   Gyroscope_End(Cross_measureType);
-                                                                                   Gyroscope_Clear(Cross_measureType);
-                                                                                   Gyroscope_Begin(Cross_measureType);
-                                                                               }
-                                                                           }
-
-                                    }
-
-
-
-
-
-
-
-                     else if (Cross_status==CROSS_IN2) {
-                                 //开始搜索左线，跟着左线的中线走,同时最后用fabs(Gyro_)来判断是否到达cross_begin_2阶段
-
-
-
-                                if((Image_LptLeft_Found &&!Image_LptRight_Found)||(Image_LptLeft_Found&&Image_LptRight_Found)){          //左角点发现之后
-                                                Cross_status=CROSS_BEGIN2;
-                                                Encoder_Begin(ENCODER_MOTOR_2);
-                                           }
-                            }
-                     else if (Cross_status==CROSS_BEGIN2) {
-
-                         if (Image_rptsLeftsNum < 0.2 / Image_sampleDist) ++none_left_line_cross;
-                                                     if (Image_rptsLeftsNum <0.2/ Image_sampleDist) ++none_right_line_cross;
-                                                         if (none_left_line_cross>2&&none_right_line_cross>2) {
-                                                             none_left_line_cross = 0;
-                                                             none_right_line_cross = 0;
-                                                             Cross_status = CROSS_RUNNING2;
-                                                             Trace_traceType = TRACE_Camera_Far;
-                                                             Gyroscope_Begin(Cross_measureType);     //开启陀螺仪
-                                                         }
-                                             }
-                     else if(Cross_status==CROSS_RUNNING2){
-                         if(Image_rptsLeftsNum > 0.2 / Image_sampleDist&&Image_rptsRightsNum > 0.2 / Image_sampleDist||abs(Encoder_sum_Motor1)>Cross_encoderRight_Thre){  //可以修改||
-                                                     Encoder_End(ENCODER_MOTOR_1);
-                                                     Encoder_Clear(ENCODER_MOTOR_1);
-                                                     Trace_traceType=TRACE_Camera_Near;
-                                                     Cross_status=CROSS_NONE;
-                                                     Trace_Status=TRACE_CENTERLINENEAR;
-                                                 }
-                     }
-
 }
 void Cross_RunCamera(){
     if (Cross_status == CROSS_BEGIN) {
@@ -218,9 +82,16 @@ void Cross_RunCamera(){
                                     none_left_line_cross = 0;
                                     none_right_line_cross = 0;
                                     Cross_status = CROSS_RUNNING;
-                                    Trace_traceType=TRACE_Camera_Far_Both;
+                                    Trace_traceType = TRACE_Camera_Far_Both;
                                     Gyroscope_Begin(Cross_measureType);     //开启陀螺仪
                                 }
+        //------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------
+                    //循迹初始行向上移动         //此时近远都要巡线
+        //------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------
+           //
     }
             //当角点较近时，切换CROSS_RUNNING模式  //此时进行同时近线远线搜索，远线主导搜索//或者编码器积分//或者陀螺仪积分//或者同时辅助
             else if (Cross_status == CROSS_RUNNING) {
@@ -231,14 +102,10 @@ void Cross_RunCamera(){
                             Trace_traceType=TRACE_Camera_Near;      //只寻近线
                             Cross_status=CROSS_IN;
                         }
-
-
-
-
                             //----------------------------------------
             }
 
-            else if(Cross_status==CROSS_IN){        //进入十字路口的弯道部分
+            else if(Cross_status==CROSS_IN){
                                             //陀螺仪方式来判断是否到达最终阶段
                                     if (Cross_measureType == GYROSCOPE_GYRO_X) {
                                                                            if (fabs(Gyro_x) > Cross_angleEntry_Thre) {
@@ -306,7 +173,7 @@ void Cross_RunCamera(){
                                                          none_left_line_cross = 0;
                                                          none_right_line_cross = 0;
                                                          Cross_status = CROSS_RUNNING2;
-                                                         Trace_traceType = TRACE_Camera_Far;
+                                                         Trace_traceType = TRACE_Camera_Far_Both;
                                                          Gyroscope_Begin(Cross_measureType);     //开启陀螺仪
                                                      }
                                          }
@@ -316,7 +183,6 @@ void Cross_RunCamera(){
                                                  Encoder_Clear(ENCODER_MOTOR_1);
                                                  Trace_traceType=TRACE_Camera_Near;
                                                  Cross_status=CROSS_NONE;
-                                                 Trace_Status=TRACE_CENTERLINENEAR;
                                              }
                  }
 }

@@ -65,7 +65,7 @@ void Circle_CheckCamera(void);
 void Circle_RunElec(CIRCLE_PRE_ENTRY_METHOD entryMethod);
 void Grage_Departure_Check(void);
 void Circle_RunCamera();
-void Circle_RunGyscopAndEncoder();
+
 
 
 #endif /* CODE_XIAO_CIRCLE_H_ */

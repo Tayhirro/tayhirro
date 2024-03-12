@@ -742,7 +742,7 @@ void Circle_RunCamera() {
         Trace_traceType = TRACE_Camera_RIGHT;
 
         //先丢左线后右线
-        if (Image_rptsLeftsNum < 0.2 / Image_sampleDist) {++none_left_line;Trace_Status=TRACE_LEFTLOST;}
+        if (Image_rptsLeftsNum < 0.2 / Image_sampleDist) ++none_left_line;
         if (Image_rptsLeftsNum > 1.0 / Image_sampleDist && none_left_line > 2) {
             ++have_left_line;
             if (have_left_line > 1) {
@@ -820,10 +820,8 @@ void Circle_RunCamera() {
     else if (Circle_status == CIRCLE_RIGHT_BEGIN) {
         Trace_traceType = TRACE_Camera_LEFT;
         //先丢右线后有线
-        if (Image_rptsRightsNum < 0.2 / Image_sampleDist){
+        if (Image_rptsRightsNum < 0.2 / Image_sampleDist)
             ++none_right_line;
-            Trace_Status=TRACE_RIGHTLOST;
-        }
         if (Image_rptsRightsNum > 1.0 / Image_sampleDist && none_right_line > 2) {
             ++have_right_line;
             if (have_right_line > 1) {
@@ -887,6 +885,9 @@ void Circle_RunCamera() {
     }
 }
 
+static void Circle_RunBoth() {
+
+}
 
 /*
  * @brief                   处理环岛
@@ -919,44 +920,44 @@ void Circle_Handler(CIRCLE_CHECK_METHOD checkMethod, CIRCLE_RUN_METHOD runMethod
             }
         }
         //仅使用电磁检测
-//        else if (checkMethod == CIRCLE_CHECK_ELEC) {
-//            Circle_CheckElec();
-//            if (Circle_leftBeginStatus_Elec == 1) {
-//                Circle_status = CIRCLE_LEFT_BEGIN;
-//                Circle_leftBeginStatus_Elec = 0;
-//                if (entryMethod == CIRCLE_ENTRY_ENCODER) {
-//                    Encoder_Begin(ENCODER_MOTOR_2);
-//                }
-//            }
-//            else if (Circle_rightBeginStatus_Elec == 1) {
-//                Circle_status = CIRCLE_RIGHT_BEGIN;
-//                Circle_rightBeginStatus_Elec = 0;
-//                if (entryMethod == CIRCLE_ENTRY_ENCODER) {
-//                    Encoder_Begin(ENCODER_MOTOR_1);
-//                }
-//            }
-//        }
+        else if (checkMethod == CIRCLE_CHECK_ELEC) {
+            Circle_CheckElec();
+            if (Circle_leftBeginStatus_Elec == 1) {
+                Circle_status = CIRCLE_LEFT_BEGIN;
+                Circle_leftBeginStatus_Elec = 0;
+                if (entryMethod == CIRCLE_ENTRY_ENCODER) {
+                    Encoder_Begin(ENCODER_MOTOR_2);
+                }
+            }
+            else if (Circle_rightBeginStatus_Elec == 1) {
+                Circle_status = CIRCLE_RIGHT_BEGIN;
+                Circle_rightBeginStatus_Elec = 0;
+                if (entryMethod == CIRCLE_ENTRY_ENCODER) {
+                    Encoder_Begin(ENCODER_MOTOR_1);
+                }
+            }
+        }
         //二者同时使用
-//        else if (checkMethod == CIRCLE_CHECK_BOTH) {
-//            Circle_CheckCamera();
-//            Circle_CheckElec();
-//            if (Circle_leftBeginStatus_Camera == 1 && Circle_leftBeginStatus_Elec == 1) {
-//                Circle_status = CIRCLE_LEFT_BEGIN;
-//                Circle_leftBeginStatus_Camera = 0;
-//                Circle_leftBeginStatus_Elec = 0;
-//                if (entryMethod == CIRCLE_ENTRY_ENCODER) {
-//                    Encoder_Begin(ENCODER_MOTOR_2);
-//                }
-//            }
-//            else if (Circle_rightBeginStatus_Camera == 1 && Circle_rightBeginStatus_Elec == 1) {
-//                Circle_status = CIRCLE_RIGHT_BEGIN;
-//                Circle_rightBeginStatus_Camera = 0;
-//                Circle_rightBeginStatus_Elec = 0;
-//                if (entryMethod == CIRCLE_ENTRY_ENCODER) {
-//                    Encoder_Begin(ENCODER_MOTOR_1);
-//                }
-//            }
-//        }
+        else if (checkMethod == CIRCLE_CHECK_BOTH) {
+            Circle_CheckCamera();
+            Circle_CheckElec();
+            if (Circle_leftBeginStatus_Camera == 1 && Circle_leftBeginStatus_Elec == 1) {
+                Circle_status = CIRCLE_LEFT_BEGIN;
+                Circle_leftBeginStatus_Camera = 0;
+                Circle_leftBeginStatus_Elec = 0;
+                if (entryMethod == CIRCLE_ENTRY_ENCODER) {
+                    Encoder_Begin(ENCODER_MOTOR_2);
+                }
+            }
+            else if (Circle_rightBeginStatus_Camera == 1 && Circle_rightBeginStatus_Elec == 1) {
+                Circle_status = CIRCLE_RIGHT_BEGIN;
+                Circle_rightBeginStatus_Camera = 0;
+                Circle_rightBeginStatus_Elec = 0;
+                if (entryMethod == CIRCLE_ENTRY_ENCODER) {
+                    Encoder_Begin(ENCODER_MOTOR_1);
+                }
+            }
+        }
     }
 
     //----------------------------------------
@@ -964,13 +965,10 @@ void Circle_Handler(CIRCLE_CHECK_METHOD checkMethod, CIRCLE_RUN_METHOD runMethod
     if (runMethod == CIRCLE_RUN_CAMERA) {
         Circle_RunCamera();
     }
-//    else if (runMethod == CIRCLE_RUN_ELEC) {
-//        Circle_RunElec(entryMethod);
-//    }
-//    else if (runMethod == CIRCLE_RUN_BOTH) {
-//        Circle_RunBoth();
-//    }
-}
-void Circle_RunGyscopAndEncoder(){
-
+    else if (runMethod == CIRCLE_RUN_ELEC) {
+        Circle_RunElec(entryMethod);
+    }
+    else if (runMethod == CIRCLE_RUN_BOTH) {
+        Circle_RunBoth();
+    }
 }

@@ -16,52 +16,13 @@
 
 //==============================需要使用到的枚举==============================
 typedef enum {
-TRACE_CENTERLINENEAR=0x00,   //中线搜索
-//--------------------------------------------------------------
-TRACE_CENTERLINEFAR=0X01,    //十字路口使用
-//--------------------------------------------------------------
-TRACE_RIGHTLOST=0x02,   //右线丢失//在pidorigin时有效//
-TRACE_LEFTLOST=0x03,   //左线丢失1//在pidorigin时有效//
-TRACE_CROSS=0x04,   //十字
-TRACE_CIRCLE=0x05   //环岛
-}TRACE_STATUS;
-
-
-
-
-typedef enum {
-    TRACE_Camera_MID = 0x01,
+    TRACE_Camera_MID = 0x01,              //使用电磁寻迹
     TRACE_Camera_LEFT = 0x02,      //使用摄像头寻近处左线
     TRACE_Camera_RIGHT = 0x03,     //使用摄像头寻近处右线
-//--------------------------------------------------------------
-    TRACE_Camera_Near=0x04,         //十字路口使用
-    TRACE_Camera_Far=0x05,          //十字路口使用
-    TRACE_Camera_Far_Both=0x06      //十字路口使用
+    TRACE_Camera_Near=0x04,
+    TRACE_Camera_Far_Both=0x05
 }TRACE_TYPE;
 
-
-
-typedef enum{
-    TRACE_CROSS_CAREMA=0x00,        //暂时没用
-    TRACE_CROSS_CAREMA_GYROSCOPE_ENCODER=0x02,
-    TRACE_CROSS_GYROSCOPE_ENCODER=0x03
-}TRACE_CROSS_TYPE;
-
-
-
-
-
-
-typedef enum{
-        TRACE_CIRCLE_CAREMA=0x00,       //暂时没用
-        TRACE_CIRCLE_CAREMA_GYROSCOPE_ENCODER=0x02,
-        TRACE_CIRCLE_GYROSCOPE_ENCODER=0x03
-}TRACE_CIRCLE_TYPE;
-
-extern TRACE_CIRCLE_TYPE Trace_Circle_Type;
-extern TRACE_CROSS_TYPE Trace_Cross_Type;
-
-extern TRACE_STATUS Trace_Status;
 //==============================外部变量接口==============================
 extern TRACE_TYPE Trace_traceType;  //小车寻迹类型
 

@@ -9,6 +9,9 @@
 //------------------------------------------------------------
 //»ù±¾±äÁ¿
 TRACE_TYPE Trace_traceType = TRACE_Camera_MID;
+extern fPID Trace_cameraLeftPID;                       //×ó±ßÏß»ñÈ¡µÄÖÐÏßµÄPID
+extern fPID Trace_cameraRightPID;                      //ÓÒ±ßÏß»ñÈ¡µÄÖÐÏßµÄPID
+extern fPID Trace_cameraMidPID;                       //×ó+ÓÒ»ñÈ¡µÄÖÐÏßµÄPID
 //==============================ÉãÏñÍ·Ñ°¼£Ïà¹Ø==============================
 //------------------------------------------------------------
 //ÖÐÏß±ê×¼ÖµÏà¹Ø
@@ -21,11 +24,6 @@ uint8 Trace_aimLine = 30;                       //ÖÐÏßÏòÉÏÕÒµÄµÚn¸öµã×÷ÎªÄ¿±êÇ°Õ
 
 float Trace_lineWeight[] = {0.5, 0.3, 0.2};     //´¦ÀíÖÐÏßÊ±ºòÈýÐÐ¼ÆËãµÄÈ¨ÖØ
 
-
-
-TRACE_CIRCLE_TYPE Trace_Circle_Type=TRACE_CIRCLE_CAREMA_GYROSCOPE_ENCODER;      //³õÊ¼»¯Îª¹²Í¬
-TRACE_CROSS_TYPE Trace_Cross_Type=TRACE_CROSS_CAREMA_GYROSCOPE_ENCODER;         //³õÊ¼»¯Îª¹²Í¬
-TRACE_STATUS Trace_Status=TRACE_CENTERLINENEAR;
 //------------------------------------------------------------
 //PIDÏà¹Ø
 //fPID Trace_cameraLeftPID;                       //×ó±ßÏß»ñÈ¡µÄÖÐÏßµÄPID
@@ -77,22 +75,58 @@ static void Trace_GetAngelError() {
 
     //------------------------------
     //»ñÈ¡Îó²î
-    if (Trace_traceType == TRACE_Camera_MID) {
-           Trace_angleError = Trace_lineWeight[0] * (float)Image_centerLine[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
-                           + Trace_lineWeight[1] * (float)Image_centerLine[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
-                           + Trace_lineWeight[2] * (float)Image_centerLine[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];
+    if(pid_type==PID_ORIGIN){
+        if (Trace_traceType == TRACE_Camera_MID) {
+                  Trace_angleError = Trace_lineWeight[0] * (float)Image_centerLine[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
+                                  + Trace_lineWeight[1] * (float)Image_centerLine[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
+                                  + Trace_lineWeight[2] * (float)Image_centerLine[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];
 
-       }
-    else if (Trace_traceType == TRACE_Camera_LEFT) {
-        Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
-                        + Trace_lineWeight[1] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
-                        + Trace_lineWeight[2] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];
+
+                  /*Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
+                                             + Trace_lineWeight[1] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
+                                             + Trace_lineWeight[2] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];*/
+
+              }
+           else if (Trace_traceType == TRACE_Camera_LEFT) {
+               Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
+                               + Trace_lineWeight[1] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
+                               + Trace_lineWeight[2] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];
+           }
+           else if (Trace_traceType == TRACE_Camera_RIGHT) {
+               Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsRightc[bf_clip(Trace_aimLine, 0, Image_rptsRightcNum - 1)][0]
+                               + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
+                               + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
+           }
     }
-    else if (Trace_traceType == TRACE_Camera_RIGHT) {
-        Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsRightc[bf_clip(Trace_aimLine, 0, Image_rptsRightcNum - 1)][0]
-                        + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
-                        + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
+
+    if(pid_type==PID_INV){
+        if (Trace_traceType == TRACE_Camera_MID) {
+                  /*Trace_angleError = Trace_lineWeight[0] * (float)Image_centerLine[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
+                                  + Trace_lineWeight[1] * (float)Image_centerLine[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
+                                  + Trace_lineWeight[2] * (float)Image_centerLine[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];*/
+
+
+                  Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
+                                             + Trace_lineWeight[1] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
+                                             + Trace_lineWeight[2] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0]
+                                             + Trace_lineWeight[0] * (float)Image_rptsRightc[bf_clip(Trace_aimLine, 0, Image_rptsRightcNum - 1)][0]
+                                             + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
+                                             + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
+                  Trace_angleError/=2.0;
+              }
+           else if (Trace_traceType == TRACE_Camera_LEFT) {
+               Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
+                               + Trace_lineWeight[1] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
+                               + Trace_lineWeight[2] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];
+           }
+           else if (Trace_traceType == TRACE_Camera_RIGHT) {
+               Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsRightc[bf_clip(Trace_aimLine, 0, Image_rptsRightcNum - 1)][0]
+                               + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
+                               + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
+           }
     }
+
+
 }
 
 /*
@@ -117,17 +151,17 @@ void Trace_PID_Set(float K_p_set, float K_d_set, float coLimit, float boost, TRA
     //------------------------------
     //Ñ°ÉãÏñÍ·×ó±ßÏß+ÓÒ±ßÏßÕÒµ½µÄÖÐÏßµÄPID
     if (traceType == TRACE_Camera_MID) {
-            PID_SetParameter(Trace_cameraMidPID, K_p_set, 0, K_d_set, 0, coLimit, boost);
+            PID_SetParameter(&Trace_cameraMidPID, K_p_set, 0, K_d_set, 0, coLimit, boost);
         }
     //Ñ°ÉãÏñÍ·×ó±ßÏßÕÒµ½µÄÖÐÏßµÄPID
 
     else if (traceType == TRACE_Camera_LEFT) {
-        PID_SetParameter(Trace_cameraLeftPID, K_p_set, 0, K_d_set, 0, coLimit, boost);
+        PID_SetParameter(&Trace_cameraLeftPID, K_p_set, 0, K_d_set, 0, coLimit, boost);
     }
     //------------------------------
     //Ñ°ÉãÏñÍ·ÓÒ±ßÏßÕÒµ½µÄÖÐÏßµÄPID
     else if (traceType == TRACE_Camera_RIGHT) {
-        PID_SetParameter(Trace_cameraRightPID, K_p_set, 0, K_d_set, 0, coLimit, boost);
+        PID_SetParameter(&Trace_cameraRightPID, K_p_set, 0, K_d_set, 0, coLimit, boost);
     }
 
 }
@@ -147,7 +181,7 @@ float Trace_Run() {
     //ÉãÏñÍ·×ó¼ÓÓÒÑ°ÖÐÏß
     if (Trace_traceType == TRACE_Camera_MID) {
            Trace_GetAngelError();
-           direction_control(Trace_cameraMidPID,Trace_angleError,94);
+           direction_control(&Trace_cameraMidPID,Trace_angleError,94);
 
            //Trace_PID_Set(Trace_cameraLeftPID.Kp_Set, Trace_cameraLeftPID.Kd_Set, Trace_cameraLeftPID.utLimit, 1.0, Trace_traceType);
            //PID_PostionalPID(&Trace_cameraLeftPID, 0, Trace_angleError);
@@ -156,7 +190,7 @@ float Trace_Run() {
     //ÉãÏñÍ·Ñ°×óÏß
      if (Trace_traceType == TRACE_Camera_LEFT) {
         Trace_GetAngelError();
-        direction_control(Trace_cameraLeftPID,Trace_angleError,94);
+        direction_control(&Trace_cameraLeftPID,Trace_angleError,94);
 
         //Trace_PID_Set(Trace_cameraLeftPID.Kp_Set, Trace_cameraLeftPID.Kd_Set, Trace_cameraLeftPID.utLimit, 1.0, Trace_traceType);
         //PID_PostionalPID(&Trace_cameraLeftPID, 0, Trace_angleError);
@@ -166,7 +200,7 @@ float Trace_Run() {
     //ÉãÏñÍ·Ñ°ÓÒÏß
     else if (Trace_traceType == TRACE_Camera_RIGHT) {
         Trace_GetAngelError();
-        direction_control(Trace_cameraRightPID,Trace_angleError,94);
+        direction_control(&Trace_cameraRightPID,Trace_angleError,94);
         //Trace_PID_Set(Trace_cameraRightPID.Kp_Set, Trace_cameraRightPID.Kd_Set, Trace_cameraRightPID.utLimit, 1.0, Trace_traceType);
         //PID_PostionalPID(&Trace_cameraRightPID, 0, Trace_angleError);
         return Trace_cameraRightPID.output_val;
