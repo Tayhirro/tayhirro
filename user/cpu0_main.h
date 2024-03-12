@@ -106,18 +106,21 @@ extern float Elec_A;    extern float Elec_B;    extern float Elec_C;
 
 //-----------------------------
 extern double H[3][3] ;
-void Camera_GetInverse(uint8 x, uint8 y, uint8 inv[2]);
 void Image_FindCorners(void);
 //-----------------------------
 //摄像头PID(左边线找到的中线)
 extern float Camera_leftP;     extern float Camera_leftI;     extern float Camera_leftD;   extern float Camera_leftCor;
 //摄像头PID(右边线找到的中线)
 extern float Camera_rightP;     extern float Camera_rightI;     extern float Camera_rightD;  extern float Camera_rightCor;
+//摄像头PID(（左+右）/2)
+extern float Camera_midP;     extern float Camera_midI ;     extern float Camera_midD ;   extern float Camera_midCor;
 //------------------------------
 //摄像头PD限幅(左边线找到的中线)
 extern float Camera_leftPLimit;    extern float Camera_leftCoLimit;   extern float Camera_leftBoost;
 //摄像头PD限幅(右边线找到的中线)
 extern float Camera_rightPLimit;    extern float Camera_rightCoLimit;   extern float Camera_rightBoost;
+//
+extern float Camera_midPLimit;    extern float Camera_midCoLimit;   extern float Camera_midBoost;
 
 extern float Speed_accVar; extern uint8 Barrier_Judege_Status;
 

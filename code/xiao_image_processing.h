@@ -122,8 +122,11 @@ extern uint8 Image_centerLineNum_Bak;
 //Y角点
 extern uint8 Image_YptLeft_rptsLefts_id;                       //左边线Y角点id
 extern uint8 Image_YptRight_rptsRights_id;                     //右边线Y角点id
+extern uint8 Image_HptLeft_rptsLefts_id;
 extern bool  Image_YptLeft_Found;                              //左边线Y角点找到判定
 extern bool  Image_YptRight_Found;                             //右边线Y角点找到判断
+extern bool Image_HptLeft_Found;
+extern bool Image_HptRight_Found;
 //------------------------------
 //L角点
 extern uint8 Image_LptLeft_rptsLefts_id;                       //左边线L角点id
@@ -191,5 +194,8 @@ uint8 IMAGE_AT(uint8* image, int16 x, int16 y);
 void Image_ShowCorner(uint8 x, uint8 y, rgb565_color_enum color);
 void Image_LCornerCheck(void);
 bool Image_LineIsClosed(uint8 select);
+
+void check_shiftroad();
+void handle_shiftroad();
 
 #endif /* CODE_XIAO_IMAGE_PROCESSING_H_ */

@@ -57,11 +57,11 @@ void Motor_SetSpeed(MOTOR_PWM_enum motor, int16 speed) {
     else if (motor == MOTOR_2) {
         if (speed < 0) {
             speed = -speed;
-            pwm_set_duty(MOTOR_2_DIR, 0);
+            pwm_set_duty(MOTOR_2_DIR, PWM_DUTY_MAX);
             pwm_set_duty(MOTOR_2_PWM, speed);
         }
         else {
-            pwm_set_duty(MOTOR_2_DIR, PWM_DUTY_MAX);
+            pwm_set_duty(MOTOR_2_DIR,0);
             pwm_set_duty(MOTOR_2_PWM, speed);
         }
 
@@ -104,10 +104,10 @@ void Motor_PID_Init(void){
  * @return          NULL
  */
 void Motor_1PID_Set(float K_p_set, float K_i_set, float K_d_set,float pLimit, float coLimit, float boost){
-    PID_SetParameter(&Motor_1PID, K_p_set, K_i_set, K_d_set, pLimit, coLimit, boost);
+    PID_SetParameter(Motor_1PID, K_p_set, K_i_set, K_d_set, pLimit, coLimit, boost);
 }
 void Motor_2PID_Set(float K_p_set, float K_i_set, float K_d_set,float pLimit, float coLimit, float boost){
-    PID_SetParameter(&Motor_2PID, K_p_set, K_i_set, K_d_set, pLimit, coLimit, boost);
+    PID_SetParameter(Motor_2PID, K_p_set, K_i_set, K_d_set, pLimit, coLimit, boost);
 }
 
 void Motor_1SetPIDP(float setP) {
@@ -189,9 +189,16 @@ float Motor_1PID_control(float target,float cur){
     Motor_1PID.Ki_output_val=Motor_1PID.Ki*Motor_1PID.err;
     Motor_1PID.Kd_output_val=Motor_1PID.Kd*(Motor_1PID.err - 2 * Motor_1PID.err_last + Motor_1PID.err_llast);
     Motor_1PID.ut=Motor_1PID.Kp_output_val+Motor_1PID.Ki_output_val+Motor_1PID.Kd_output_val;
-    Motor_1PID.output_val=Motor_1PID.ut+target;
+    Motor_1PID.output_val=Motor_1PID.boost*(Motor_1PID.ut+target);
+
     Motor_1PID.err_llast=Motor_1PID.err_last;
     Motor_1PID.err_last=Motor_1PID.err;
+
+    if (Motor_1PID.output_val > Motor_1PID.pLimit) {
+            Motor_1PID.output_val = Motor_1PID.pLimit;
+           } else if (Motor_1PID.output_val < -Motor_1PID.pLimit) {
+               Motor_1PID.output_val = -Motor_1PID.pLimit;
+           }
   //  ////PID_SetParameter(&Motor_1PID, target, cur);
     Motor_SetSpeed(MOTOR_1, (int)Motor_1PID.output_val);
     return Motor_1PID.output_val;
@@ -214,10 +221,17 @@ float Motor_2PID_control(float target,float cur){
     Motor_2PID.Ki_output_val=Motor_2PID.Ki*Motor_2PID.err;
     Motor_2PID.Kd_output_val=Motor_2PID.Kd*(Motor_2PID.err - 2 * Motor_2PID.err_last + Motor_2PID.err_llast);
     Motor_2PID.ut=Motor_2PID.Kp_output_val+Motor_2PID.Ki_output_val+Motor_2PID.Kd_output_val;
-    Motor_2PID.output_val=Motor_2PID.ut+target;
+    Motor_2PID.output_val=Motor_2PID.boost*(Motor_2PID.ut+target);
   //  //PID_SetParameter(&Motor_2PID, target, cur);
     Motor_2PID.err_llast=Motor_2PID.err_last;
     Motor_2PID.err_last=Motor_2PID.err;
+
+    if (Motor_2PID.output_val > Motor_2PID.pLimit) {
+                Motor_2PID.output_val = Motor_2PID.pLimit;
+               } else if (Motor_2PID.output_val < -Motor_2PID.pLimit) {
+                   Motor_2PID.output_val = -Motor_2PID.pLimit;
+               }
+
     Motor_SetSpeed(MOTOR_2, (int)Motor_2PID.output_val);
     return Motor_2PID.output_val;
 }

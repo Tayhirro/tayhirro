@@ -11,12 +11,12 @@
 #include "../libraries/zf_common/zf_common_headfile.h"
 
 //------------------------------通用宏------------------------------
-#define ENCODER_1_DIR               (TIM4_ENCODER)              //带方向编码器(电机1)
-#define ENCODER_2_DIR               (TIM2_ENCODER)              //带方向编码器(电机2)
-#define ENCODER_1_DIR_PULSE         (TIM4_ENCODER_CH2_P00_9)    //电机1计数引脚
-#define ENCODER_1_DIR_DIR           (TIM4_ENCODER_CH1_P02_8)    //电机1DIR脚
-#define ENCODER_2_DIR_PULSE         (TIM2_ENCODER_CH2_P33_6)    //电机2计数引脚
-#define ENCODER_2_DIR_DIR           (TIM2_ENCODER_CH1_P33_7)    //电机2DIR脚
+#define ENCODER_1_DIR               (TIM5_ENCODER)              //带方向编码器(电机1)
+#define ENCODER_2_DIR               (TIM6_ENCODER)              //带方向编码器(电机2)
+#define ENCODER_1_DIR_PULSE         (TIM5_ENCODER_CH1_P10_3)    //电机1计数引脚
+#define ENCODER_1_DIR_DIR           (TIM5_ENCODER_CH2_P10_1)    //电机1DIR脚
+#define ENCODER_2_DIR_PULSE         (TIM6_ENCODER_CH1_P20_3)    //电机2计数引脚
+#define ENCODER_2_DIR_DIR           (TIM6_ENCODER_CH2_P20_0)    //电机2DIR脚
 
 #define ENCODER_FILTER_MAX          (4)
 

@@ -13,10 +13,10 @@
 #include "cpu0_main.h"
 
 #if DIRVER_WITH_DIRECTION       //带方向的驱动板
-#define MOTOR_1_DIR             (ATOM0_CH2_P21_4)
-#define MOTOR_1_PWM             (ATOM0_CH3_P21_5)
-#define MOTOR_2_DIR             (ATOM0_CH0_P21_2)
-#define MOTOR_2_PWM             (ATOM0_CH1_P21_3)
+#define MOTOR_1_DIR             (ATOM0_CH6_P02_6)
+#define MOTOR_1_PWM             (ATOM0_CH7_P02_7)
+#define MOTOR_2_DIR             (ATOM0_CH4_P02_4)
+#define MOTOR_2_PWM             (ATOM0_CH5_P02_5)
 #define MOTOR_ADVANVE           (0)
 #define MOTOR_RETREAT           (1)
 #else                           //不带方向的驱动板

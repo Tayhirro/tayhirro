@@ -23,4 +23,5 @@ int16 bf_max(int16 x, int16 y);
 float bf_fmin(float x, float y);
 float bf_fmax(float x, float y);
 int difference_sum( uint8 a,uint8 b );
+extern float invSqrt(float x)  ;
 #endif /* CODE_XIAO_BASIC_FUNCTION_H_ */

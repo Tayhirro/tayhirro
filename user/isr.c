@@ -45,7 +45,7 @@ IFX_INTERRUPT(cc60_pit_ch0_isr,0, CCU6_0_CH0_ISR_PRIORITY)
     //--------------------数据采集--------------------
    // dl1a_get_distance();                          //tof数据采集
    // Elec_Once();                                    //电感数据采集
-   // Encoder_SpeedRead();                            //编码器数据采集
+    Encoder_SpeedRead();                            //编码器数据采集
     //对陀螺仪进行数据采集
     Gyroscope_Conut();
     //--------------------数据处理--------------------
@@ -59,7 +59,7 @@ IFX_INTERRUPT(cc60_pit_ch0_isr,0, CCU6_0_CH0_ISR_PRIORITY)
 //    }
     //舵机pid
    // if(1){
-  //  Trace_Run();
+    Trace_Run();
   //  }
     //ele_direction_control(fPID* topid_steer,iPID* toipid_speed_left,iPID* toipid_speed_right,float zhongxian,float target)
 //    //电机PID
@@ -68,7 +68,7 @@ IFX_INTERRUPT(cc60_pit_ch0_isr,0, CCU6_0_CH0_ISR_PRIORITY)
   //      Motor_2cor=Motor_2PID_control(setpoint_right, (float)Encoder_2Data);
   // }
     //编码器积分
-  //  Encoder_Count();
+   Encoder_Count();
 
     //--------------------蜂鸣器控制--------------------
 //    if (Beep_status == 0 && Beep_count < Beep_countThre) {

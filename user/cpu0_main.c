@@ -73,12 +73,15 @@ float Motor_pLimit=0;    float Motor_coLimit=10000;   float Motor_boost=3.5;
 float Camera_leftP = 2.0;     float Camera_leftI = 0.0;     float Camera_leftD = 0.0;   float Camera_leftCor = 0.0;
 //摄像头PID(右边线找到的中线)
 float Camera_rightP = 2.0;     float Camera_rightI = 0.0;     float Camera_rightD = 0.0;   float Camera_rightCor = 0.0;
+//摄像头PID(（左+右）/2)
+float Camera_midP = 2.0;     float Camera_midI = 0.0;     float Camera_midD = 0.0;   float Camera_midCor = 0.0;
 //------------------------------
 //摄像头PD限幅(左边线找到的中线)
 float Camera_leftPLimit=5.0;     float Camera_leftCoLimit=50.0;    float Camera_leftBoost=1;
 //摄像头PD限幅(右边线找到的中线)
 float Camera_rightPLimit=5.0;     float Camera_rightCoLimit=50.0;    float Camera_rightBoost=1;
-
+//
+float Camera_midPLimit=30.0;     float Camera_midCoLimit=50.0;    float Camera_midBoost=1;
 
 //------------------------------状态机------------------------------
 //PID工作状态机
@@ -402,6 +405,11 @@ void Image_FindCorners(void) {
         uint8 ip1 = bf_clip(i + (uint8)round(Image_angleDist / Image_sampleDist), 0, Image_rptsLeftsNum - 1);
         float conf = fabs(Image_rptsLefta[i]) - fabs(Image_rptsLefta[im1] + Image_rptsLefta[ip1]) / 2;
 
+        //环岛角点判断
+        if (Image_HptLeft_Found == false && 30 < conf && 65 > conf && i < 0.4 / Image_sampleDist) {
+            Image_HptLeft_rptsLefts_id = i;
+            Image_HptLeft_Found = true;
+        }
         //Y角点判断
         if (Image_YptLeft_Found == false && 30 < conf && 65 > conf && i < 0.4 / Image_sampleDist) {
             Image_YptLeft_rptsLefts_id = i;
@@ -501,7 +509,7 @@ int core0_main(void)
     //Elec_PID_Init();                                                    //电感PID初始化
    // Motor_PID_Init();
    //电机PID初始化
-    //Steer_PID_Init();
+    Steer_PID_Init();
     Gyroscope_Init(GYROSCOPE_IMU660RA, 4);
     //------------------------------中断初始化------------------------------
     //中断功能
@@ -529,6 +537,10 @@ int core0_main(void)
     //Elec_PID_Set(Elec_P, Elec_I, Elec_D, Elec_pLimit, Elec_coLimit, Elec_boost);             //电磁PID设置                                                //差比合差设置
    //   Motor_1PID_Set(Motor_1P, Motor_1I, Motor_1D, Motor_pLimit, Motor_coLimit, Motor_boost);  //电机1PID设置
    //   Motor_2PID_Set(Motor_2P, Motor_2I, Motor_2D, Motor_pLimit, Motor_coLimit, Motor_boost);  //电机2PID设置
+    Steer_PID_Left_Set( Camera_leftP,  Camera_leftI,  Camera_leftD, Camera_leftPLimit,  Camera_leftCoLimit,  Camera_leftBoost);       //左边找中线的舵机PID设置
+           Steer_PID_Right_Set( Camera_rightP,  Camera_rightI,  Camera_rightD, Camera_rightPLimit,  Camera_rightCoLimit, Camera_rightBoost); //右边找中线的舵机PID设置
+           Steer_PID_Mid_Set( Camera_midP,  Camera_midI,  Camera_midD, Camera_midPLimit,  Camera_midCoLimit,  Camera_midBoost);              //左边加右边找中线的舵机PID设置
+
     //Beep_SetTweetTime(500, 4);
 
     //------------------------------变量------------------------------
@@ -569,6 +581,7 @@ int core0_main(void)
 
     //------------------------------刷新变量------------------------------
 
+
     //----------------------------------------
     cpu_wait_event_ready();         // 等待所有核心初始化完毕
    //Beep_Tweet();
@@ -588,6 +601,11 @@ int core0_main(void)
                                }
         //------------------------------出入库处理------------------------------
         Motor_pidStatus = 1;
+                //Motor_SetSpeed(MOTOR_1,2000);
+                //Motor_SetSpeed(MOTOR_2,2000);
+              ips200_show_string(0, 200, "Trace_angleError:");ips200_show_float(150, 200, Trace_angleError, 3, 3);
+              ips200_show_string(0, 250, "Trace_angleErrorTher:");ips200_show_float(150, 250, Trace_angleErrorTher, 3, 3);
+              ips200_show_string(0, 300, "Trace_aimLine:");ips200_show_float(150, 300, Trace_aimLine, 3, 3);
 
         //if (Grage_isDeparture == 0) {
         //    Grage_Departure_Check();
@@ -630,7 +648,7 @@ int core0_main(void)
                 //清除之前的显示
 
                 Image_ShowLine(0, 0, IMAGE_IPS200, IMAGE_CLEAR_ORIGIN);
-                Image_ShowLine(0, 130, IMAGE_IPS200, IMAGE_CLEAR_MAPPING);
+                Image_ShowLine(10, 130, IMAGE_IPS200, IMAGE_CLEAR_MAPPING);
 
                 //----------------------------------------
                 //对图像进行逆透视变换
@@ -646,14 +664,13 @@ int core0_main(void)
                 for (uint8 y =IMAGE_HEIGHT/2; y < IMAGE_HEIGHT; ++y) {
                     for (uint8 x = 0; x < IMAGE_WIDTH; ++x) {
                         Camera_GetInverse(x, y,inv);
-//                       if (inv_map_x[y][x] == 0 || inv_map_y[y][x] == 0) {
-//                           mapImage[y][x] = 0;
-//                           continue;
-//                       }
-                        if(inv[0]==0||inv[1]==0){mapImage[y][x] = 0;continue;}
+                       if (inv[1]== 0 || inv[0] == 0) {
+                           mapImage[y][x] = 0;
+                           continue;
+                       }
                         mapImage[y][x] = mt9v03x_image[inv[1]][inv[0]];
                     }
-                }   //上半部分
+                }   //下半部分
                 for(uint8 y1=90;y1<IMAGE_HEIGHT;++y1){
                     for(uint8 x1=0;x1<IMAGE_WIDTH;++x1){
                         mapImage[y1][x1]=0;
@@ -719,8 +736,8 @@ int core0_main(void)
                 //----------------------------------------
                 //显示边线和逆透视变换后的边线
                 Image_ShowLine(0, 0, IMAGE_IPS200, IMAGE_ORIGIN);
-                Image_ShowLine(0, 130, IMAGE_IPS200, IMAGE_MAPPING);
-                Image_ShowLine(0, 130, IMAGE_IPS200, IMAGE_MIDLINE_RIGHT);
+                Image_ShowLine(10, 130, IMAGE_IPS200, IMAGE_MAPPING);
+                Image_ShowLine(10, 130, IMAGE_IPS200, IMAGE_MIDLINE_RIGHT);
                 //----------------------------------------
                 //显示原图和逆透视变换后的图
                 ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
@@ -730,21 +747,48 @@ int core0_main(void)
                 //车库处理
                 //Grage_Storage_Check(GRAGE_CAMERA);
 
+
+                //--------------------弯道判断------如果使用的origin--//
+                if(pid_type==PID_ORIGIN){
+                   if(Trace_Status==TRACE_CENTERLINENEAR){
+                       check_shiftroad();
+                       handle_shiftroad();
+                   }
+                }
+                //弯道判断-------如果使用inv------------------------
+                //无操作
+
+
+
                 //--------------------环岛-----十字---------------
+                //角点还是用逆透视进行判断
                 //角点判断
                 Image_FindCorners();
-    //            L角点判断
-    //            Image_LCornerCheck();
+                //L角点判断
+                Image_LCornerCheck();
                   // Image_FindConers2();
+
                 //十字检测
-                //Cross_CheckCamera();
+                Cross_CheckCamera();
                 //环岛检测
-     //           Circle_CheckCamera();
-                //环岛处理
-     //           Circle_RunCamera();
+                Circle_CheckCamera();
+                //--------------------环岛处理----------------//
+                if(Trace_Circle_Type==TRACE_CIRCLE_CAREMA_GYROSCOPE_ENCODER||TRACE_CIRCLE_CAREMA){
+                Circle_RunCamera();
+                }
+                if(Trace_Circle_Type==TRACE_CIRCLE_GYROSCOPE_ENCODER){
+                Circle_RunGyscopAndEncoder();
+                }
+                //--------------------十字处理--------------//
 
 
+                if(Trace_Cross_Type==TRACE_CROSS_CAREMA_GYROSCOPE_ENCODER||Trace_Cross_Type==TRACE_CROSS_CAREMA){
+                    Cross_RunCamera();
+                }
 
+                if(Trace_Cross_Type==TRACE_CROSS_GYROSCOPE_ENCODER){
+                    Cross_RunGyscopAndEncoder();
+                }
 
 
                 //------------------------------图传相关------------------------------

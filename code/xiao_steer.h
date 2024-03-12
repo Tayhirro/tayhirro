@@ -20,11 +20,13 @@
 
 #define SERVO_MOTOR_DUTY(x)         ((float)PWM_DUTY_MAX/(1000.0/(float)SERVO_MOTOR_FREQ)*(0.5+(float)(x)/90.0))
 
-#define STEER_LEFT      2050     //舵机摆角左极限  这里的值是用于测试的，大家根据自己的舵机更改
-#define STEER_MIDDLE    1880   //舵机摆角中值
-#define STEER_RIGHT     1680   //舵机摆角右极限
+#define STEER_LEFT      680    //舵机摆角左极限  这里的值是用于测试的，大家根据自己的舵机更改
+#define STEER_MIDDLE    760   //舵机摆角中值
+#define STEER_RIGHT     860    //舵机摆角右极限
 
 extern void steer_init();
-extern void PWMSetSteer(uint16 angle_pwm);
-
+extern void PWMSetSteer(float angle_pwm);
+extern void Steer_PID_Left_Set(float K_p_set, float K_i_set, float K_d_set,float pLimit, float coLimit, float boost);
+extern void Steer_PID_Right_Set(float K_p_set, float K_i_set, float K_d_set,float pLimit, float coLimit, float boost);
+extern void Steer_PID_Mid_Set(float K_p_set, float K_i_set, float K_d_set,float pLimit, float coLimit, float boost);
 #endif /* CODE_XIAO_STEER_H_ */
