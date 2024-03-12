@@ -602,7 +602,7 @@ int core0_main(void)
                                            Image_Process_inv(mapImage[0]);
                                            Image_Process_Status = 1;
                                            Image_Process_Status_inv=1;
-                                       }*/
+                                       }
         Motor_SetSpeed(MOTOR_1,2000);
          Motor_SetSpeed(MOTOR_2,2000);
          ips200_show_float(0,250, Encoder_1Data, 3, 3);
