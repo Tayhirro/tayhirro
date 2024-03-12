@@ -113,14 +113,14 @@ extern float Camera_leftP;     extern float Camera_leftI;     extern float Camer
 //摄像头PID(右边线找到的中线)
 extern float Camera_rightP;     extern float Camera_rightI;     extern float Camera_rightD;  extern float Camera_rightCor;
 //摄像头PID(（左+右）/2)
-extern float Camera_midP;     extern float Camera_midI ;     extern float Camera_midD ;   extern float Camera_midCor;
+//extern float Camera_midP;     extern float Camera_midI ;     extern float Camera_midD ;   extern float Camera_midCor;
 //------------------------------
 //摄像头PD限幅(左边线找到的中线)
 extern float Camera_leftPLimit;    extern float Camera_leftCoLimit;   extern float Camera_leftBoost;
 //摄像头PD限幅(右边线找到的中线)
 extern float Camera_rightPLimit;    extern float Camera_rightCoLimit;   extern float Camera_rightBoost;
 //
-extern float Camera_midPLimit;    extern float Camera_midCoLimit;   extern float Camera_midBoost;
+//extern float Camera_midPLimit;    extern float Camera_midCoLimit;   extern float Camera_midBoost;
 
 extern float Speed_accVar; extern uint8 Barrier_Judege_Status;
 

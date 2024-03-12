@@ -56,30 +56,35 @@ float Elec_pLimit=5.0;     float Elec_coLimit=50.0;    float Elec_boost=1;
 //------------------------------
 //电机1PID
 //float Motor_1P = 145.8 ;      float Motor_1I = 3.6 ;       float Motor_1D = 0;     float Motor_1Target=0;      float Motor_1cor=0.0;
-float Motor_1P = 100 ;      float Motor_1I = 2.52 ;       float Motor_1D = 0;     float Motor_1Target=0;      float Motor_1cor=0.0;
+float Motor_1P = 100 ;      float Motor_1I = 2.52 ;       float Motor_1D = 0;     float Motor_1Target=800;      float Motor_1cor=0.0;
 float Motor_1Puse;         float Motor_1Pcor=0.0;      float Motor_1Icor=0.0;       float Motor_1Dcor=0.0;
 //------------------------------
 //电机2PID
 //float Motor_2P = 192.375 ;      float Motor_2I = 14.175 ;       float Motor_2D = 0   ;     float Motor_2Target=0;       float Motor_2cor=0.0;
-float Motor_2P = 100 ;      float Motor_2I = 2.52 ;       float Motor_2D = 0   ;     float Motor_2Target=0;       float Motor_2cor=0.0;
+float Motor_2P = 100 ;      float Motor_2I = 2.52 ;       float Motor_2D = 0   ;     float Motor_2Target=800;       float Motor_2cor=0.0;
 float Motor_2Puse;         float Motor_2Pcor=0.0;      float Motor_2Icor=0.0;       float Motor_2Dcor=0.0;
 //------------------------------
 //电机限幅
-float Motor_pLimit=0;    float Motor_coLimit=10000;   float Motor_boost=3.5;
+//float Motor_pLimit=0;    float Motor_coLimit=10000;   float Motor_boost=3.5;
+float Motor_pLimit=3000;    float Motor_coLimit=10000;   float Motor_boost=1.0;
 
 //------------------------------摄像头------------------------------
 //------------------------------
+
+fPID Trace_cameraLeftPID={0};                       //左边线获取的中线的PID
+fPID Trace_cameraRightPID={0};                      //右边线获取的中线的PID
+fPID Trace_cameraMidPID={0};                       //左+右获取的中线的PID
 //摄像头PID(左边线找到的中线)
 float Camera_leftP = 2.0;     float Camera_leftI = 0.0;     float Camera_leftD = 0.0;   float Camera_leftCor = 0.0;
 //摄像头PID(右边线找到的中线)
 float Camera_rightP = 2.0;     float Camera_rightI = 0.0;     float Camera_rightD = 0.0;   float Camera_rightCor = 0.0;
 //摄像头PID(（左+右）/2)
-float Camera_midP = 2.0;     float Camera_midI = 0.0;     float Camera_midD = 0.0;   float Camera_midCor = 0.0;
+float Camera_midP = 1.5;     float Camera_midI = 0.0;     float Camera_midD = 0.0;   float Camera_midCor = 0.0;
 //------------------------------
 //摄像头PD限幅(左边线找到的中线)
-float Camera_leftPLimit=5.0;     float Camera_leftCoLimit=50.0;    float Camera_leftBoost=1;
+float Camera_leftPLimit=80.0;     float Camera_leftCoLimit=50.0;    float Camera_leftBoost=1;
 //摄像头PD限幅(右边线找到的中线)
-float Camera_rightPLimit=5.0;     float Camera_rightCoLimit=50.0;    float Camera_rightBoost=1;
+float Camera_rightPLimit=80.0;     float Camera_rightCoLimit=50.0;    float Camera_rightBoost=1;
 //
 float Camera_midPLimit=30.0;     float Camera_midCoLimit=50.0;    float Camera_midBoost=1;
 
@@ -101,7 +106,7 @@ SHOW_MODE_enum Show_list[5]={Page1,Page2,Page3,Page4,Page5};        //需要显示的
 //==============================差比和差==============================
 //------------------------------
 //差比和差
-float Elec_A = 10 ;       float Elec_B = 5 ;       float Elec_C = 10 ;
+//float Elec_A = 10 ;       float Elec_B = 5 ;       float Elec_C = 10 ;
 //------------------------------
 //积分
 uint16 Encoder_sum;
@@ -535,17 +540,16 @@ int core0_main(void)
 
     //------------------------------函数设置------------------------------
     //Elec_PID_Set(Elec_P, Elec_I, Elec_D, Elec_pLimit, Elec_coLimit, Elec_boost);             //电磁PID设置                                                //差比合差设置
-   //   Motor_1PID_Set(Motor_1P, Motor_1I, Motor_1D, Motor_pLimit, Motor_coLimit, Motor_boost);  //电机1PID设置
-   //   Motor_2PID_Set(Motor_2P, Motor_2I, Motor_2D, Motor_pLimit, Motor_coLimit, Motor_boost);  //电机2PID设置
-    Steer_PID_Left_Set( Camera_leftP,  Camera_leftI,  Camera_leftD, Camera_leftPLimit,  Camera_leftCoLimit,  Camera_leftBoost);       //左边找中线的舵机PID设置
-           Steer_PID_Right_Set( Camera_rightP,  Camera_rightI,  Camera_rightD, Camera_rightPLimit,  Camera_rightCoLimit, Camera_rightBoost); //右边找中线的舵机PID设置
-           Steer_PID_Mid_Set( Camera_midP,  Camera_midI,  Camera_midD, Camera_midPLimit,  Camera_midCoLimit,  Camera_midBoost);              //左边加右边找中线的舵机PID设置
-
-    //Beep_SetTweetTime(500, 4);
+         //Motor_1PID_Set(Motor_1P, Motor_1I, Motor_1D, Motor_pLimit, Motor_coLimit, Motor_boost);  //电机1PID设置
+         //Motor_2PID_Set(Motor_2P, Motor_2I, Motor_2D, Motor_pLimit, Motor_coLimit, Motor_boost);  //电机2PID设置
+         Steer_PID_Left_Set( Camera_leftP,  Camera_leftI,  Camera_leftD, Camera_leftPLimit,  Camera_leftCoLimit,  Camera_leftBoost);       //左边找中线的舵机PID设置
+         Steer_PID_Right_Set( Camera_rightP,  Camera_rightI,  Camera_rightD, Camera_rightPLimit,  Camera_rightCoLimit, Camera_rightBoost); //右边找中线的舵机PID设置
+         Steer_PID_Mid_Set( Camera_midP,  Camera_midI,  Camera_midD, Camera_midPLimit,  Camera_midCoLimit,  Camera_midBoost);              //左边加右边找中线的舵机PID设置
+       //Beep_SetTweetTime(500, 4);
 
     //------------------------------变量------------------------------
     //摄像头逆透视
-    uint8 mapImage[120][188]={0};               //进行逆透视变换后的图像
+    uint8 mapImage[MT9V03X_H][MT9V03X_W];               //进行逆透视变换后的图像
     //图传边线传输
     uint8 mapLinex_Left[IMAGE_LINE_MAX_NUM];            //左边线x坐标
     uint8 mapLiney_Left[IMAGE_LINE_MAX_NUM];            //左边线y坐标
@@ -594,19 +598,24 @@ int core0_main(void)
             Show_Switch(Show_list, 3);
         }
         if (mt9v03x_finish_flag == 1) {
-                                   Image_Process(mt9v03x_image[0]);
-                                   Image_Process_inv(mapImage[0]);
-                                   Image_Process_Status = 1;
-                                   Image_Process_Status_inv=1;
-                               }
+                                           Image_Process(mt9v03x_image[0]);
+                                           Image_Process_inv(mapImage[0]);
+                                           Image_Process_Status = 1;
+                                           Image_Process_Status_inv=1;
+                                       }*/
+        Motor_SetSpeed(MOTOR_1,2000);
+         Motor_SetSpeed(MOTOR_2,2000);
+         ips200_show_float(0,250, Encoder_1Data, 3, 3);
+         ips200_show_float(0,300, Encoder_2Data, 3, 3);
         //------------------------------出入库处理------------------------------
-        Motor_pidStatus = 1;
-                //Motor_SetSpeed(MOTOR_1,2000);
-                //Motor_SetSpeed(MOTOR_2,2000);
-              ips200_show_string(0, 200, "Trace_angleError:");ips200_show_float(150, 200, Trace_angleError, 3, 3);
-              ips200_show_string(0, 250, "Trace_angleErrorTher:");ips200_show_float(150, 250, Trace_angleErrorTher, 3, 3);
-              ips200_show_string(0, 300, "Trace_aimLine:");ips200_show_float(150, 300, Trace_aimLine, 3, 3);
-
+        //Motor_pidStatus = 0;
+        //ips200_show_float(0, 0, Encoder_1Data, 3, 3);
+        //ips200_show_float(0, 60, Encoder_sum_Motor1, 5, 3);
+        //ips200_show_float(0, 120, Encoder_2Data, 3, 3);
+         //ips200_show_string(0, 250, "Trace_angleError:");ips200_show_float(150, 250, Trace_angleError, 3, 3);
+        // ips200_show_string(0, 250, "Trace_angleErrorTher:");ips200_show_float(150, 250, Trace_angleErrorTher, 3, 3);
+         //ips200_show_float(150, 250, Trace_cameraMidPID.output_val, 3, 3);
+         //ips200_show_string(0, 300, "Trace_aimLine:");ips200_show_float(150, 300, Trace_aimLine, 3, 3);
         //if (Grage_isDeparture == 0) {
         //    Grage_Departure_Check();
         //}

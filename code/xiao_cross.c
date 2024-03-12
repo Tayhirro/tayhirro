@@ -246,12 +246,6 @@ void Cross_RunCamera(){
                                                                                Cross_forceAngle_Status = 0;
                                                                                Elec_pidStatus = 1;
                                                                                Cross_status = CROSS_IN2;
-
-
-                                                                               Cross_Steer_Angle=Cross_Targetangle+Cross_SteerVar;  //参数传递//会更改
-
-
-                                                                               Gyroscope_End(Cross_measureType);
                                                                                Gyroscope_Clear(Cross_measureType);
                                                                                Gyroscope_Begin(Cross_measureType);
                                                                            }

@@ -18,6 +18,14 @@
 //            int utLimit;
 //            int ut;
 //}PID;
+
+typedef enum {
+        PID_ORIGIN=0x01,
+        PID_INV=0x02,
+}PID_TYPE;
+
+extern PID_TYPE pid_type;
+
 struct pidcc_controller_float{
     float Kp;
     float Ki;
@@ -47,46 +55,25 @@ struct pidcc_controller_float{
     float coLimit;
     float boost;
 };
-struct pidcc_controller_int{
-    float Kp;
-    float Ki;
-    float Kd;
 
-    int target_val;
-    int Kp_output_val;
-    int Ki_output_val;
-    int Kd_output_val;
-  int output_val;
-    int input_val;
-
-    int err;
-    int err_last;
-    int integral;
-
-    int omin;
-    int omax;
-};
-typedef enum {
-        PID_ORIGIN=0x01,
-        PID_INV=0x02,
-}PID_TYPE;
-extern PID_TYPE pid_type;
 typedef struct pidcc_controller_float fPID,*tofPID;
-typedef struct pidcc_controller_int iPID,*toiPID;
-extern iPID ipid_speed_left;
-extern iPID ipid_speed_right;
+//typedef struct pidcc_controller_int iPID,*toiPID;
+//extern iPID ipid_speed_left;
+//extern iPID ipid_speed_right;
 
 
 extern fPID Trace_cameraLeftPID;                       //左边线获取的中线的PID
 extern fPID Trace_cameraRightPID;                      //右边线获取的中线的PID
 extern fPID Trace_cameraMidPID;                       //左+右获取的中线的PID
 
-extern void direction_control(fPID topid_steer,float zhongxian,float target);
+
+
+extern void direction_control(fPID* topid_steer,float zhongxian,float target);
 extern void Steer_PID_Init(void);
 extern float setpoint_left; // setpoint_left -> left 左边标准速度    setpoint_right -> right  右边标准速度
 extern float setpoint_right;
 
-void PID_Init(fPID PID);
-void PID_SetParameter(fPID PID, float K_p_set,float K_i_set,float K_d_set,float pLimit,float coLimit,float boost);
+void PID_Init(fPID* PID);
+void PID_SetParameter(fPID* PID, float K_p_set,float K_i_set,float K_d_set,float pLimit,float coLimit,float boost);
 
 #endif /* CODE_XIAO_PID_H_ */

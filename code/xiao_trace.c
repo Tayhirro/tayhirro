@@ -9,6 +9,9 @@
 //------------------------------------------------------------
 //基本变量
 TRACE_TYPE Trace_traceType = TRACE_Camera_MID;
+extern fPID Trace_cameraLeftPID;                       //左边线获取的中线的PID
+extern fPID Trace_cameraRightPID;                      //右边线获取的中线的PID
+extern fPID Trace_cameraMidPID;                       //左+右获取的中线的PID
 //==============================摄像头寻迹相关==============================
 //------------------------------------------------------------
 //中线标准值相关
@@ -77,6 +80,7 @@ static void Trace_GetAngelError() {
 
     //------------------------------
     //获取误差
+<<<<<<< HEAD
     if (Trace_traceType == TRACE_Camera_MID) {
            Trace_angleError = Trace_lineWeight[0] * (float)Image_centerLine[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
                            + Trace_lineWeight[1] * (float)Image_centerLine[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
@@ -93,6 +97,60 @@ static void Trace_GetAngelError() {
                         + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
                         + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
     }
+=======
+    if(pid_type==PID_ORIGIN){
+        if (Trace_traceType == TRACE_Camera_MID) {
+                  Trace_angleError = Trace_lineWeight[0] * (float)Image_centerLine[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
+                                  + Trace_lineWeight[1] * (float)Image_centerLine[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
+                                  + Trace_lineWeight[2] * (float)Image_centerLine[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];
+
+
+                  /*Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
+                                             + Trace_lineWeight[1] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
+                                             + Trace_lineWeight[2] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];*/
+
+              }
+           else if (Trace_traceType == TRACE_Camera_LEFT) {
+               Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
+                               + Trace_lineWeight[1] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
+                               + Trace_lineWeight[2] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];
+           }
+           else if (Trace_traceType == TRACE_Camera_RIGHT) {
+               Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsRightc[bf_clip(Trace_aimLine, 0, Image_rptsRightcNum - 1)][0]
+                               + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
+                               + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
+           }
+    }
+
+    if(pid_type==PID_INV){
+        if (Trace_traceType == TRACE_Camera_MID) {
+                  /*Trace_angleError = Trace_lineWeight[0] * (float)Image_centerLine[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
+                                  + Trace_lineWeight[1] * (float)Image_centerLine[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
+                                  + Trace_lineWeight[2] * (float)Image_centerLine[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];*/
+
+
+                  Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
+                                             + Trace_lineWeight[1] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
+                                             + Trace_lineWeight[2] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0]
+                                             + Trace_lineWeight[0] * (float)Image_rptsRightc[bf_clip(Trace_aimLine, 0, Image_rptsRightcNum - 1)][0]
+                                             + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
+                                             + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
+                  Trace_angleError/=2.0;
+              }
+           else if (Trace_traceType == TRACE_Camera_LEFT) {
+               Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
+                               + Trace_lineWeight[1] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
+                               + Trace_lineWeight[2] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];
+           }
+           else if (Trace_traceType == TRACE_Camera_RIGHT) {
+               Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsRightc[bf_clip(Trace_aimLine, 0, Image_rptsRightcNum - 1)][0]
+                               + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
+                               + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
+           }
+    }
+
+
+>>>>>>> bee737bac262e60efb81e3b385a6f0dcb27b3c26
 }
 
 /*
@@ -117,17 +175,29 @@ void Trace_PID_Set(float K_p_set, float K_d_set, float coLimit, float boost, TRA
     //------------------------------
     //寻摄像头左边线+右边线找到的中线的PID
     if (traceType == TRACE_Camera_MID) {
+<<<<<<< HEAD
             PID_SetParameter(Trace_cameraMidPID, K_p_set, 0, K_d_set, 0, coLimit, boost);
+=======
+            PID_SetParameter(&Trace_cameraMidPID, K_p_set, 0, K_d_set, 0, coLimit, boost);
+>>>>>>> bee737bac262e60efb81e3b385a6f0dcb27b3c26
         }
     //寻摄像头左边线找到的中线的PID
 
     else if (traceType == TRACE_Camera_LEFT) {
+<<<<<<< HEAD
         PID_SetParameter(Trace_cameraLeftPID, K_p_set, 0, K_d_set, 0, coLimit, boost);
+=======
+        PID_SetParameter(&Trace_cameraLeftPID, K_p_set, 0, K_d_set, 0, coLimit, boost);
+>>>>>>> bee737bac262e60efb81e3b385a6f0dcb27b3c26
     }
     //------------------------------
     //寻摄像头右边线找到的中线的PID
     else if (traceType == TRACE_Camera_RIGHT) {
+<<<<<<< HEAD
         PID_SetParameter(Trace_cameraRightPID, K_p_set, 0, K_d_set, 0, coLimit, boost);
+=======
+        PID_SetParameter(&Trace_cameraRightPID, K_p_set, 0, K_d_set, 0, coLimit, boost);
+>>>>>>> bee737bac262e60efb81e3b385a6f0dcb27b3c26
     }
 
 }
@@ -147,7 +217,11 @@ float Trace_Run() {
     //摄像头左加右寻中线
     if (Trace_traceType == TRACE_Camera_MID) {
            Trace_GetAngelError();
+<<<<<<< HEAD
            direction_control(Trace_cameraMidPID,Trace_angleError,94);
+=======
+           direction_control(&Trace_cameraMidPID,Trace_angleError,94);
+>>>>>>> bee737bac262e60efb81e3b385a6f0dcb27b3c26
 
            //Trace_PID_Set(Trace_cameraLeftPID.Kp_Set, Trace_cameraLeftPID.Kd_Set, Trace_cameraLeftPID.utLimit, 1.0, Trace_traceType);
            //PID_PostionalPID(&Trace_cameraLeftPID, 0, Trace_angleError);
@@ -156,7 +230,11 @@ float Trace_Run() {
     //摄像头寻左线
      if (Trace_traceType == TRACE_Camera_LEFT) {
         Trace_GetAngelError();
+<<<<<<< HEAD
         direction_control(Trace_cameraLeftPID,Trace_angleError,94);
+=======
+        direction_control(&Trace_cameraLeftPID,Trace_angleError,94);
+>>>>>>> bee737bac262e60efb81e3b385a6f0dcb27b3c26
 
         //Trace_PID_Set(Trace_cameraLeftPID.Kp_Set, Trace_cameraLeftPID.Kd_Set, Trace_cameraLeftPID.utLimit, 1.0, Trace_traceType);
         //PID_PostionalPID(&Trace_cameraLeftPID, 0, Trace_angleError);
@@ -166,7 +244,11 @@ float Trace_Run() {
     //摄像头寻右线
     else if (Trace_traceType == TRACE_Camera_RIGHT) {
         Trace_GetAngelError();
+<<<<<<< HEAD
         direction_control(Trace_cameraRightPID,Trace_angleError,94);
+=======
+        direction_control(&Trace_cameraRightPID,Trace_angleError,94);
+>>>>>>> bee737bac262e60efb81e3b385a6f0dcb27b3c26
         //Trace_PID_Set(Trace_cameraRightPID.Kp_Set, Trace_cameraRightPID.Kd_Set, Trace_cameraRightPID.utLimit, 1.0, Trace_traceType);
         //PID_PostionalPID(&Trace_cameraRightPID, 0, Trace_angleError);
         return Trace_cameraRightPID.output_val;

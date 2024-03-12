@@ -55,7 +55,11 @@ uint8 Image_disPictureCnt = 0;                      //丢弃图片的数量计数
 const uint8 Image_disPictureCnt_Thre = 10;          //丢弃图片的数量阈值
 uint16 Image_threSum = 0;                           //图片阈值积分
 uint8 Image_threCnt_Thre = 10;                      //用来计算大津法的图片数量
+<<<<<<< HEAD
 uint8 clip_middle=5;
+=======
+
+>>>>>>> bee737bac262e60efb81e3b385a6f0dcb27b3c26
 
 //------------------------------图片处理相关------------------------------
 //------------------------------
@@ -1588,7 +1592,7 @@ void Image_GetAngle(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen) {
                 }
 //                ips200_show_float(ips200_width_max - 50, ips200_height_max - 20, Image_rptsLeftan[cornerIndex], 3, 4);
             }
-            else if (screen == IMAGE_TFT180) {
+            /*else if (screen == IMAGE_TFT180) {
                 int8 half = Image_angleBlockLen / 2;
                 for (int8 i = -half; i <= half; ++i) {
                     for (int8 j = -half; j <= half; ++j) {
@@ -1596,7 +1600,7 @@ void Image_GetAngle(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen) {
                     }
                 }
                 tft180_show_float(tft180_width_max - 50, tft180_height_max - 20, Image_rptsLeftan[cornerIndex], 3, 4);
-            }
+            }*/
         }
     }
 }
