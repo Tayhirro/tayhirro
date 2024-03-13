@@ -738,6 +738,7 @@ void Circle_RunCamera() {
     //5. 走出圆环,寻右线(或者用电磁跑)
     //------------------------------
     //开始
+
     if (Circle_status == CIRCLE_LEFT_BEGIN) {
         Trace_traceType = TRACE_Camera_RIGHT;
 

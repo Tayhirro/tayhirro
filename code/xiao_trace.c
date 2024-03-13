@@ -29,6 +29,7 @@ float Trace_lineWeight[] = {0.5, 0.3, 0.2};     //处理中线时候三行计算的权重
 TRACE_CIRCLE_TYPE Trace_Circle_Type=TRACE_CIRCLE_CAREMA_GYROSCOPE_ENCODER;      //初始化为共同
 TRACE_CROSS_TYPE Trace_Cross_Type=TRACE_CROSS_CAREMA_GYROSCOPE_ENCODER;         //初始化为共同
 TRACE_STATUS Trace_Status=TRACE_CENTERLINENEAR;
+
 //------------------------------------------------------------
 //PID相关
 //fPID Trace_cameraLeftPID;                       //左边线获取的中线的PID

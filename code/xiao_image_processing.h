@@ -179,6 +179,7 @@ typedef enum {
     IMAGE_LCORNER_IS_CIRCLE_RIGHT = 0x05,
 }IMAGE_LCORNER_JUDGE;
 
+
 //------------------------------------------------------------
 //´¦Àíº¯Êý
 void Image_Init(void);
@@ -195,7 +196,5 @@ void Image_ShowCorner(uint8 x, uint8 y, rgb565_color_enum color);
 void Image_LCornerCheck(void);
 bool Image_LineIsClosed(uint8 select);
 
-void check_shiftroad();
-void handle_shiftroad();
 
 #endif /* CODE_XIAO_IMAGE_PROCESSING_H_ */
