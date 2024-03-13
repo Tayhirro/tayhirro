@@ -201,7 +201,7 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
                 setpoint_left = STOP_SPEED;
             }
         }
-        else if(20<=(*topid_steer).err && (*topid_steer).err<30)//左偏较大
+        else if(20<=(*topid_steer).err && (*topid_steer).err<30)//左偏较大1
         {speedflag =2;
             //(*topid_steer).Kp=5;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
