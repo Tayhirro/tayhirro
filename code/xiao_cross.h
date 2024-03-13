@@ -37,6 +37,6 @@ extern int16 Circle_encoderRight_Thre;           //右环岛编码器阈值         -   
 
 //------------------------------_处理数据_------------------------------
 void Cross_CheckCamera(void);
-
-
+void Cross_RunGyscopAndEncoder();
+void Cross_RunCamera();
 #endif /* CODE_XIAO_CROSS_H_ */

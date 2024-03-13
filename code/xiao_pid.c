@@ -1,23 +1,23 @@
 /*
  * xiao_(*PID).c
  *
- *  Created on: 2024ï¿½ï¿½2ï¿½ï¿½28ï¿½ï¿½
- *      Author: ï¿½ï¿½
+ *  Created on: 2024Äê2ÔÂ28ÈÕ
+ *      Author: ¿µ
  */
 #include "xiao_pid.h"
 #include "xiao_steer.h"
 int NORMAL_SPEED=1800;
 int STOP_SPEED=0;
 int CIRCLE_SPEED=0;
-float setpoint_left=80.0; // setpoint_left -> left ï¿½ï¿½ß±ï¿½×¼ï¿½Ù¶ï¿½    setpoint_right -> right  ï¿½Ò±ß±ï¿½×¼ï¿½Ù¶ï¿½
-float setpoint_right=80.0;
-int speedflag=1;           //Ö±ï¿½ï¿½ï¿½ï¿½Í£Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï±ï¿½Ö¾
-extern fPID Trace_cameraLeftPID;                       //ï¿½ï¿½ï¿½ï¿½ß»ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ßµï¿½PID
-extern fPID Trace_cameraRightPID;                      //ï¿½Ò±ï¿½ï¿½ß»ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ßµï¿½PID
-extern fPID Trace_cameraMidPID;                       //ï¿½ï¿½+ï¿½Ò»ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ßµï¿½PID
-//fPID Trace_cameraLeftPID;                       //ï¿½ï¿½ï¿½ï¿½ß»ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ßµï¿½PID
-//fPID Trace_cameraRightPID;                      //ï¿½Ò±ï¿½ï¿½ß»ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ßµï¿½PID
-//fPID Trace_cameraMidPID;                       //ï¿½ï¿½+ï¿½Ò»ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ßµï¿½PID
+float setpoint_left=1800.0; // setpoint_left -> left ×ó±ß±ê×¼ËÙ¶È    setpoint_right -> right  ÓÒ±ß±ê×¼ËÙ¶È
+float setpoint_right=1800.0;
+int speedflag=1;           //Ö±µÀ¡¢Í£Ö¹¡¢½ø»·ÅÐ¶Ï±êÖ¾
+extern fPID Trace_cameraLeftPID;                       //×ó±ßÏß»ñÈ¡µÄÖÐÏßµÄPID
+extern fPID Trace_cameraRightPID;                      //ÓÒ±ßÏß»ñÈ¡µÄÖÐÏßµÄPID
+extern fPID Trace_cameraMidPID;                       //×ó+ÓÒ»ñÈ¡µÄÖÐÏßµÄPID
+//fPID Trace_cameraLeftPID;                       //×ó±ßÏß»ñÈ¡µÄÖÐÏßµÄPID
+//fPID Trace_cameraRightPID;                      //ÓÒ±ßÏß»ñÈ¡µÄÖÐÏßµÄPID
+//fPID Trace_cameraMidPID;                       //×ó+ÓÒ»ñÈ¡µÄÖÐÏßµÄPID
 
 //iPID ipid_speed_left;
 //iPID ipid_speed_right;
@@ -85,12 +85,12 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
 {
         //(*topid_steer).Kp=(*topid_steer).Kp_Set;
         //ips200_show_float(100, 250, (*topid_steer).Kp, 3, 3);
-        (*topid_steer).err =(int)(zhongxian-target);//ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        (*topid_steer).err =(int)(zhongxian-target);//¼ÆËã²îÖµ£¬×ó¼õÓÒ
 
         //uart_printf(UART_0," topid_steer->err =  %d\n", topid_steer->err);
 
 
-        if(-30>(*topid_steer).err)//ï¿½ï¿½Æ«ï¿½ï¿½ï¿½ï¿½
+        if(-30>(*topid_steer).err)//ÓÒÆ«¹ý´ó
         {speedflag =2;
             //(*topid_steer).Kp=6;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp* (*topid_steer).err;
@@ -111,7 +111,7 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
             }
         }
 
-        else if(-20>=(*topid_steer).err && (*topid_steer).err>=-30)//ï¿½ï¿½Æ«ï¿½Ï´ï¿½
+        else if(-20>=(*topid_steer).err && (*topid_steer).err>=-30)//ÓÒÆ«½Ï´ó
         {speedflag =2;
             //(*topid_steer).Kp=5;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
@@ -131,7 +131,7 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
                 setpoint_left = STOP_SPEED+1*(*topid_steer).err;
             }
         }
-        else if(-13>(*topid_steer).err && (*topid_steer).err>-20)//ï¿½ï¿½Æ«ï¿½ï¿½Ð¡
+        else if(-13>(*topid_steer).err && (*topid_steer).err>-20)//ÓÒÆ«½ÏÐ¡
         {speedflag =2;
             //(*topid_steer).Kp=5;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
@@ -151,7 +151,7 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
                 setpoint_left = STOP_SPEED+1*(*topid_steer).err;
             }
         }
-        else if(-13<=(*topid_steer).err && (*topid_steer).err<0)//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ«
+        else if(-13<=(*topid_steer).err && (*topid_steer).err<0)//»ù±¾ÎÞÓÒÆ«
         {speedflag =1;
             //(*topid_steer).Kp=1;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
@@ -166,7 +166,7 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
             }
 
         }
-        else if(0<=(*topid_steer).err && (*topid_steer).err<=13)//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ«
+        else if(0<=(*topid_steer).err && (*topid_steer).err<=13)//»ù±¾ÎÞ×óÆ«
         {speedflag =1;
             //(*topid_steer).Kp=1;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
@@ -181,7 +181,7 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
             }
 
         }
-        else if(13<(*topid_steer).err && (*topid_steer).err<20)//ï¿½ï¿½Æ«ï¿½ï¿½Ð¡
+        else if(13<(*topid_steer).err && (*topid_steer).err<20)//×óÆ«½ÏÐ¡
         {speedflag =2;
             //(*topid_steer).Kp=5;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
@@ -201,7 +201,7 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
                 setpoint_left = STOP_SPEED;
             }
         }
-        else if(20<=(*topid_steer).err && (*topid_steer).err<30)//ï¿½ï¿½Æ«ï¿½Ï´ï¿½
+        else if(20<=(*topid_steer).err && (*topid_steer).err<30)//×óÆ«½Ï´ó
         {speedflag =2;
             //(*topid_steer).Kp=5;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
@@ -220,7 +220,7 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
               setpoint_right = STOP_SPEED-1*(*topid_steer).err;
                 setpoint_left = STOP_SPEED;
             }
-        }else if(30<=(*topid_steer).err)//ï¿½ï¿½Æ«ï¿½ï¿½ï¿½ï¿½
+        }else if(30<=(*topid_steer).err)//×óÆ«¹ý´ó
         {speedflag =2;
             //(*topid_steer).Kp=6;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
@@ -241,24 +241,24 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
         }
 
 
-        if((*topid_steer).Kp_output_val<-(*topid_steer).pLimit)(*topid_steer).Kp_output_val=-(*topid_steer).pLimit;//ï¿½ï¿½Kpï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½Þ·ï¿½
-        if((*topid_steer).Kp_output_val>(*topid_steer).pLimit)(*topid_steer).Kp_output_val=(*topid_steer).pLimit;  //ï¿½ï¿½Kpï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½Þ·ï¿½
+        if((*topid_steer).Kp_output_val<-(*topid_steer).pLimit)(*topid_steer).Kp_output_val=-(*topid_steer).pLimit;//¶ÔKp¾õµÃµÄÊäÈëÖµ½øÐÐÏÞ·ù
+        if((*topid_steer).Kp_output_val>(*topid_steer).pLimit)(*topid_steer).Kp_output_val=(*topid_steer).pLimit;  //¶ÔKp¾õµÃµÄÊäÈëÖµ½øÐÐÏÞ·ù
 
         //uart_printf(UART_0,"output = %f\n",dir_P_value);
 
-        //(*topid_steer).Kd=(*topid_steer).Kd_Set;                                              //ï¿½ï¿½ÖµKd
-        (*topid_steer).Kd_output_val=(*topid_steer).Kd*((*topid_steer).err-(*topid_steer).err_last); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Kdï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+        //(*topid_steer).Kd=(*topid_steer).Kd_Set;                                              //¸³ÖµKd
+        (*topid_steer).Kd_output_val=(*topid_steer).Kd*((*topid_steer).err-(*topid_steer).err_last); //¼ÆËã¹ØÓÚKdµÄÊäÈëÖµ
 
-        (*topid_steer).output_val=(*topid_steer).boost*((*topid_steer).Kp_output_val+(*topid_steer).Kd_output_val);   //Kdï¿½ï¿½ï¿½ï¿½Öµ+Kpï¿½ï¿½ï¿½ï¿½Öµ  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+        (*topid_steer).output_val=(*topid_steer).boost*((*topid_steer).Kp_output_val+(*topid_steer).Kd_output_val);   //KdÊäÈëÖµ+KpÊäÈëÖµ  ¹¹³É×îÖÕµÄÊäÈëÖµ
 
-        (*topid_steer).err_last=(*topid_steer).err;                               //ï¿½ï¿½ï¿½Ë´Î¼ï¿½ï¿½ï¿½ï¿½Æ«ï¿½î±£ï¿½æµ½last_errï¿½ï£¬ï¿½Ô±ï¿½Î¢ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½
+        (*topid_steer).err_last=(*topid_steer).err;                               //½«´Ë´Î¼ÆËãµÄÆ«²î±£´æµ½last_errÀï£¬ÒÔ±¸Î¢·ÖµÄÔËËã
 
 
 
-              //  toipid_speed_left.target_val=(int)setpoint_left;                                                                                                                           //ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶È»ï¿½
+              //  toipid_speed_left.target_val=(int)setpoint_left;                                                                                                                           //´«¸øËÙ¶È»·
               //  toipid_speed_right.target_val= (int)setpoint_right;
         //ips200_show_float(100, 250, (*topid_steer).output_val, 3, 3);
-        PWMSetSteer(90-(*topid_steer).output_val);                        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        PWMSetSteer(90-(*topid_steer).output_val);                        //Êä³ö¶æ»ú
 }
 
 void PID_SetParameter(fPID* PID, float K_p_set,float K_i_set,float K_d_set,float pLimit,float coLimit,float boost){

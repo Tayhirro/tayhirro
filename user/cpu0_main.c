@@ -768,18 +768,19 @@ int core0_main(void)
                 //------------------------------元素判断------------------------------
                 //车库处理
                 //Grage_Storage_Check(GRAGE_CAMERA);
-
-
                 //--------------------弯道判断------如果使用的origin--//
-                if(pid_type==PID_ORIGIN){
-                   if(Trace_Status==TRACE_CENTERLINENEAR){
-                     //  check_shiftroad();
-                    //   handle_shiftroad();
-                   }
-                }
-                //弯道判断-------如果使用inv------------------------
-                //无操作
 
+                      if(Trace_Status==TRACE_CENTERLINENEAR){
+                       check_shiftroad();
+                       if(Shift_Direction==SHIFT_LEFT){
+                       handle_shiftroad_left();
+                       }
+                       else if(Shift_Direction==SHIFT_RIGHT){
+                       handle_shiftroad_right();
+                       }
+                      }
+
+                //弯道判断-------如果使用inv------------------------
 
 
                 //--------------------环岛-----十字---------------
@@ -791,19 +792,21 @@ int core0_main(void)
                   // Image_FindConers2();
 
                 //十字检测
-               // Cross_CheckCamera();
+                Cross_CheckCamera();
                 //环岛检测
-               // Circle_CheckCamera();
+                Circle_CheckCamera();
                 //--------------------环岛处理----------------//
-                if(Trace_Circle_Type==TRACE_CIRCLE_CAREMA_GYROSCOPE_ENCODER||TRACE_CIRCLE_CAREMA){
-                Circle_RunCamera();
-                }
-                if(Trace_Circle_Type==TRACE_CIRCLE_GYROSCOPE_ENCODER){
-                Circle_RunGyscopAndEncoder();
+                if(Trace_Status==TRACE_CIRCLE){
+                    if(Trace_Circle_Type==TRACE_CIRCLE_CAREMA_GYROSCOPE_ENCODER||Trace_Circle_Type==TRACE_CIRCLE_CAREMA){
+                                 Circle_RunCamera();
+                    }
+                    if(Trace_Circle_Type==TRACE_CIRCLE_GYROSCOPE_ENCODER){
+                                 Circle_RunGyscopAndEncoder();
+                    }
                 }
                 //--------------------十字处理--------------//
 
-
+                if(Trace_Status==TRACE_CROSS){
                 if(Trace_Cross_Type==TRACE_CROSS_CAREMA_GYROSCOPE_ENCODER||Trace_Cross_Type==TRACE_CROSS_CAREMA){
                     Cross_RunCamera();
                 }
@@ -811,7 +814,7 @@ int core0_main(void)
                 if(Trace_Cross_Type==TRACE_CROSS_GYROSCOPE_ENCODER){
                     Cross_RunGyscopAndEncoder();
                 }
-
+                }
 
                 //------------------------------图传相关------------------------------
                 //----------------------------------------

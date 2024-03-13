@@ -21,6 +21,8 @@
 #include "xiao_camera_processing.h"                     //相机处理
 #include "xiao_trace.h"                                 //巡线
 #include "xiao_circle.h"                                //环岛处理
+#include "xiao_cross.h"                                 //十字
+#include "xiao_shift.h"                                 //弯道处理
 #include "xiao_barrier.h"                               //障碍处理
 #include "xiao_basic_function.h"                        //基本通用函数
 #include "xiao_gyroscope.h"                             //陀螺仪处理
