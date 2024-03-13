@@ -1061,7 +1061,7 @@ void Image_Process(uint8* image) {
                 Image_iptsRight_Bak[i][1] = Image_iptsRight[i][1];
             }
         }//边界的话就是0了
-   if(Trace_Status==TRACE_CENTERLINENEAR||Trace_Status==TRACE_CENTERLINEFAR&&pid_type==PID_ORIGIN){
+   if((Trace_Status==TRACE_CENTERLINENEAR||Trace_Status==TRACE_CENTERLINEFAR)&&pid_type==PID_ORIGIN){
     Image_getcenterLine();
    }
     // Image_Processing_OtsuGetThresh(image);
