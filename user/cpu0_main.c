@@ -608,12 +608,12 @@ int core0_main(void)
                                            ips200_show_float(0,200,Image_iptsLeftNum, 3, 3);
                                            ips200_show_float(40,200,Image_iptsRightNum,3,3);
                                            ips200_show_float(80,200,Image_centerLineNum,3,3);
-                                          // Image_Process_inv(mapImage[0]);
+                                           Image_Process_inv(mapImage[0]);
                                            Image_Process_Status = 1;
                                            Image_Process_Status_inv=1;
                                        }
-         Motor_SetSpeed(MOTOR_1,1300);
-         Motor_SetSpeed(MOTOR_2,1300);
+         Motor_SetSpeed(MOTOR_1,1600);
+         Motor_SetSpeed(MOTOR_2,1600);
          //seekfree_assistant_oscilloscope_send(&oscilloscope_data);
          //oscilloscope_data.data[0]=Motor_1PID.ut;
         // oscilloscope_data.data[1]=Motor_2PID.ut;
@@ -767,8 +767,8 @@ int core0_main(void)
                 Image_ShowLine(10, 130, IMAGE_IPS200, IMAGE_MIDLINE_RIGHT);
                 //----------------------------------------
                 //显示原图和逆透视变换后的图
-               ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
-                ips200_show_gray_image(0, 130,mapImage[0] , MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
+                ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
+                //ips200_show_gray_image(0, 130,mapImage[0] , MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
                 //ips200_show_float(0,150,Encoder_2Data, 3, 3);
                 //ips200_show_float(50,150,Encoder_sum_Motor2,3,3);
 
@@ -785,7 +785,9 @@ int core0_main(void)
                        else if(Shift_Direction==SHIFT_RIGHT){
                            handle_shiftroad_right();
                        }
-
+                       if(Shift_Direction==SHIFT_CROSS){
+                           handle_shiftroad_cross();
+                       }
 
                 //弯道判断-------如果使用inv------------------------
 

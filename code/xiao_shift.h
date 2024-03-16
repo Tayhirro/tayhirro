@@ -22,7 +22,8 @@ typedef enum{
 typedef enum{
     SHIFT_LEFT=0x00,
     SHIFT_RIGHT=0x01,
-    SHIFT_DNONE=0x02
+    SHIFT_DNONE=0x02,
+    SHIFT_CROSS=0x03
 }SHIFT_DIRECTION;
 
 extern SHIFT_STATUS Shift_Status;
@@ -33,7 +34,7 @@ extern int16 Shift_encoderRight_Thre;             //ÓÒÂÖ±àÂëÆ÷»ý·ÖãÐÖµ
 void check_shiftroad();
 void handle_shiftroad_left(void);
 void handle_shiftroad_right(void);
-
+void handle_shiftroad_cross(void);
 
 
 #endif /* CODE_XIAO_SHIFT_H_ */
