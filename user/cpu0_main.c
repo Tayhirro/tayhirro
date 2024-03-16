@@ -91,7 +91,7 @@ float Camera_midPLimit=30.0;     float Camera_midCoLimit=50.0;    float Camera_m
 //------------------------------状态机------------------------------
 //PID工作状态机
 uint8 Elec_pidStatus = 0;           //电磁PID工作状态机
-uint8 Motor_pidStatus = 1;          //电机PID工作状态机
+uint8 Motor_pidStatus = 0;          //电机PID工作状态机
 
 //==============================速度==============================
 float Speed_set= 60;                    //目标速度（目标编码器数值）
@@ -612,8 +612,8 @@ int core0_main(void)
                                            Image_Process_Status = 1;
                                            Image_Process_Status_inv=1;
                                        }
-         Motor_SetSpeed(MOTOR_1,2000);
-         Motor_SetSpeed(MOTOR_2,2000);
+         Motor_SetSpeed(MOTOR_1,1300);
+         Motor_SetSpeed(MOTOR_2,1300);
          //seekfree_assistant_oscilloscope_send(&oscilloscope_data);
          //oscilloscope_data.data[0]=Motor_1PID.ut;
         // oscilloscope_data.data[1]=Motor_2PID.ut;
@@ -629,7 +629,8 @@ int core0_main(void)
         //ips200_show_float(0, 0, Encoder_1Data, 3, 3);
         //ips200_show_float(0, 60, Encoder_sum_Motor1, 5, 3);
         //ips200_show_float(0, 120, Encoder_2Data, 3, 3);
-         //ips200_show_string(0, 250, "Trace_angleError:");ips200_show_float(150, 250, Trace_angleError, 3, 3);
+
+         ips200_show_string(0, 250, "Trace_angleError:");ips200_show_float(150, 250, Trace_angleError, 3, 3);
         // ips200_show_string(0, 250, "Trace_angleErrorTher:");ips200_show_float(150, 250, Trace_angleErrorTher, 3, 3);
          //ips200_show_float(150, 250, Trace_cameraMidPID.output_val, 3, 3);
          //ips200_show_string(0, 300, "Trace_aimLine:");ips200_show_float(150, 300, Trace_aimLine, 3, 3);
@@ -766,9 +767,9 @@ int core0_main(void)
                 Image_ShowLine(10, 130, IMAGE_IPS200, IMAGE_MIDLINE_RIGHT);
                 //----------------------------------------
                 //显示原图和逆透视变换后的图
-               // ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
+               ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
                 ips200_show_gray_image(0, 130,mapImage[0] , MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
-                ips200_show_float(0,150,Encoder_2Data, 3, 3);
+                //ips200_show_float(0,150,Encoder_2Data, 3, 3);
                 //ips200_show_float(50,150,Encoder_sum_Motor2,3,3);
 
                 //------------------------------元素判断------------------------------

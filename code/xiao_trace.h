@@ -64,7 +64,7 @@ extern TRACE_CROSS_TYPE Trace_Cross_Type;
 extern TRACE_STATUS Trace_Status;
 //==============================外部变量接口==============================
 extern TRACE_TYPE Trace_traceType;  //小车寻迹类型
-
+extern int counter;
 //==============================外部函数接口==============================
 void Trace_PIDInit();
 void Trace_PID_Set(float K_p_set, float K_d_set, float coLimit, float boost, TRACE_TYPE traceType);
