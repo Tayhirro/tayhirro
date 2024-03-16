@@ -9,8 +9,8 @@
 int NORMAL_SPEED=1800;
 int STOP_SPEED=0;
 int CIRCLE_SPEED=0;
-float setpoint_left=1800.0; // setpoint_left -> left 左边标准速度    setpoint_right -> right  右边标准速度
-float setpoint_right=1800.0;
+float setpoint_left=80; // setpoint_left -> left 左边标准速度    setpoint_right -> right  右边标准速度
+float setpoint_right=80;
 int speedflag=1;           //直道、停止、进环判断标志
 extern fPID Trace_cameraLeftPID;                       //左边线获取的中线的PID
 extern fPID Trace_cameraRightPID;                      //右边线获取的中线的PID

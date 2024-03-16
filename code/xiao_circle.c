@@ -174,7 +174,7 @@ void Circle_PutStatus(void) {
  */
 void Circle_CheckCamera(void) {
     //×ó»·µº
-    if (Circle_status == CIRCLE_NONE && Image_LptLeft_Found && !Image_LptRight_Found && Image_isStraightRight) {
+    if (Circle_status == CIRCLE_NONE && Image_LptLeft_Found && !Image_LptRight_Found && Image_isStraightRight&&Trace_Status==TRACE_CENTERLINENEAR) {
         //²âÊÔ´úÂë
         Circle_status = CIRCLE_LEFT_BEGIN;
         Encoder_Begin(ENCODER_MOTOR_2);

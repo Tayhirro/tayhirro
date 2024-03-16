@@ -484,11 +484,11 @@ int core0_main(void)
     //------------------------------设备初始化------------------------------
     mt9v03x_init();                                                     //摄像头初始化
     ips200_init(IPS200_TYPE_PARALLEL8);                                 //屏幕初始化
-    cpu_wait_event_ready();
+   // cpu_wait_event_ready();
 //    uart_init(UART_3, 3000000, UART3_TX_P15_6, UART3_RX_P15_7);         //图传对应串口初始化
    // Elec_Init();                                                        //电感初始化
    // seekfree_assistant_interface_init(SEEKFREE_ASSISTANT_DEBUG_UART);
-    Show_Init();
+    //Show_Init();
 
     steer_init();                                                       //舵机初始化
     Motor_Init();                                                       //电机初始化
@@ -590,6 +590,7 @@ int core0_main(void)
 
 
     //----------------------------------------
+    Image_Init();
     cpu_wait_event_ready();         // 等待所有核心初始化完毕
    //Beep_Tweet();
    // Image_Init();
@@ -604,7 +605,10 @@ int core0_main(void)
         }
         if (mt9v03x_finish_flag == 1) {
                                            Image_Process(mt9v03x_image[0]);
-                                           Image_Process_inv(mapImage[0]);
+                                           ips200_show_float(0,200,Image_iptsLeftNum, 3, 3);
+                                           ips200_show_float(40,200,Image_iptsRightNum,3,3);
+                                           ips200_show_float(80,200,Image_centerLineNum,3,3);
+                                          // Image_Process_inv(mapImage[0]);
                                            Image_Process_Status = 1;
                                            Image_Process_Status_inv=1;
                                        }
@@ -618,7 +622,7 @@ int core0_main(void)
          //ips200_show_float(0,50, Motor_1PID.ut, 3, 3);
          //ips200_show_float(0,100, Motor_2PID.output_val, 3, 3);ips200_show_float(100,100, Motor_2PID.Kp, 3, 3);
          //ips200_show_float(0,150, Motor_2PID.ut, 3, 3);
-         ips200_show_float(0,250, Trace_angleError, 3, 3);
+        // ips200_show_float(0,250, Trace_angleError, 3, 3);
          ips200_show_float(0,300, Trace_Status, 3, 3);
         //------------------------------出入库处理------------------------------
         //Motor_pidStatus = 0;
@@ -700,60 +704,60 @@ int core0_main(void)
                 }
                 //----------------------------------------
 
-                //边线提取
-                //左边线提取
-                for (uint8 i = 0; i < Image_rptsLeftsNum; ++i) {
-                    mapLinex_Left[i] = Image_rptsLefts[i][0];
-                    mapLiney_Left[i] = Image_rptsLefts[i][1];
-                }
-                //右边线提取
-                for (uint8 i = 0; i < Image_rptsRightsNum; ++i) {
-                    mapLinex_Right[i] = Image_rptsRights[i][0];
-                    mapLiney_Right[i] = Image_rptsRights[i][1];
-                }
-                //中线提取
-                for (uint8 i = 0; i < Image_rptsLeftcNum; ++i) {
-                    mapLinex_midLeft[i] = Image_rptsLeftc[i][0];
-                    mapLiney_midLeft[i] = Image_rptsLeftc[i][1];
-                }
-                for (uint8 i = 0; i < Image_rptsRightcNum; ++i) {
-                    mapLinex_midRight[i] = Image_rptsRightc[i][0];
-                    mapLiney_midRight[i] = Image_rptsRightc[i][1];
-                }
+//                //边线提取
+//                //左边线提取
+//                for (uint8 i = 0; i < Image_rptsLeftsNum; ++i) {
+//                    mapLinex_Left[i] = Image_rptsLefts[i][0];
+//                    mapLiney_Left[i] = Image_rptsLefts[i][1];
+//                }
+//                //右边线提取
+//                for (uint8 i = 0; i < Image_rptsRightsNum; ++i) {
+//                    mapLinex_Right[i] = Image_rptsRights[i][0];
+//                    mapLiney_Right[i] = Image_rptsRights[i][1];
+//                }
+//                //中线提取
+//                for (uint8 i = 0; i < Image_rptsLeftcNum; ++i) {
+//                    mapLinex_midLeft[i] = Image_rptsLeftc[i][0];
+//                    mapLiney_midLeft[i] = Image_rptsLeftc[i][1];
+//                }
+//                for (uint8 i = 0; i < Image_rptsRightcNum; ++i) {
+//                    mapLinex_midRight[i] = Image_rptsRightc[i][0];
+//                    mapLiney_midRight[i] = Image_rptsRightc[i][1];
+//                }
 
-                //角点提取
-                for (uint8 i = 0; i < Image_rptsLeftanNum; ++i) {
-                    if (Image_rptsLeftan[i] != 0) {
-                        if (Image_rptsLeftan[i] >= 90.0) {
-                            mapLinex_cornerLeft_obtuse[cornerLeftNum_obtuse] = Image_rptsLefts[i][0];
-                            mapLiney_cornerLeft_obtuse[cornerLeftNum_obtuse] = Image_rptsLefts[i][1];
-                            cornersLeft_obtuse[cornerLeftNum_acute] = Image_rptsLeftan[i];
-                            ++cornerLeftNum_obtuse;
-                        }
-                        else if (Image_rptsLeftan[i] < -90.0 && Image_rptsLeftan[i] > -120.0) {
-                            mapLinex_cornerLeft_acute[cornerLeftNum_acute] = Image_rptsLefts[i][0];
-                            mapLiney_cornerLeft_acute[cornerLeftNum_acute] = Image_rptsLefts[i][1];
-                            cornersLeft_acute[cornerLeftNum_acute] = Image_rptsLeftan[i];
-                            ++cornerLeftNum_acute;
-                        }
-                    }
-               }
-                for (uint8 i = 0; i < Image_rptsRightanNum; ++i) {
-                    if (Image_rptsRightan[i] != 0) {
-                        if (Image_rptsRightan[i] >= 90.0) {
-                            mapLinex_cornerRight_obtuse[cornerRightNum_obtuse] = Image_rptsRights[i][0];
-                            mapLiney_cornerRight_obtuse[cornerRightNum_obtuse] = Image_rptsRights[i][1];
-                            cornersRight_obtuse[cornerRightNum_obtuse] = Image_rptsRightan[i];
-                            ++cornerRightNum_obtuse;
-                        }
-                        else if (Image_rptsRightan[i] < 90.0) {
-                            mapLinex_cornerRight_acute[cornerRightNum_acute] = Image_rptsRights[i][0];
-                            mapLiney_cornerRight_acute[cornerRightNum_acute] = Image_rptsRights[i][1];
-                            cornersRight_acute[cornerRightNum_acute] = Image_rptsRightan[i];
-                            ++cornerRightNum_acute;
-                        }
-                    }
-                }
+//                //角点提取
+//                for (uint8 i = 0; i < Image_rptsLeftanNum; ++i) {
+//                    if (Image_rptsLeftan[i] != 0) {
+//                        if (Image_rptsLeftan[i] >= 90.0) {
+//                            mapLinex_cornerLeft_obtuse[cornerLeftNum_obtuse] = Image_rptsLefts[i][0];
+//                            mapLiney_cornerLeft_obtuse[cornerLeftNum_obtuse] = Image_rptsLefts[i][1];
+//                            cornersLeft_obtuse[cornerLeftNum_acute] = Image_rptsLeftan[i];
+//                            ++cornerLeftNum_obtuse;
+//                        }
+//                        else if (Image_rptsLeftan[i] < -90.0 && Image_rptsLeftan[i] > -120.0) {
+//                            mapLinex_cornerLeft_acute[cornerLeftNum_acute] = Image_rptsLefts[i][0];
+//                            mapLiney_cornerLeft_acute[cornerLeftNum_acute] = Image_rptsLefts[i][1];
+//                            cornersLeft_acute[cornerLeftNum_acute] = Image_rptsLeftan[i];
+//                            ++cornerLeftNum_acute;
+//                        }
+//                    }
+//               }
+//                for (uint8 i = 0; i < Image_rptsRightanNum; ++i) {
+//                    if (Image_rptsRightan[i] != 0) {
+//                        if (Image_rptsRightan[i] >= 90.0) {
+//                            mapLinex_cornerRight_obtuse[cornerRightNum_obtuse] = Image_rptsRights[i][0];
+//                            mapLiney_cornerRight_obtuse[cornerRightNum_obtuse] = Image_rptsRights[i][1];
+//                            cornersRight_obtuse[cornerRightNum_obtuse] = Image_rptsRightan[i];
+//                            ++cornerRightNum_obtuse;
+//                        }
+//                        else if (Image_rptsRightan[i] < 90.0) {
+//                            mapLinex_cornerRight_acute[cornerRightNum_acute] = Image_rptsRights[i][0];
+//                            mapLiney_cornerRight_acute[cornerRightNum_acute] = Image_rptsRights[i][1];
+//                            cornersRight_acute[cornerRightNum_acute] = Image_rptsRightan[i];
+//                            ++cornerRightNum_acute;
+//                        }
+//                    }
+//                }
 
                 //----------------------------------------
                 //显示边线和逆透视变换后的边线
@@ -762,23 +766,25 @@ int core0_main(void)
                 Image_ShowLine(10, 130, IMAGE_IPS200, IMAGE_MIDLINE_RIGHT);
                 //----------------------------------------
                 //显示原图和逆透视变换后的图
-                ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
+               // ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
                 ips200_show_gray_image(0, 130,mapImage[0] , MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
+                ips200_show_float(0,150,Encoder_2Data, 3, 3);
+                ips200_show_float(50,150,Encoder_sum_Motor2,3,3);
 
                 //------------------------------元素判断------------------------------
                 //车库处理
                 //Grage_Storage_Check(GRAGE_CAMERA);
                 //--------------------弯道判断------如果使用的origin--//
 
-                      if(Trace_Status==TRACE_CENTERLINENEAR){
-                       check_shiftroad();
+
+                check_shiftroad();
                        if(Shift_Direction==SHIFT_LEFT){
-                       handle_shiftroad_left();
+                           handle_shiftroad_left();
                        }
                        else if(Shift_Direction==SHIFT_RIGHT){
-                       handle_shiftroad_right();
+                           handle_shiftroad_right();
                        }
-                      }
+
 
                 //弯道判断-------如果使用inv------------------------
 
@@ -786,35 +792,35 @@ int core0_main(void)
                 //--------------------环岛-----十字---------------
                 //角点还是用逆透视进行判断
                 //角点判断
-                Image_FindCorners();
-                //L角点判断
-                Image_LCornerCheck();
-                  // Image_FindConers2();
-
-                //十字检测
-                Cross_CheckCamera();
-                //环岛检测
-                Circle_CheckCamera();
-                //--------------------环岛处理----------------//
-                if(Trace_Status==TRACE_CIRCLE){
-                    if(Trace_Circle_Type==TRACE_CIRCLE_CAREMA_GYROSCOPE_ENCODER||Trace_Circle_Type==TRACE_CIRCLE_CAREMA){
-                                 Circle_RunCamera();
-                    }
-                    if(Trace_Circle_Type==TRACE_CIRCLE_GYROSCOPE_ENCODER){
-                                 Circle_RunGyscopAndEncoder();
-                    }
-                }
-                //--------------------十字处理--------------//
-
-                if(Trace_Status==TRACE_CROSS){
-                if(Trace_Cross_Type==TRACE_CROSS_CAREMA_GYROSCOPE_ENCODER||Trace_Cross_Type==TRACE_CROSS_CAREMA){
-                    Cross_RunCamera();
-                }
-
-                if(Trace_Cross_Type==TRACE_CROSS_GYROSCOPE_ENCODER){
-                    Cross_RunGyscopAndEncoder();
-                }
-                }
+//                Image_FindCorners();
+//                //L角点判断
+//                Image_LCornerCheck();
+//                  // Image_FindConers2();
+//
+//                //十字检测
+//                Cross_CheckCamera();
+//                //环岛检测
+//                Circle_CheckCamera();
+//                //--------------------环岛处理----------------//
+//                if(Trace_Status==TRACE_CIRCLE){
+//                    if(Trace_Circle_Type==TRACE_CIRCLE_CAREMA_GYROSCOPE_ENCODER||Trace_Circle_Type==TRACE_CIRCLE_CAREMA){
+//                                 Circle_RunCamera();
+//                    }
+//                    if(Trace_Circle_Type==TRACE_CIRCLE_GYROSCOPE_ENCODER){
+//                                 Circle_RunGyscopAndEncoder();
+//                    }
+//                }
+//                //--------------------十字处理--------------//
+//
+//                if(Trace_Status==TRACE_CROSS){
+//                if(Trace_Cross_Type==TRACE_CROSS_CAREMA_GYROSCOPE_ENCODER||Trace_Cross_Type==TRACE_CROSS_CAREMA){
+//                    Cross_RunCamera();
+//                }
+//
+//                if(Trace_Cross_Type==TRACE_CROSS_GYROSCOPE_ENCODER){
+//                    Cross_RunGyscopAndEncoder();
+//                }
+//                }
 
                 //------------------------------图传相关------------------------------
                 //----------------------------------------
