@@ -12,8 +12,8 @@ SHIFT_DIRECTION Shift_Direction=SHIFT_DNONE;
 int16 Shift_encoderLeft_Thre = 400;              //左轮编码器积分阈值
 int16 Shift_encoderRight_Thre = 400;             //右轮编码器积分阈值
 void check_shiftroad(void){
-    if (Image_rptsLeftsNum < 0.2 / Image_sampleDist) {++none_leftshift_line;}
-    if(none_leftshift_line>=6&&Shift_Status==SHIFT_NONE){
+    if (Image_iptsLeftNum < 0.1 / Image_sampleDist) {++none_leftshift_line;}
+    if(none_leftshift_line>=10&&Shift_Status==SHIFT_NONE){
         Trace_Status=TRACE_LEFTLOST;
         Shift_Direction=SHIFT_LEFT;
         none_leftshift_line=0;
@@ -22,8 +22,8 @@ void check_shiftroad(void){
         Encoder_Begin(ENCODER_MOTOR_2);
 
     }
-    if (Image_rptsRightsNum < 0.2 / Image_sampleDist){++none_rightshift_line;}
-    if(none_rightshift_line>=6&&Shift_Status==SHIFT_NONE){
+    else if (Image_iptsRightNum < 0.1 / Image_sampleDist){++none_rightshift_line;}
+    if(none_rightshift_line>=10&&Shift_Status==SHIFT_NONE){
         Trace_Status=TRACE_RIGHTLOST;
         Shift_Direction=SHIFT_RIGHT;
         none_rightshift_line=0;
@@ -41,6 +41,7 @@ void handle_shiftroad_left(void){
         //pwm 打角
         //}
         //
+        PWMSetSteer(110);
            Shift_Status=SHIFT_RUNNING;
     }
     if(Shift_Status==SHIFT_RUNNING){
@@ -48,14 +49,15 @@ void handle_shiftroad_left(void){
                 //pwm 打角
                 //}
             if(abs(Encoder_sum_Motor2)>Shift_encoderLeft_Thre){
-                Shift_Status==SHIFT_END;
+                Shift_Status=SHIFT_END;
                 Encoder_End(ENCODER_MOTOR_2);
-              //  Encoder_Clear(ENCODER_MOTOR_2);
+                Encoder_Clear(ENCODER_MOTOR_2);
             }
     }
     if(Shift_Status==SHIFT_END){
            Shift_Status=SHIFT_NONE;
            Trace_Status=TRACE_CENTERLINENEAR;
+           PWMSetSteer(90);
 
     }
 }
@@ -65,6 +67,7 @@ void handle_shiftroad_right(void){
                 //pwm 打角
                 //}
 
+        PWMSetSteer(75);
            Shift_Status=SHIFT_RUNNING;
     }
     if(Shift_Status==SHIFT_RUNNING){
@@ -72,7 +75,7 @@ void handle_shiftroad_right(void){
                 //pwm 打角
                 //}
             if(abs(Encoder_sum_Motor1)>Shift_encoderRight_Thre){
-                Shift_Status==SHIFT_END;
+                Shift_Status=SHIFT_END;
                 Encoder_End(ENCODER_MOTOR_1);
                 Encoder_Clear(ENCODER_MOTOR_1);
             }
@@ -80,6 +83,7 @@ void handle_shiftroad_right(void){
     if(Shift_Status==SHIFT_END){
            Shift_Status=SHIFT_NONE;
            Trace_Status=TRACE_CENTERLINENEAR;
+           PWMSetSteer(90);
 
     }
 }

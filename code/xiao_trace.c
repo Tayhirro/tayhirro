@@ -196,7 +196,7 @@ float Trace_Run() {
      if (Trace_Status == TRACE_RIGHTLOST) {
         Trace_GetAngelError();
 
-        direction_control(&Trace_cameraLeftPID,Trace_angleError,94);
+      //  direction_control(&Trace_cameraLeftPID,Trace_angleError,94);
 
 
         //Trace_PID_Set(Trace_cameraLeftPID.Kp_Set, Trace_cameraLeftPID.Kd_Set, Trace_cameraLeftPID.utLimit, 1.0, Trace_traceType);
@@ -208,7 +208,7 @@ float Trace_Run() {
     else if (Trace_Status == TRACE_LEFTLOST) {
         Trace_GetAngelError();
 
-        direction_control(&Trace_cameraRightPID,Trace_angleError,94);
+      //  direction_control(&Trace_cameraRightPID,Trace_angleError,94);
 
         //Trace_PID_Set(Trace_cameraRightPID.Kp_Set, Trace_cameraRightPID.Kd_Set, Trace_cameraRightPID.utLimit, 1.0, Trace_traceType);
         //PID_PostionalPID(&Trace_cameraRightPID, 0, Trace_angleError);

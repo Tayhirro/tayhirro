@@ -590,7 +590,7 @@ int core0_main(void)
 
 
     //----------------------------------------
-    Image_Init();
+    //Image_Init();
     cpu_wait_event_ready();         // 等待所有核心初始化完毕
    //Beep_Tweet();
    // Image_Init();
@@ -612,7 +612,7 @@ int core0_main(void)
                                            Image_Process_Status = 1;
                                            Image_Process_Status_inv=1;
                                        }
-        Motor_SetSpeed(MOTOR_1,2000);
+         Motor_SetSpeed(MOTOR_1,2000);
          Motor_SetSpeed(MOTOR_2,2000);
          //seekfree_assistant_oscilloscope_send(&oscilloscope_data);
          //oscilloscope_data.data[0]=Motor_1PID.ut;
@@ -769,7 +769,7 @@ int core0_main(void)
                // ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
                 ips200_show_gray_image(0, 130,mapImage[0] , MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
                 ips200_show_float(0,150,Encoder_2Data, 3, 3);
-                ips200_show_float(50,150,Encoder_sum_Motor2,3,3);
+                //ips200_show_float(50,150,Encoder_sum_Motor2,3,3);
 
                 //------------------------------元素判断------------------------------
                 //车库处理
@@ -873,7 +873,7 @@ int core0_main(void)
 //                cornerRightNum_obtuse = 0;
 //                cornerRightNum_acute = 0;
                 //    seekfree_assistant_camera_send();
-                    mt9v03x_finish_flag = 0;
+                mt9v03x_finish_flag = 0;
 
                 Image_Process_Status = 0;
                 Image_Process_Status_inv= 0;
