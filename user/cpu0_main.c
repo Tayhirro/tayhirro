@@ -368,6 +368,7 @@ uint8 inv_map_y[120][188]={0,0,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,3
 };
 
 #endif
+int picturetime=0;
 double H[3][3] ={{-0.218597,0.164510,0.526444},{-0.012728,0.019089,-6.710670},{-0.000207,0.001860,-0.207453}};
 #define LED_20_8
 #define LED_20_9    P20_9
@@ -590,7 +591,7 @@ int core0_main(void)
 
 
     //----------------------------------------
-    //Image_Init();
+    Image_Init();
     cpu_wait_event_ready();         // 等待所有核心初始化完毕
    //Beep_Tweet();
    // Image_Init();
@@ -611,7 +612,7 @@ int core0_main(void)
                                            Image_Process_inv(mapImage[0]);
                                            Image_Process_Status = 1;
                                            Image_Process_Status_inv=1;
-                                       }
+            }
          Motor_SetSpeed(MOTOR_1,1600);
          Motor_SetSpeed(MOTOR_2,1600);
          //seekfree_assistant_oscilloscope_send(&oscilloscope_data);
@@ -676,7 +677,7 @@ int core0_main(void)
 
                 Image_ShowLine(0, 0, IMAGE_IPS200, IMAGE_CLEAR_ORIGIN);
                 Image_ShowLine(10, 130, IMAGE_IPS200, IMAGE_CLEAR_MAPPING);
-
+                Image_ShowLine(10, 130, IMAGE_IPS200, IMAGE_CLEAR_MIDLINE_RIGHT);
                 //----------------------------------------
                 //对图像进行逆透视变换
                 for (uint8 y =0; y < IMAGE_HEIGHT/2; ++y) {
@@ -767,7 +768,7 @@ int core0_main(void)
                 Image_ShowLine(10, 130, IMAGE_IPS200, IMAGE_MIDLINE_RIGHT);
                 //----------------------------------------
                 //显示原图和逆透视变换后的图
-                ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
+                //ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
                 //ips200_show_gray_image(0, 130,mapImage[0] , MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
                 //ips200_show_float(0,150,Encoder_2Data, 3, 3);
                 //ips200_show_float(50,150,Encoder_sum_Motor2,3,3);
@@ -776,7 +777,7 @@ int core0_main(void)
                 //车库处理
                 //Grage_Storage_Check(GRAGE_CAMERA);
                 //--------------------弯道判断------如果使用的origin--//
-
+                ips200_show_int(0,0,(abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))/2,10);
 
                 check_shiftroad();
                        if(Shift_Direction==SHIFT_LEFT){
@@ -795,10 +796,10 @@ int core0_main(void)
                 //--------------------环岛-----十字---------------
                 //角点还是用逆透视进行判断
                 //角点判断
-//                Image_FindCorners();
+                Image_FindCorners();
 //                //L角点判断
-//                Image_LCornerCheck();
-//                  // Image_FindConers2();
+                Image_LCornerCheck();
+                 // Image_FindConers2();
 //
 //                //十字检测
 //                Cross_CheckCamera();

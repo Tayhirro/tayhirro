@@ -237,7 +237,7 @@ uint8 image_thre = 140;                                  //边线处理的初始阈值
 uint8 image_begin_x = IMAGE_WIDTH / 2;                  //边线处理的起始x坐标偏离中心的距离
 uint8 image_begin_y = IMAGE_HEIGHT -10;                //边线处理起始的y坐标
 uint8 image_block_size = 5;                             //区域二值化的区域边长
-uint8 image_block_clip_value = 1;                       //修正的经验参数(一般为2~5)
+uint8 image_block_clip_value = 3;                       //修正的经验参数(一般为2~5)
 
 
 
@@ -959,6 +959,27 @@ void  Image_Process_inv(uint8* image_inv){
             Image_rptsRightc_Bak[i][0] = Image_rptsRightc[i][0];
             Image_rptsRightc_Bak[i][1] = Image_rptsRightc[i][1];
         }
+        Image_rptsLeftsNum_Bak = Image_rptsLeftsNum;
+        Image_rptsRightsNum_Bak = Image_rptsRightsNum;
+
+        for (uint8 i = 0; i < Image_rptsLeftsNum; ++i) {
+            Image_rptsLefts_Bak[i][0] = Image_rptsLefts[i][0];
+            Image_rptsLefts_Bak[i][1] = Image_rptsLefts[i][1];
+        }
+        for (uint8 i = 0; i < Image_rptsRightsNum; ++i) {
+            Image_rptsRights_Bak[i][0] = Image_rptsRights[i][0];
+            Image_rptsRights_Bak[i][1] = Image_rptsRights[i][1];
+        }
+        Image_rptsRightcNum_Bak=Image_rptsRightcNum;
+        Image_rptsLeftcNum_Bak=Image_rptsLeftcNum;
+        for (uint8 i = 0; i < Image_rptsRightcNum; ++i) {
+                   Image_rptsRightc_Bak[i][0] = Image_rptsRightc[i][0];
+                   Image_rptsRightc_Bak[i][1] = Image_rptsRightc[i][1];
+               }
+               for (uint8 i = 0; i <Image_rptsLeftcNum; ++i) {
+                   Image_rptsLeftc_Bak[i][0] = Image_rptsLeftc[i][0];
+                   Image_rptsLeftc_Bak[i][1] = Image_rptsLeftc[i][1];
+               }
     }
 
     if(Trace_Status==TRACE_CROSS){
@@ -972,7 +993,7 @@ void  Image_Process_inv(uint8* image_inv){
        // image_thre=Image_Processing_OtsuGetThresh(image_inv);
        Image_rptsLeftNum = sizeof(Image_rptsLeft) / sizeof(Image_rptsLeft[0]);
        uint8 rx1 = image_begin_x;
-       uint8 ry1 = image_begin_y-30;
+       uint8 ry1 = image_begin_y-50;
        for (; rx1 > 0; --rx1) if (IMAGE_AT(image_inv, rx1 - 1, ry1) < image_thre) break;           //查找边界上的第一个点
        if (IMAGE_AT(image_inv, rx1, ry1) >= image_thre){//没有到边界就正常处理
            Image_FindLine_LeftHand_Adaptive_inv(image_inv,image_block_size,image_block_clip_value, rx1,ry1);
@@ -984,7 +1005,7 @@ void  Image_Process_inv(uint8* image_inv){
        //找右边线
        Image_rptsRightNum = sizeof(Image_rptsRight) / sizeof(Image_rptsRight[0]);
        uint8 rx2 = image_begin_x;
-       uint8 ry2 = image_begin_y-30;
+       uint8 ry2 = image_begin_y-50;
        for (; rx2 < IMAGE_WIDTH - 1; ++rx2) if (IMAGE_AT(image_inv, rx2 + 1, ry2) < image_thre) break;     //查找边界上的第一个点
        if (IMAGE_AT(image_inv, rx2, ry2) >= image_thre)                                                  //没有到边界就正常处理
            Image_FindLine_RightHand_Adaptive_inv(image_inv,image_block_size,image_block_clip_value, rx2,ry2);
@@ -1051,6 +1072,9 @@ void  Image_Process_inv(uint8* image_inv){
            Image_rptsRightsNum = sizeof(Image_rptsRights) / sizeof(Image_rptsRights[0]);
            Image_ResamplePoints(Image_rptsRightb, Image_rptsRightbNum, Image_rptsRights, &Image_rptsRightsNum, Image_sampleDist * Image_pixelPreMeter);
 
+
+
+
            //----------------------------------------
 
 
@@ -1087,7 +1111,7 @@ void  Image_Process_inv(uint8* image_inv){
  * @example             Image_Process(mt9v03x_image[0]);
  */
 void Image_Process(uint8* image) {
-    image_thre=Image_Processing_OtsuGetThresh(image)+2;
+    image_thre=Image_Processing_OtsuGetThresh(image);
     Image_Process_Status = 0;
     //----------------------------------------
     //原图找左右边线

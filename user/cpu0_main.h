@@ -106,6 +106,7 @@ extern float Elec_A;    extern float Elec_B;    extern float Elec_C;
 
 //-----------------------------
 extern double H[3][3] ;
+extern int picturetime;
 void Image_FindCorners(void);
 //-----------------------------
 //摄像头PID(左边线找到的中线)
