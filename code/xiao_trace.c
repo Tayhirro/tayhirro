@@ -85,7 +85,7 @@ static float Trace_GetAngelError() {
                   Trace_angleError = Trace_lineWeight[0] * (float)Image_centerLine[bf_clip(Trace_aimLine, 0, Image_centerLineNum - 1)][0]
                                   + Trace_lineWeight[1] * (float)Image_centerLine[bf_clip(Trace_aimLine + 1, 0, Image_centerLineNum - 1)][0]
                                   + Trace_lineWeight[2] * (float)Image_centerLine[bf_clip(Trace_aimLine + 2, 0, Image_centerLineNum - 1)][0];
-                  ips200_show_float(0,270, Trace_angleError, 3, 3);
+                  //ips200_show_float(0,270, Trace_angleError, 3, 3);
                   //counter++;
                    return Trace_angleError;
                   /*Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]

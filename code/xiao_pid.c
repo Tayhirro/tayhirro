@@ -6,11 +6,11 @@
  */
 #include "xiao_pid.h"
 #include "xiao_steer.h"
-int NORMAL_SPEED=1800;
-int STOP_SPEED=0;
-int CIRCLE_SPEED=0;
-float setpoint_left=80; // setpoint_left -> left 左边标准速度    setpoint_right -> right  右边标准速度
-float setpoint_right=80;
+float NORMAL_SPEED=80;
+float STOP_SPEED=0;
+float CIRCLE_SPEED=64;
+//float Motor_1Target=80; // Motor_1Target -> left 左边标准速度    Motor_2Target -> right  右边标准速度
+//float Motor_2Target=80;
 int speedflag=1;           //直道、停止、进环判断标志
 extern fPID Trace_cameraLeftPID;                       //左边线获取的中线的PID
 extern fPID Trace_cameraRightPID;                      //右边线获取的中线的PID
@@ -21,7 +21,8 @@ extern fPID Trace_cameraMidPID;                       //左+右获取的中线的PID
 
 //iPID ipid_speed_left;
 //iPID ipid_speed_right;
-
+extern float Motor_1Target;
+extern float Motor_2Target;
 PID_TYPE pid_type=PID_ORIGIN;
 
 void PID_Init(fPID* PID){
@@ -92,151 +93,151 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
 
         if(-30>(*topid_steer).err)//右偏过大
         {speedflag =2;
-            //(*topid_steer).Kp=6;
+            (*topid_steer).Kp=1;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp* (*topid_steer).err;
             if(speedflag == 1)
             {
-                setpoint_left = NORMAL_SPEED+2.5*(*topid_steer).err;
-                setpoint_right = NORMAL_SPEED;
+                Motor_1Target = NORMAL_SPEED+2.5*(*topid_steer).err;
+                Motor_2Target = NORMAL_SPEED;
             }
             else if(speedflag == 2)
             {
-                setpoint_left = CIRCLE_SPEED+6*(*topid_steer).err;
-                setpoint_right = CIRCLE_SPEED;
+                Motor_1Target = CIRCLE_SPEED+6*(*topid_steer).err;
+                Motor_2Target = CIRCLE_SPEED;
             }
             else if(speedflag == 5)
             {
-              setpoint_right = STOP_SPEED;
-                setpoint_left = STOP_SPEED+1*(*topid_steer).err;
+              Motor_2Target = STOP_SPEED;
+                Motor_1Target = STOP_SPEED+1*(*topid_steer).err;
             }
         }
 
         else if(-20>=(*topid_steer).err && (*topid_steer).err>=-30)//右偏较大
         {speedflag =2;
-            //(*topid_steer).Kp=5;
+            (*topid_steer).Kp=1;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
             if(speedflag == 1)
             {
-              setpoint_left = NORMAL_SPEED+1*(*topid_steer).err;
-              setpoint_right = NORMAL_SPEED;
+              Motor_1Target = NORMAL_SPEED+1*(*topid_steer).err;
+              Motor_2Target = NORMAL_SPEED;
             }
             else if(speedflag == 2)
             {
-                setpoint_left = CIRCLE_SPEED+6*(*topid_steer).err;
-                setpoint_right = CIRCLE_SPEED;
+                Motor_1Target = CIRCLE_SPEED+6*(*topid_steer).err;
+                Motor_2Target = CIRCLE_SPEED;
             }
             else if(speedflag == 5)
             {
-              setpoint_right = STOP_SPEED;
-                setpoint_left = STOP_SPEED+1*(*topid_steer).err;
+              Motor_2Target = STOP_SPEED;
+                Motor_1Target = STOP_SPEED+1*(*topid_steer).err;
             }
         }
         else if(-13>(*topid_steer).err && (*topid_steer).err>-20)//右偏较小
-        {speedflag =2;
-            //(*topid_steer).Kp=5;
+        {speedflag =1;
+            (*topid_steer).Kp=0.5;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
             if(speedflag == 1)
             {
-              setpoint_left = NORMAL_SPEED+1*(*topid_steer).err;
-              setpoint_right =NORMAL_SPEED ;
+              Motor_1Target = NORMAL_SPEED+1*(*topid_steer).err;
+              Motor_2Target =NORMAL_SPEED ;
             }
             else if(speedflag == 2)
             {
-                setpoint_left = CIRCLE_SPEED+6*(*topid_steer).err;
-                setpoint_right = CIRCLE_SPEED;
+                Motor_1Target = CIRCLE_SPEED+6*(*topid_steer).err;
+                Motor_2Target = CIRCLE_SPEED;
             }
             else if(speedflag == 5)
             {
-              setpoint_right = STOP_SPEED;
-                setpoint_left = STOP_SPEED+1*(*topid_steer).err;
+              Motor_2Target = STOP_SPEED;
+                Motor_1Target = STOP_SPEED+1*(*topid_steer).err;
             }
         }
         else if(-13<=(*topid_steer).err && (*topid_steer).err<0)//基本无右偏
         {speedflag =1;
-            //(*topid_steer).Kp=1;
+            (*topid_steer).Kp=0.5;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
            if(speedflag == 1)
             {
-              setpoint_left =NORMAL_SPEED;
-              setpoint_right =NORMAL_SPEED ;
+              Motor_1Target =NORMAL_SPEED;
+              Motor_2Target =NORMAL_SPEED ;
             }
               else if(speedflag == 2)
             {
-              setpoint_left = setpoint_right = CIRCLE_SPEED;
+              Motor_1Target = Motor_2Target = CIRCLE_SPEED;
             }
 
         }
         else if(0<=(*topid_steer).err && (*topid_steer).err<=13)//基本无左偏
         {speedflag =1;
-            //(*topid_steer).Kp=1;
+            (*topid_steer).Kp=0.5;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
            if(speedflag == 1)
             {
-              setpoint_left =NORMAL_SPEED;
-              setpoint_right =NORMAL_SPEED ;
+              Motor_1Target =NORMAL_SPEED;
+              Motor_2Target =NORMAL_SPEED ;
             }
            else if(speedflag == 2)
             {
-              setpoint_left = setpoint_right = CIRCLE_SPEED;
+              Motor_1Target = Motor_2Target = CIRCLE_SPEED;
             }
 
         }
         else if(13<(*topid_steer).err && (*topid_steer).err<20)//左偏较小
-        {speedflag =2;
-            //(*topid_steer).Kp=5;
+        {speedflag =1;
+            (*topid_steer).Kp=0.5;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
            if(speedflag == 1)
             {
-              setpoint_right =NORMAL_SPEED -1*(*topid_steer).err;
-                setpoint_left =NORMAL_SPEED ;
+              Motor_2Target =NORMAL_SPEED -1*(*topid_steer).err;
+                Motor_1Target =NORMAL_SPEED ;
             }
            else if(speedflag == 2)
             {
-              setpoint_right = CIRCLE_SPEED-6*(*topid_steer).err;
-                setpoint_left = CIRCLE_SPEED;
+              Motor_2Target = CIRCLE_SPEED-6*(*topid_steer).err;
+                Motor_1Target = CIRCLE_SPEED;
             }
            else if(speedflag == 5)
             {
-              setpoint_right = STOP_SPEED-1*(*topid_steer).err;
-                setpoint_left = STOP_SPEED;
+              Motor_2Target = STOP_SPEED-1*(*topid_steer).err;
+                Motor_1Target = STOP_SPEED;
             }
         }
         else if(20<=(*topid_steer).err && (*topid_steer).err<30)//左偏较大
         {speedflag =2;
-            //(*topid_steer).Kp=5;
+            (*topid_steer).Kp=1;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
             if(speedflag == 1)
             {
-              setpoint_right =NORMAL_SPEED -1*(*topid_steer).err;
-              setpoint_left =NORMAL_SPEED ;
+              Motor_2Target =NORMAL_SPEED -1*(*topid_steer).err;
+              Motor_1Target =NORMAL_SPEED ;
             }
             else if(speedflag == 2)
             {
-              setpoint_right = CIRCLE_SPEED-6*(*topid_steer).err;
-                setpoint_left = CIRCLE_SPEED;
+              Motor_2Target = CIRCLE_SPEED-6*(*topid_steer).err;
+                Motor_1Target = CIRCLE_SPEED;
             }
             else if(speedflag == 5)
             {
-              setpoint_right = STOP_SPEED-1*(*topid_steer).err;
-                setpoint_left = STOP_SPEED;
+              Motor_2Target = STOP_SPEED-1*(*topid_steer).err;
+                Motor_1Target = STOP_SPEED;
             }
         }else if(30<=(*topid_steer).err)//左偏过大
         {speedflag =2;
-            //(*topid_steer).Kp=6;
+            (*topid_steer).Kp=1;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
             if(speedflag == 1)
             {
-              setpoint_right =NORMAL_SPEED -2.5*(*topid_steer).err;
-              setpoint_left =NORMAL_SPEED ;
+              Motor_2Target =NORMAL_SPEED -2.5*(*topid_steer).err;
+              Motor_1Target =NORMAL_SPEED ;
             }
             else if(speedflag == 2)
             {
-              setpoint_right = CIRCLE_SPEED-6*(*topid_steer).err;
-              setpoint_left = CIRCLE_SPEED;
+              Motor_2Target = CIRCLE_SPEED-6*(*topid_steer).err;
+              Motor_1Target = CIRCLE_SPEED;
             }else if(speedflag == 5)
             {
-                setpoint_right = STOP_SPEED-1*(*topid_steer).err;
-                setpoint_left = STOP_SPEED;
+                Motor_2Target = STOP_SPEED-1*(*topid_steer).err;
+                Motor_1Target = STOP_SPEED;
             }
         }
 
@@ -255,10 +256,10 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
 
 
 
-              //  toipid_speed_left.target_val=(int)setpoint_left;                                                                                                                           //传给速度环
-              //  toipid_speed_right.target_val= (int)setpoint_right;
+              //  toipid_speed_left.target_val=(int)Motor_1Target;                                                                                                                           //传给速度环
+              //  toipid_speed_right.target_val= (int)Motor_2Target;
         //ips200_show_float(100, 250, (*topid_steer).output_val, 3, 3);
-        PWMSetSteer(90-(*topid_steer).output_val);                        //输出舵机
+        PWMSetSteer(90.0-(*topid_steer).output_val);                        //输出舵机
 }
 
 void PID_SetParameter(fPID* PID, float K_p_set,float K_i_set,float K_d_set,float pLimit,float coLimit,float boost){

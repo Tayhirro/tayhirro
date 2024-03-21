@@ -15,7 +15,7 @@ int16 Shift_encoderCross_Thre =6000;             //过十字路口的积分阈值
 void check_shiftroad(void){
     if (Image_iptsLeftNum < 0.1 / Image_sampleDist) {++none_leftshift_line;}
     if (Image_iptsRightNum < 0.1 / Image_sampleDist){++none_rightshift_line;}
-    if(none_rightshift_line>=10&&none_leftshift_line>=10&&Shift_Status==SHIFT_NONE){
+    if(none_rightshift_line>=25&&none_leftshift_line>=10&&Shift_Status==SHIFT_NONE){
         //Trace_Status=TRACE_CROSS;
         Trace_Status=TRACE_CROSS;
         Shift_Direction=SHIFT_CROSS;
@@ -23,9 +23,11 @@ void check_shiftroad(void){
         PWMSetSteer(90.0);
         Encoder_Begin(ENCODER_MOTOR_2);
         Encoder_Begin(ENCODER_MOTOR_1);
+        none_rightshift_line=0;
+        none_leftshift_line=0;
         return;
     }//十字路口
-    if(none_leftshift_line>=10&&Shift_Status==SHIFT_NONE){
+    if(none_leftshift_line>=25&&Shift_Status==SHIFT_NONE){
         Trace_Status=TRACE_LEFTLOST;
         Shift_Direction=SHIFT_LEFT;
         none_leftshift_line=0;
@@ -35,7 +37,7 @@ void check_shiftroad(void){
         return;
 
     }
-    if(none_rightshift_line>=10&&Shift_Status==SHIFT_NONE){
+    if(none_rightshift_line>=25&&Shift_Status==SHIFT_NONE){
         Trace_Status=TRACE_RIGHTLOST;
         Shift_Direction=SHIFT_RIGHT;
         none_rightshift_line=0;

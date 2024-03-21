@@ -95,10 +95,11 @@ IFX_INTERRUPT(cc61_pit_ch0_isr, 0, CCU6_1_CH0_ISR_PRIORITY)
 {
     interrupt_global_enable(0);                     // ¿ªÆôÖÐ¶ÏÇ¶Ì×
     pit_clear_flag(CCU61_CH0);
-//    if (mt9v03x_finish_flag == 1) {
-////        Image_Process_Status = 1;
-////        Image_Process_Status_inv=1;
-//    }
+    if (mt9v03x_finish_flag == 1) {
+
+            Image_Process(mt9v03x_image[0]);
+            Image_Process_Status = 1;
+    }
 }
 
 IFX_INTERRUPT(cc61_pit_ch1_isr, 0, CCU6_1_CH1_ISR_PRIORITY)

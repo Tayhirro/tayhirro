@@ -44,7 +44,7 @@
 //------------------------------状态机------------------------------
 uint8 Image_Process_Status = 0;
 uint8 Image_Process_Status_inv = 0;
-uint8 Image_isUsefulData_Status = 1;
+uint8 Image_isUsefulData_Status = 0;
 //------------------------------变量------------------------------
 //------------------------------
 //基本变量
@@ -943,168 +943,6 @@ void Image_getcenterLine(){
         }
     }
 }
-void  Image_Process_inv(uint8* image_inv){
-    image_thre=Image_Processing_OtsuGetThresh(image_inv)+2;
-    Image_Process_Status_inv= 0;
-    //-------------------状态机-------------------
-    if (Image_isUsefulData_Status) {
-        Image_rptsLeftcNum_Bak = Image_rptsLeftcNum;
-        for (uint8 i = 0; i < Image_rptsLeftcNum; ++i) {
-            Image_rptsLeftc_Bak[i][0] = Image_rptsLeftc[i][0];
-            Image_rptsLeftc_Bak[i][1] = Image_rptsLeftc[i][1];
-        }
-
-        Image_rptsRightcNum_Bak = Image_rptsRightcNum;
-        for (uint8 i = 0; i < Image_rptsRightcNum; ++i) {
-            Image_rptsRightc_Bak[i][0] = Image_rptsRightc[i][0];
-            Image_rptsRightc_Bak[i][1] = Image_rptsRightc[i][1];
-        }
-        Image_rptsLeftsNum_Bak = Image_rptsLeftsNum;
-        Image_rptsRightsNum_Bak = Image_rptsRightsNum;
-
-        for (uint8 i = 0; i < Image_rptsLeftsNum; ++i) {
-            Image_rptsLefts_Bak[i][0] = Image_rptsLefts[i][0];
-            Image_rptsLefts_Bak[i][1] = Image_rptsLefts[i][1];
-        }
-        for (uint8 i = 0; i < Image_rptsRightsNum; ++i) {
-            Image_rptsRights_Bak[i][0] = Image_rptsRights[i][0];
-            Image_rptsRights_Bak[i][1] = Image_rptsRights[i][1];
-        }
-        Image_rptsRightcNum_Bak=Image_rptsRightcNum;
-        Image_rptsLeftcNum_Bak=Image_rptsLeftcNum;
-        for (uint8 i = 0; i < Image_rptsRightcNum; ++i) {
-                   Image_rptsRightc_Bak[i][0] = Image_rptsRightc[i][0];
-                   Image_rptsRightc_Bak[i][1] = Image_rptsRightc[i][1];
-               }
-               for (uint8 i = 0; i <Image_rptsLeftcNum; ++i) {
-                   Image_rptsLeftc_Bak[i][0] = Image_rptsLeftc[i][0];
-                   Image_rptsLeftc_Bak[i][1] = Image_rptsLeftc[i][1];
-               }
-    }
-
-    if(Trace_Status==TRACE_CROSS){
-        if(Trace_traceType==TRACE_Camera_Far){image_begin_y=IMAGE_HEIGHT-70;}
-        if(Trace_traceType==TRACE_Camera_Near){image_begin_y=IMAGE_HEIGHT-10;}
-    }
-
-
-    //-------------------状态机------------------
-    //找左边线
-       // image_thre=Image_Processing_OtsuGetThresh(image_inv);
-       Image_rptsLeftNum = sizeof(Image_rptsLeft) / sizeof(Image_rptsLeft[0]);
-       uint8 rx1 = image_begin_x;
-       uint8 ry1 = image_begin_y-50;
-       for (; rx1 > 0; --rx1) if (IMAGE_AT(image_inv, rx1 - 1, ry1) < image_thre) break;           //查找边界上的第一个点
-       if (IMAGE_AT(image_inv, rx1, ry1) >= image_thre){//没有到边界就正常处理
-           Image_FindLine_LeftHand_Adaptive_inv(image_inv,image_block_size,image_block_clip_value, rx1,ry1);
-       }
-       else{
-           Image_rptsLeftNum = 0;                                                          //边界的话就是0了
-       }
-       //----------------------------------------
-       //找右边线
-       Image_rptsRightNum = sizeof(Image_rptsRight) / sizeof(Image_rptsRight[0]);
-       uint8 rx2 = image_begin_x;
-       uint8 ry2 = image_begin_y-50;
-       for (; rx2 < IMAGE_WIDTH - 1; ++rx2) if (IMAGE_AT(image_inv, rx2 + 1, ry2) < image_thre) break;     //查找边界上的第一个点
-       if (IMAGE_AT(image_inv, rx2, ry2) >= image_thre)                                                  //没有到边界就正常处理
-           Image_FindLine_RightHand_Adaptive_inv(image_inv,image_block_size,image_block_clip_value, rx2,ry2);
-       else{
-           Image_rptsRightNum = 0;
-       }
-       for (uint8 i = 1; i < Image_rptsLeftNum - 1; ++i) {
-               if (Image_rptsLeft[i + 1][0] != 0 || Image_rptsLeft[i + 1][1] != 0) {
-                   Image_rptsLeft[i][0] = Image_rptsLeft[i + 1][0];
-                   Image_rptsLeft[i][1] = Image_rptsLeft[i + 1][1];
-                   ++Image_rptsLeftrNum;
-               }
-           }
-           Image_rptsLeftNum = Image_rptsLeftrNum;
-           Image_rptsLeftrNum = 0;
-           for (uint8 i = 1; i < Image_rptsRightNum - 1; ++i) {
-               if (Image_rptsRight[i + 1][0] != 0 || Image_rptsRight[i + 1][1] != 0) {
-                   Image_rptsRight[i][0] = Image_rptsRight[i + 1][0];
-                   Image_rptsRight[i][1] = Image_rptsRight[i + 1][1];
-                   ++Image_rptsRightrNum;
-               }
-           }
-           Image_rptsRightNum = Image_rptsRightrNum;
-           Image_rptsRightrNum = 0;
-//           if (Image_isUsefulData_Status) {
-//                   Image_rptsLeftNum_Bak = Image_rptsLeftNum;
-//                   Image_rptsRightNum_Bak=Image_rptsRightNum;
-//                   //对数据进行备份
-//                   for (uint8 i = 0; i < Image_rptsLeftNum; ++i) {
-//                       Image_rptsLeft_Bak[i][0] = Image_rptsLeft[i][0];
-//                       Image_rptsRight_Bak[i][1] = Image_rptsLeft[i][1];
-//                   }
-//               }
-
-           //----------------------------------------
-           //对数据进行三角滤波
-           //左边线
-           Image_BlurPoints(Image_rptsLeft, Image_rptsLeftNum, Image_rptsLeftb, Image_linerBlurKernel);
-           Image_rptsLeftbNum = Image_rptsLeftNum;
-           //右边线
-           Image_BlurPoints(Image_rptsRight, Image_rptsRightNum, Image_rptsRightb, Image_linerBlurKernel);
-           Image_rptsRightbNum = Image_rptsRightNum;
-
-           //----------------------------------------
-           //对滤波后数据进行等距采样
-           //----------------------------------------
-           //对数据进行备份
-//           if (Image_isUsefulData_Status) {
-//               Image_rptsLeftbNum_Bak = Image_rptsLeftbNum;
-//               Image_rptsRightbNum_Bak = Image_rptsRightbNum;
-//               for (uint8 i = 0; i < Image_rptsLeftsNum; ++i) {
-//                   Image_rptsLeftb_Bak[i][0] = Image_rptsLeftb[i][0];
-//                   Image_rptsLeftb_Bak[i][1] = Image_rptsLeftb[i][1];
-//               }
-//               for (uint8 i = 0; i < Image_rptsRightsNum; ++i) {
-//                   Image_rptsRightb_Bak[i][0] = Image_rptsRightb[i][0];
-//                   Image_rptsRightb_Bak[i][1] = Image_rptsRightb[i][1];
-//               }
-//           }
-           //----------------------------------------
-           //等距采样
-           Image_rptsLeftsNum = sizeof(Image_rptsLefts) / sizeof(Image_rptsLefts[0]);
-           Image_ResamplePoints(Image_rptsLeftb, Image_rptsLeftbNum, Image_rptsLefts, &Image_rptsLeftsNum, Image_sampleDist * Image_pixelPreMeter);
-           Image_rptsRightsNum = sizeof(Image_rptsRights) / sizeof(Image_rptsRights[0]);
-           Image_ResamplePoints(Image_rptsRightb, Image_rptsRightbNum, Image_rptsRights, &Image_rptsRightsNum, Image_sampleDist * Image_pixelPreMeter);
-
-
-
-
-           //----------------------------------------
-
-
-           //求解边线局部角度变化率
-           Image_LocalAnglePoints(Image_rptsLefts, Image_rptsLeftsNum, Image_rptsLefta, (uint16)round(Image_angleDist / Image_sampleDist));
-           Image_rptsLeftaNum = Image_rptsLeftsNum;
-           Image_LocalAnglePoints(Image_rptsRights, Image_rptsRightsNum, Image_rptsRighta, (uint16)round(Image_angleDist / Image_sampleDist));
-           Image_rptsRightaNum = Image_rptsRightsNum;
-
-           //----------------------------------------
-           //对角度变化率进行非极大抑制(只保留一段边线中数据最大的点)
-           Image_NmsAngle(Image_rptsLefta, Image_rptsLeftaNum, Image_rptsLeftan, (uint16)round(Image_angleDist / Image_sampleDist) * 2 + 1, &Image_cornerNumLeft);
-           Image_rptsLeftanNum = Image_rptsLeftaNum;
-           Image_NmsAngle(Image_rptsRighta, Image_rptsRightaNum, Image_rptsRightan, (uint16)round(Image_angleDist / Image_sampleDist) * 2 + 1, &Image_cornerNumRight);
-           Image_rptsRightanNum = Image_rptsRightaNum;
-
-
-           //----------------------------------------
-           //找左右中线
-           Image_TrackLeftLine(Image_rptsLefts, Image_rptsLeftsNum, Image_rptsLeftc, (uint8)round(Image_angleDist / Image_sampleDist), Image_pixelPreMeter * Image_roadWidth / 2-clip_middle);
-           Image_rptsLeftcNum = Image_rptsLeftsNum;
-           Image_TrackRightLine(Image_rptsRights, Image_rptsRightsNum, Image_rptsRightc, (uint8)round(Image_angleDist / Image_sampleDist), Image_pixelPreMeter * Image_roadWidth / 2+clip_middle);
-           Image_rptsRightcNum = Image_rptsRightsNum;
-       if (Image_isUsefulData_Status== 0) {
-           Image_isUsefulData_Status = 1;
-       }
-       Image_Process_Status_inv = 1;
-}
-
-
 /*
  * @brief               图像处理,包括边缘提取,去畸变+逆透视,滤波,等距采样,计算角度,计算中线
  * @parameter image     需要处理的图片
@@ -1112,12 +950,11 @@ void  Image_Process_inv(uint8* image_inv){
  */
 void Image_Process(uint8* image) {
     image_thre=Image_Processing_OtsuGetThresh(image);
-    Image_Process_Status = 0;
     //----------------------------------------
     //原图找左右边线
     //----------------------------------------
     //-----------------------------------------
-
+    Image_Process_Status = 0;
     if (Image_isUsefulData_Status) {
         Image_iptsLeftNum_Bak = Image_iptsLeftNum;
         Image_iptsRightNum_Bak = Image_iptsRightNum;
@@ -1130,9 +967,29 @@ void Image_Process(uint8* image) {
                       Image_iptsRight_Bak[i][0] = Image_iptsRight[i][0];
                       Image_iptsRight_Bak[i][1] = Image_iptsRight[i][1];
                   }
+        Image_rptsLeftsNum_Bak = Image_rptsLeftsNum;
+        Image_rptsRightsNum_Bak = Image_rptsRightsNum;
+        for (uint8 i = 0; i < Image_rptsLeftsNum; ++i) {
+            Image_rptsLefts_Bak[i][0] = Image_rptsLefts[i][0];
+            Image_rptsLefts_Bak[i][1] = Image_rptsLefts[i][1];
+        }
+        for (uint8 i = 0; i < Image_rptsRightsNum; ++i) {
+            Image_rptsRights_Bak[i][0] = Image_rptsRights[i][0];
+            Image_rptsRights_Bak[i][1] = Image_rptsRights[i][1];
+        }
+        Image_rptsLeftcNum_Bak = Image_rptsLeftcNum;
+        for (uint8 i = 0; i < Image_rptsLeftcNum; ++i) {
+            Image_rptsLeftc_Bak[i][0] = Image_rptsLeftc[i][0];
+            Image_rptsLeftc_Bak[i][1] = Image_rptsLeftc[i][1];
+        }
 
-
+        Image_rptsRightcNum_Bak = Image_rptsRightcNum;
+        for (uint8 i = 0; i < Image_rptsRightcNum; ++i) {
+            Image_rptsRightc_Bak[i][0] = Image_rptsRightc[i][0];
+            Image_rptsRightc_Bak[i][1] = Image_rptsRightc[i][1];
+        }
     }
+
     if(Trace_Status==TRACE_CROSS){
         if(Trace_traceType==TRACE_Camera_Far){image_begin_y=IMAGE_HEIGHT-70;}
         if(Trace_traceType==TRACE_Camera_Near){image_begin_y=IMAGE_HEIGHT-10;}
@@ -1167,172 +1024,87 @@ void Image_Process(uint8* image) {
    if((Trace_Status==TRACE_CENTERLINENEAR||Trace_Status==TRACE_CENTERLINEFAR||Trace_Status==TRACE_LEFTLOST||Trace_Status==TRACE_RIGHTLOST)&&pid_type==PID_ORIGIN){
     Image_getcenterLine();
    }
-    // Image_Processing_OtsuGetThresh(image);
-        //对数据进行三角滤波
-//        //左边线
-//        Image_BlurPoints(Image_iptsLeft, Image_iptsLeftNum, Image_iptsLeftb, Image_linerBlurKernel);
-//        Image_iptsLeftbNum = Image_iptsLeftNum;
-//        //右边线
-//        Image_BlurPoints(Image_iptsRight, Image_iptsRightNum, Image_iptsRightb, Image_linerBlurKernel);
-//        Image_iptsRightbNum = Image_iptsRightNum;
-//
-//            //----------------------------------------
-//            //对滤波后数据进行等距采样
-//            //----------------------------------------
-//            //对数据进行备份
-//            if (Image_isUsefulData_Status) {
-//                Image_iptsLeftsNum_Bak = Image_iptsLeftsNum;
-//                Image_iptsRightsNum_Bak = Image_iptsRightsNum;
-//                for (uint8 i = 0; i < Image_iptsLeftsNum; ++i) {
-//                    Image_iptsLefts_Bak[i][0] = Image_iptsLefts[i][0];
-//                    Image_iptsLefts_Bak[i][1] = Image_iptsLefts[i][1];
-//                }
-//                for (uint8 i = 0; i < Image_iptsRightsNum; ++i) {
-//                    Image_iptsRights_Bak[i][0] = Image_itsRights[i][0];
-//                    Image_iptsRights_Bak[i][1] = Image_iptsRights[i][1];
-//                }
-//            }
-//                //等距采样
-//                Image_iptsLeftsNum = sizeof(Image_iptsLefts) / sizeof(Image_iptsLefts[0]);
-//                Image_ResamplePoints(Image_iptsLeftb, Image_iptsLeftbNum, Image_iptsLefts, &Image_iptsLeftsNum, Image_sampleDist * Image_pixelPreMeter);
-//                Image_iptsRightsNum = sizeof(Image_iptsRights) / sizeof(Image_iptsRights[0]);
-//                Image_ResamplePoints(Image_iptsRightb, Image_iptsRightbNum, Image_iptsRights, &Image_iptsRightsNum, Image_sampleDist * Image_pixelPreMeter);
-//
-//
-//                    //求解边线局部角度变化率
-//                    Image_LocalAnglePoints(Image_iptsLefts, Image_iptsLeftsNum, Image_iptsLefta, (uint16)round(Image_angleDist / Image_sampleDist));
-//                    Image_iptsLeftaNum = Image_iptsLeftsNum;
-//                    Image_LocalAnglePoints(Image_iptsRights, Image_iptsRightsNum, Image_iptsRighta, (uint16)round(Image_angleDist / Image_sampleDist));
-//                    Image_iptsRightaNum = Image_iptsRightsNum;
-//
-//                    //----------------------------------------
-//                    //对角度变化率进行非极大抑制(只保留一段边线中数据最大的点)
-//                    Image_NmsAngle(Image_iptsLefta, Image_iptsLeftaNum, Image_iptsLeftan, (uint16)round(Image_angleDist / Image_sampleDist) * 2 + 1, &Image_cornerNumLeft);
-//                    Image_iptsLeftanNum = Image_iptsLeftaNum;
-//                    Image_NmsAngle(Image_iptsRighta, Image_iptsRightaNum, Image_iptsRightan, (uint16)round(Image_angleDist / Image_sampleDist) * 2 + 1, &Image_cornerNumRight);
-//                    Image_iptsRightanNum = Image_iptsRightaNum;
-//
-//                    if (Image_isUsefulData_Status) {
-//                        Image_iptsLeftcNum_Bak = Image_iptsLeftcNum;
-//                        for (uint8 i = 0; i < Image_iptsLeftcNum; ++i) {
-//                            Image_iptsLeftc_Bak[i][0] = Image_iptsLeftc[i][0];
-//                            Image_iptsLeftc_Bak[i][1] = Image_iptsLeftc[i][1];
-//                        }
-//
-//                        Image_iptsRightcNum_Bak = Image_iptsRightcNum;
-//                        for (uint8 i = 0; i < Image_iptsRightcNum; ++i) {
-//                            Image_iptsRightc_Bak[i][0] = Image_iptsRightc[i][0];
-//                            Image_iptsRightc_Bak[i][1] = Image_iptsRightc[i][1];
-//                        }
-//                    }
-//                    //中线计算
-//                    Image_getcenterLine();
-//
 
-//逆透视方式寻找边线，现在暂时通过原图
-    //----------------------------------------
-    //对边线进行去畸变 + 逆透视变换
-//    for (uint8 i = 0; i < Image_iptsLeftNum; ++i) {
-//        Image_rptsLeft[i][0] = inv_map_x[Image_iptsLeft[i][1]][Image_iptsLeft[i][0]];
-//        Image_rptsLeft[i][1] = inv_map_y[Image_iptsLeft[i][1]][Image_iptsLeft[i][0]];
-//    }
-//   Image_rptsLeftNum = Image_iptsLeftNum;
-//
-//    for (uint8 i = 0; i < Image_iptsRightNum; ++i) {
-//        Image_rptsRight[i][0] = inv_map_x[Image_iptsRight[i][1]][Image_iptsRight[i][0]];
-//        Image_rptsRight[i][1] = inv_map_y[Image_iptsRight[i][1]][Image_iptsRight[i][0]];
-//    }
-//    Image_rptsRightNum = Image_iptsRightNum;
+      if(Trace_Status==TRACE_CROSS){
+          if(Trace_traceType==TRACE_Camera_Far){image_begin_y=IMAGE_HEIGHT-70;}
+          if(Trace_traceType==TRACE_Camera_Near){image_begin_y=IMAGE_HEIGHT-10;}
+      }
+   // ----------------------------------------
+   // 对边线进行去畸变 + 逆透视变换
+    for (uint8 i = 0; i < Image_iptsLeftNum; ++i) {
+        Image_rptsLeft[i][0] = map_x[Image_iptsLeft[i][1]][Image_iptsLeft[i][0]];
+        Image_rptsLeft[i][1] = map_y[Image_iptsLeft[i][1]][Image_iptsLeft[i][0]];
+    }
+   Image_rptsLeftNum = Image_iptsLeftNum;
+
+    for (uint8 i = 0; i < Image_iptsRightNum; ++i) {
+        Image_rptsRight[i][0] = map_x[Image_iptsRight[i][1]][Image_iptsRight[i][0]];
+        Image_rptsRight[i][1] = map_y[Image_iptsRight[i][1]][Image_iptsRight[i][0]];
+    }
+    Image_rptsRightNum = Image_iptsRightNum;
 
 
     //去除(0,0)点
-//    for (uint8 i = 1; i < Image_rptsLeftNum - 1; ++i) {
-//        if (Image_rptsLeft[i + 1][0] != 0 || Image_rptsLeft[i + 1][1] != 0) {
-//            Image_rptsLeft[i][0] = Image_rptsLeft[i + 1][0];
-//            Image_rptsLeft[i][1] = Image_rptsLeft[i + 1][1];
-//            ++Image_rptsLeftrNum;
-//        }
-//    }
-//    Image_rptsLeftNum = Image_rptsLeftrNum;
-//    Image_rptsLeftrNum = 0;
-//    for (uint8 i = 1; i < Image_rptsRightNum - 1; ++i) {
-//        if (Image_rptsRight[i + 1][0] != 0 || Image_rptsRight[i + 1][1] != 0) {
-//            Image_rptsRight[i][0] = Image_rptsRight[i + 1][0];
-//            Image_rptsRight[i][1] = Image_rptsRight[i + 1][1];
-//            ++Image_rptsRightrNum;
-//        }
-//    }
-//    Image_rptsRightNum = Image_rptsRightrNum;
-//    Image_rptsRightrNum = 0;
-//
-//
-//    //----------------------------------------
-//    //对数据进行三角滤波
-//    //左边线
-//    Image_BlurPoints(Image_rptsLeft, Image_rptsLeftNum, Image_rptsLeftb, Image_linerBlurKernel);
-//    Image_rptsLeftbNum = Image_rptsLeftNum;
-//    //右边线
-//    Image_BlurPoints(Image_rptsRight, Image_rptsRightNum, Image_rptsRightb, Image_linerBlurKernel);
-//    Image_rptsRightbNum = Image_rptsRightNum;
-//
-//    //----------------------------------------
-//    //对滤波后数据进行等距采样
-//    //----------------------------------------
-//    //对数据进行备份
-//    if (Image_isUsefulData_Status) {
-//        Image_rptsLeftsNum_Bak = Image_rptsLeftsNum;
-//        Image_rptsRightsNum_Bak = Image_rptsRightsNum;
-//        for (uint8 i = 0; i < Image_rptsLeftsNum; ++i) {
-//            Image_rptsLefts_Bak[i][0] = Image_rptsLefts[i][0];
-//            Image_rptsLefts_Bak[i][1] = Image_rptsLefts[i][1];
-//        }
-//        for (uint8 i = 0; i < Image_rptsRightsNum; ++i) {
-//            Image_rptsRights_Bak[i][0] = Image_rptsRights[i][0];
-//            Image_rptsRights_Bak[i][1] = Image_rptsRights[i][1];
-//        }
-//    }
-//    //----------------------------------------
-//    //等距采样
-//    Image_rptsLeftsNum = sizeof(Image_rptsLefts) / sizeof(Image_rptsLefts[0]);
-//    Image_ResamplePoints(Image_rptsLeftb, Image_rptsLeftbNum, Image_rptsLefts, &Image_rptsLeftsNum, Image_sampleDist * Image_pixelPreMeter);
-//    Image_rptsRightsNum = sizeof(Image_rptsRights) / sizeof(Image_rptsRights[0]);
-//    Image_ResamplePoints(Image_rptsRightb, Image_rptsRightbNum, Image_rptsRights, &Image_rptsRightsNum, Image_sampleDist * Image_pixelPreMeter);
-//
-//    //----------------------------------------
-//
-//
-//    //求解边线局部角度变化率
-//    Image_LocalAnglePoints(Image_rptsLefts, Image_rptsLeftsNum, Image_rptsLefta, (uint16)round(Image_angleDist / Image_sampleDist));
-//    Image_rptsLeftaNum = Image_rptsLeftsNum;
-//    Image_LocalAnglePoints(Image_rptsRights, Image_rptsRightsNum, Image_rptsRighta, (uint16)round(Image_angleDist / Image_sampleDist));
-//    Image_rptsRightaNum = Image_rptsRightsNum;
-//
-//    //----------------------------------------
-//    //对角度变化率进行非极大抑制(只保留一段边线中数据最大的点)
-//    Image_NmsAngle(Image_rptsLefta, Image_rptsLeftaNum, Image_rptsLeftan, (uint16)round(Image_angleDist / Image_sampleDist) * 2 + 1, &Image_cornerNumLeft);
-//    Image_rptsLeftanNum = Image_rptsLeftaNum;
-//    Image_NmsAngle(Image_rptsRighta, Image_rptsRightaNum, Image_rptsRightan, (uint16)round(Image_angleDist / Image_sampleDist) * 2 + 1, &Image_cornerNumRight);
-//    Image_rptsRightanNum = Image_rptsRightaNum;
-//
-//    if (Image_isUsefulData_Status) {
-//        Image_rptsLeftcNum_Bak = Image_rptsLeftcNum;
-//        for (uint8 i = 0; i < Image_rptsLeftcNum; ++i) {
-//            Image_rptsLeftc_Bak[i][0] = Image_rptsLeftc[i][0];
-//            Image_rptsLeftc_Bak[i][1] = Image_rptsLeftc[i][1];
-//        }
-//
-//        Image_rptsRightcNum_Bak = Image_rptsRightcNum;
-//        for (uint8 i = 0; i < Image_rptsRightcNum; ++i) {
-//            Image_rptsRightc_Bak[i][0] = Image_rptsRightc[i][0];
-//            Image_rptsRightc_Bak[i][1] = Image_rptsRightc[i][1];
-//        }
-//    }
-//    //----------------------------------------
-//    //找左右中线
-//    Image_TrackLeftLine(Image_rptsLefts, Image_rptsLeftsNum, Image_rptsLeftc, (uint8)round(Image_angleDist / Image_sampleDist), Image_pixelPreMeter * Image_roadWidth / 2);
-//    Image_rptsLeftcNum = Image_rptsLeftsNum;
-//    Image_TrackRightLine(Image_rptsRights, Image_rptsRightsNum, Image_rptsRightc, (uint8)round(Image_angleDist / Image_sampleDist), Image_pixelPreMeter * Image_roadWidth / 2);
-//    Image_rptsRightcNum = Image_rptsRightsNum;
+    for (uint8 i = 1; i < Image_rptsLeftNum - 1; ++i) {
+        if (Image_rptsLeft[i + 1][0] != 0 || Image_rptsLeft[i + 1][1] != 0) {
+            Image_rptsLeft[i][0] = Image_rptsLeft[i + 1][0];
+            Image_rptsLeft[i][1] = Image_rptsLeft[i + 1][1];
+            ++Image_rptsLeftrNum;
+        }
+    }
+    Image_rptsLeftNum = Image_rptsLeftrNum;
+    Image_rptsLeftrNum = 0;
+    for (uint8 i = 1; i < Image_rptsRightNum - 1; ++i) {
+        if (Image_rptsRight[i + 1][0] != 0 || Image_rptsRight[i + 1][1] != 0) {
+            Image_rptsRight[i][0] = Image_rptsRight[i + 1][0];
+            Image_rptsRight[i][1] = Image_rptsRight[i + 1][1];
+            ++Image_rptsRightrNum;
+        }
+    }
+    Image_rptsRightNum = Image_rptsRightrNum;
+    Image_rptsRightrNum = 0;
+
+
+    //----------------------------------------
+    //对数据进行三角滤波
+    //左边线
+    Image_BlurPoints(Image_rptsLeft, Image_rptsLeftNum, Image_rptsLeftb, Image_linerBlurKernel);
+    Image_rptsLeftbNum = Image_rptsLeftNum;
+    //右边线
+    Image_BlurPoints(Image_rptsRight, Image_rptsRightNum, Image_rptsRightb, Image_linerBlurKernel);
+    Image_rptsRightbNum = Image_rptsRightNum;
+    //----------------------------------------
+    //对滤波后数据进行等距采样
+    //----------------------------------------
+    //对数据进行备份
+    //----------------------------------------
+    //等距采样
+    Image_rptsLeftsNum = sizeof(Image_rptsLefts) / sizeof(Image_rptsLefts[0]);
+    Image_ResamplePoints(Image_rptsLeftb, Image_rptsLeftbNum, Image_rptsLefts, &Image_rptsLeftsNum, Image_sampleDist * Image_pixelPreMeter);
+    Image_rptsRightsNum = sizeof(Image_rptsRights) / sizeof(Image_rptsRights[0]);
+    Image_ResamplePoints(Image_rptsRightb, Image_rptsRightbNum, Image_rptsRights, &Image_rptsRightsNum, Image_sampleDist * Image_pixelPreMeter);
+
+    //----------------------------------------
+
+
+    //求解边线局部角度变化率
+    Image_LocalAnglePoints(Image_rptsLefts, Image_rptsLeftsNum, Image_rptsLefta, (uint16)round(Image_angleDist / Image_sampleDist));
+    Image_rptsLeftaNum = Image_rptsLeftsNum;
+    Image_LocalAnglePoints(Image_rptsRights, Image_rptsRightsNum, Image_rptsRighta, (uint16)round(Image_angleDist / Image_sampleDist));
+    Image_rptsRightaNum = Image_rptsRightsNum;
+
+    //----------------------------------------
+    //对角度变化率进行非极大抑制(只保留一段边线中数据最大的点)
+    Image_NmsAngle(Image_rptsLefta, Image_rptsLeftaNum, Image_rptsLeftan, (uint16)round(Image_angleDist / Image_sampleDist) * 2 + 1, &Image_cornerNumLeft);
+    Image_rptsLeftanNum = Image_rptsLeftaNum;
+    Image_NmsAngle(Image_rptsRighta, Image_rptsRightaNum, Image_rptsRightan, (uint16)round(Image_angleDist / Image_sampleDist) * 2 + 1, &Image_cornerNumRight);
+    Image_rptsRightanNum = Image_rptsRightaNum;
+    //----------------------------------------
+    //找左右中线
+    Image_TrackLeftLine(Image_rptsLefts, Image_rptsLeftsNum, Image_rptsLeftc, (uint8)round(Image_angleDist / Image_sampleDist), Image_pixelPreMeter * Image_roadWidth / 2);
+    Image_rptsLeftcNum = Image_rptsLeftsNum;
+    Image_TrackRightLine(Image_rptsRights, Image_rptsRightsNum, Image_rptsRightc, (uint8)round(Image_angleDist / Image_sampleDist), Image_pixelPreMeter * Image_roadWidth / 2);
+    Image_rptsRightcNum = Image_rptsRightsNum;
 
     if (Image_isUsefulData_Status == 0) {
         Image_isUsefulData_Status = 1;

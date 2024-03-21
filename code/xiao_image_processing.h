@@ -185,7 +185,6 @@ void Image_Init(void);
 uint8 Image_Processing_OtsuGetThresh(const uint8* image);
 void Image_ShowLine(uint16 beg_x, uint16 beg_y, IMAGE_SCREEN screen, IMAGE_SHOW_TYPE showType);
 void Image_Process(uint8* image);
-void Image_Process_inv(uint8* image_inv);
 void Image_GetAngleInit(void);
 void Image_GetAngle(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen);
 void Image_ShowCorners(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen);

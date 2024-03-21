@@ -163,17 +163,8 @@ void Cross_RunGyscopAndEncoder(){
                                                                            }
 
                                     }
-
-
-
-
-
-
-
                      else if (Cross_status==CROSS_IN2) {
                                  //开始搜索左线，跟着左线的中线走,同时最后用fabs(Gyro_)来判断是否到达cross_begin_2阶段
-
-
 
                                 if((Image_LptLeft_Found &&!Image_LptRight_Found)||(Image_LptLeft_Found&&Image_LptRight_Found)){          //左角点发现之后
                                                 Cross_status=CROSS_BEGIN2;
