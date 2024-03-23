@@ -410,12 +410,6 @@ void Image_FindCorners(void) {
         uint8 im1 = bf_clip(i - (uint8)round(Image_angleDist / Image_sampleDist), 0, Image_rptsLeftsNum - 1);
         uint8 ip1 = bf_clip(i + (uint8)round(Image_angleDist / Image_sampleDist), 0, Image_rptsLeftsNum - 1);
         float conf = fabs(Image_rptsLefta[i]) - fabs(Image_rptsLefta[im1] + Image_rptsLefta[ip1]) / 2;
-
-        //环岛角点判断
-        if (Image_HptLeft_Found == false && 30 < conf && 65 > conf && i < 0.4 / Image_sampleDist) {
-            Image_HptLeft_rptsLefts_id = i;
-            Image_HptLeft_Found = true;
-        }
         //Y角点判断
         if (Image_YptLeft_Found == false && 30 < conf && 65 > conf && i < 0.4 / Image_sampleDist) {
             Image_YptLeft_rptsLefts_id = i;
@@ -599,8 +593,8 @@ int core0_main(void)
                                            //Image_Process_Status_inv=0;
                                     }
     //}
-         Motor_SetSpeed(MOTOR_1,2000);
-         Motor_SetSpeed(MOTOR_2,2000);
+         Motor_SetSpeed(MOTOR_1,Motor_1Target*25);
+         Motor_SetSpeed(MOTOR_2,Motor_2Target*25);
 
 
 
@@ -628,6 +622,8 @@ int core0_main(void)
 
          ips200_show_string(0, 250, "Trace_angleError:");ips200_show_float(150, 250, Trace_angleError, 3, 3);
          ips200_show_string(0, 270, "output:");ips200_show_float(150, 270, Trace_cameraMidPID.output_val, 3, 3);
+         ips200_show_string(0, 210, "Motor_1Target:");ips200_show_float(150, 210, Motor_1Target, 3, 3);
+         ips200_show_string(0, 230, "Motor_2Target:");ips200_show_float(150, 230, Motor_2Target, 3, 3);
         // ips200_show_string(0, 250, "Trace_angleErrorTher:");ips200_show_float(150, 250, Trace_angleErrorTher, 3, 3);
          //ips200_show_float(150, 250, Trace_cameraMidPID.output_val, 3, 3);
          //ips200_show_string(0, 300, "Trace_aimLine:");ips200_show_float(150, 300, Trace_aimLine, 3, 3);
@@ -683,9 +679,9 @@ int core0_main(void)
                 //--------------------环岛-----十字---------------
                 //角点还是用逆透视进行判断
                 //角点判断
-                Image_FindCorners();
+               // Image_FindCorners();
 //                //L角点判断
-                Image_LCornerCheck();
+               // Image_LCornerCheck();
                  // Image_FindConers2();
 //
 //                //十字检测
