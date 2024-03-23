@@ -177,6 +177,7 @@ typedef enum {
     IMAGE_LCORNER_IS_GRAGE_RIGHT = 0x03,
     IMAGE_LCORNER_IS_CIRCLE_LEFT = 0x04,
     IMAGE_LCORNER_IS_CIRCLE_RIGHT = 0x05,
+    IMAGE_LCORNER_BEGIN_BOTH = 0x06,
 }IMAGE_LCORNER_JUDGE;
 
 //------------------------------------------------------------
