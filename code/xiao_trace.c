@@ -20,9 +20,9 @@ uint8 Trace_middleStandard = 94;                //ÉãÏñÍ·Ëø¶¨µÄÖÐµãËùÔÚµÄÁÐ(»ù±¾É
 //ÖÐÏßÑ²Ïß´¦Àí
 float Trace_angleError = 0.0;                   //½Ç¶ÈÎó²î
 float Trace_angleErrorTher = 7.0;               //½Ç¶ÈÎó²îãÐÖµ
-uint8 Trace_aimLine = 30;                       //ÖÐÏßÏòÉÏÕÒµÄµÚn¸öµã×÷ÎªÄ¿±êÇ°Õ°
+uint8 Trace_aimLine = 32;//24                       //ÖÐÏßÏòÉÏÕÒµÄµÚn¸öµã×÷ÎªÄ¿±êÇ°Õ°
 
-float Trace_lineWeight[] = {0.8, 0.1, 0.1};     //´¦ÀíÖÐÏßÊ±ºòÈýÐÐ¼ÆËãµÄÈ¨ÖØ
+float Trace_lineWeight[] = {0.5, 0.3, 0.2};     //´¦ÀíÖÐÏßÊ±ºòÈýÐÐ¼ÆËãµÄÈ¨ÖØ
 int counter=1;
 
 
@@ -113,16 +113,10 @@ static float Trace_GetAngelError() {
                                   + Trace_lineWeight[1] * (float)Image_centerLine[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
                                   + Trace_lineWeight[2] * (float)Image_centerLine[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];*/
 
+
             Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsRightc[bf_clip(Trace_aimLine, 0, Image_rptsRightcNum - 1)][0]
-                                           + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
-                                           + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
-                 /* Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
-                                             + Trace_lineWeight[1] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
-                                             + Trace_lineWeight[2] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0]
-                                             + Trace_lineWeight[0] * (float)Image_rptsRightc[bf_clip(Trace_aimLine, 0, Image_rptsRightcNum - 1)][0]
-                                             + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
-                                             + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
-                  Trace_angleError/=2.0;*/
+                                                      + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
+                                                      + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
                   return Trace_angleError;
               }
            else if (Trace_Status == TRACE_RIGHTLOST) {

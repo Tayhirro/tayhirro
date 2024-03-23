@@ -56,12 +56,12 @@ float Elec_pLimit=5.0;     float Elec_coLimit=50.0;    float Elec_boost=1;
 //------------------------------
 //电机1PID
 //float Motor_1P = 145.8 ;      float Motor_1I = 3.6 ;       float Motor_1D = 0;     float Motor_1Target=0;      float Motor_1cor=0.0;
-float Motor_1P = 0.125 ;      float Motor_1I = 0.02 ;       float Motor_1D = 0;     float Motor_1Target=80;      float Motor_1cor=0.0;
+float Motor_1P = 0.125 ;      float Motor_1I = 0.02 ;       float Motor_1D = 0;     float Motor_1Target=88;      float Motor_1cor=0.0;
 float Motor_1Puse;         float Motor_1Pcor=0.0;      float Motor_1Icor=0.0;       float Motor_1Dcor=0.0;
 //------------------------------
 //电机2PID
 //float Motor_2P = 192.375 ;      float Motor_2I = 14.175 ;       float Motor_2D = 0   ;     float Motor_2Target=0;       float Motor_2cor=0.0;
-float Motor_2P = 0.125 ;      float Motor_2I = 0.02 ;       float Motor_2D = 0   ;     float Motor_2Target=80;       float Motor_2cor=0.0;
+float Motor_2P = 0.125 ;      float Motor_2I = 0.02 ;       float Motor_2D = 0   ;     float Motor_2Target=88;       float Motor_2cor=0.0;
 float Motor_2Puse;         float Motor_2Pcor=0.0;      float Motor_2Icor=0.0;       float Motor_2Dcor=0.0;
 //------------------------------
 //电机限幅
@@ -79,7 +79,7 @@ float Camera_leftP = 1.0;     float Camera_leftI = 0.0;     float Camera_leftD =
 //摄像头PID(右边线找到的中线)
 float Camera_rightP = 1.0;     float Camera_rightI = 0.0;     float Camera_rightD = 0.0;   float Camera_rightCor = 0.0;
 //摄像头PID(（左+右）/2)
-float Camera_midP = 0.5;     float Camera_midI = 1.0;     float Camera_midD = 0.0;   float Camera_midCor = 0.0;
+float Camera_midP = 0.6;     float Camera_midI = 1.0;     float Camera_midD = 0.0;   float Camera_midCor = 0.0;
 //------------------------------
 //摄像头PD限幅(左边线找到的中线)
 float Camera_leftPLimit=80.0;     float Camera_leftCoLimit=50.0;    float Camera_leftBoost=1;
@@ -410,6 +410,12 @@ void Image_FindCorners(void) {
         uint8 im1 = bf_clip(i - (uint8)round(Image_angleDist / Image_sampleDist), 0, Image_rptsLeftsNum - 1);
         uint8 ip1 = bf_clip(i + (uint8)round(Image_angleDist / Image_sampleDist), 0, Image_rptsLeftsNum - 1);
         float conf = fabs(Image_rptsLefta[i]) - fabs(Image_rptsLefta[im1] + Image_rptsLefta[ip1]) / 2;
+
+        //环岛角点判断
+        if (Image_HptLeft_Found == false && 30 < conf && 65 > conf && i < 0.4 / Image_sampleDist) {
+            Image_HptLeft_rptsLefts_id = i;
+            Image_HptLeft_Found = true;
+        }
         //Y角点判断
         if (Image_YptLeft_Found == false && 30 < conf && 65 > conf && i < 0.4 / Image_sampleDist) {
             Image_YptLeft_rptsLefts_id = i;
@@ -593,8 +599,8 @@ int core0_main(void)
                                            //Image_Process_Status_inv=0;
                                     }
     //}
-         Motor_SetSpeed(MOTOR_1,Motor_1Target*25);
-         Motor_SetSpeed(MOTOR_2,Motor_2Target*25);
+         Motor_SetSpeed(MOTOR_1,2200);
+         Motor_SetSpeed(MOTOR_2,2200);
 
 
 
@@ -622,8 +628,6 @@ int core0_main(void)
 
          ips200_show_string(0, 250, "Trace_angleError:");ips200_show_float(150, 250, Trace_angleError, 3, 3);
          ips200_show_string(0, 270, "output:");ips200_show_float(150, 270, Trace_cameraMidPID.output_val, 3, 3);
-         ips200_show_string(0, 210, "Motor_1Target:");ips200_show_float(150, 210, Motor_1Target, 3, 3);
-         ips200_show_string(0, 230, "Motor_2Target:");ips200_show_float(150, 230, Motor_2Target, 3, 3);
         // ips200_show_string(0, 250, "Trace_angleErrorTher:");ips200_show_float(150, 250, Trace_angleErrorTher, 3, 3);
          //ips200_show_float(150, 250, Trace_cameraMidPID.output_val, 3, 3);
          //ips200_show_string(0, 300, "Trace_aimLine:");ips200_show_float(150, 300, Trace_aimLine, 3, 3);
@@ -679,9 +683,9 @@ int core0_main(void)
                 //--------------------环岛-----十字---------------
                 //角点还是用逆透视进行判断
                 //角点判断
-               // Image_FindCorners();
+                Image_FindCorners();
 //                //L角点判断
-               // Image_LCornerCheck();
+                Image_LCornerCheck();
                  // Image_FindConers2();
 //
 //                //十字检测
@@ -749,14 +753,14 @@ int core0_main(void)
                 }
     //显示原图和逆透视变换后的图
     //ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
-   // ips200_show_gray_image(0, 130,mapImage[0] , MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
+    ips200_show_gray_image(0, 130,mapImage[0] , MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
     //ips200_show_float(0,150,Encoder_2Data, 3, 3);
     //ips200_show_float(50,150,Encoder_sum_Motor2,3,3);
     mt9v03x_finish_flag = 0;
     Image_Process_Status = 0;
     }
     //}
-
+    //ips200_clear();
 }
 
 
