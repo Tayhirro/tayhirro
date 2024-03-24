@@ -66,6 +66,7 @@ IFX_INTERRUPT(cc60_pit_ch0_isr,0, CCU6_0_CH0_ISR_PRIORITY)
     if(Motor_pidStatus == 1){
         Motor_1cor=Motor_1PID_control(Motor_1Target, (float)Encoder_1Data);
         Motor_2cor=Motor_2PID_control(Motor_2Target, (float)Encoder_2Data);
+
    }
     //±àÂëÆ÷»ý·Ö
    Encoder_Count();

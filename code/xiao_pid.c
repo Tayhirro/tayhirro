@@ -6,9 +6,9 @@
  */
 #include "xiao_pid.h"
 #include "xiao_steer.h"
-float NORMAL_SPEED=88;
+float NORMAL_SPEED=72;
 float STOP_SPEED=0;
-float CIRCLE_SPEED=64;
+float CIRCLE_SPEED=48;
 //float Motor_1Target=80; // Motor_1Target -> left 左边标准速度    Motor_2Target -> right  右边标准速度
 //float Motor_2Target=80;
 int speedflag=1;           //直道、停止、进环判断标志
@@ -23,7 +23,7 @@ extern fPID Trace_cameraMidPID;                       //左+右获取的中线的PID
 //iPID ipid_speed_right;
 extern float Motor_1Target;
 extern float Motor_2Target;
-PID_TYPE pid_type=PID_ORIGIN;
+PID_TYPE pid_type=PID_INV;
 
 void PID_Init(fPID* PID){
     (*PID).Kp=0;
@@ -87,7 +87,6 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
         //(*topid_steer).Kp=(*topid_steer).Kp_Set;
         //ips200_show_float(100, 250, (*topid_steer).Kp, 3, 3);
         (*topid_steer).err =(int)(zhongxian-target);//计算差值，左减右
-
         //uart_printf(UART_0," topid_steer->err =  %d\n", topid_steer->err);
 
 
@@ -103,7 +102,7 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
             }
             else if(speedflag == 2)
             {
-                Motor_2Target = CIRCLE_SPEED+0.6*(*topid_steer).err;
+                Motor_2Target = CIRCLE_SPEED+0.8*(*topid_steer).err;
                 Motor_1Target = CIRCLE_SPEED;
             }
             else if(speedflag == 5)
@@ -115,8 +114,8 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
 
         else if(-20>=(*topid_steer).err && (*topid_steer).err>=-30)//右偏较大
         {speedflag =2;
-        (*topid_steer).Kd=1.0;
-            (*topid_steer).Kp=1.0;
+        (*topid_steer).Kd=0.7;
+            (*topid_steer).Kp=0.8;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
             if(speedflag == 1)
             {
@@ -125,7 +124,7 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
             }
             else if(speedflag == 2)
             {
-                Motor_2Target = CIRCLE_SPEED+0.6*(*topid_steer).err;
+                Motor_2Target = CIRCLE_SPEED+0.8*(*topid_steer).err;
                 Motor_1Target = CIRCLE_SPEED;
             }
             else if(speedflag == 5)
@@ -195,7 +194,7 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
             }
            else if(speedflag == 2)
             {
-              Motor_1Target = CIRCLE_SPEED+0.1*(*topid_steer).err;
+              Motor_1Target = CIRCLE_SPEED+0.2*(*topid_steer).err;
                 Motor_2Target = CIRCLE_SPEED;
             }
            else if(speedflag == 5)
@@ -206,8 +205,8 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
         }
         else if(20<=(*topid_steer).err && (*topid_steer).err<30)//左偏较大
         {speedflag =2;
-        (*topid_steer).Kd=1.0;
-            (*topid_steer).Kp=1.0;
+        (*topid_steer).Kd=0.7;
+            (*topid_steer).Kp=0.8;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
             if(speedflag == 1)
             {
@@ -216,7 +215,7 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
             }
             else if(speedflag == 2)
             {
-              Motor_1Target = CIRCLE_SPEED+0.6*(*topid_steer).err;
+              Motor_1Target = CIRCLE_SPEED+0.8*(*topid_steer).err;
                 Motor_2Target = CIRCLE_SPEED;
             }
             else if(speedflag == 5)
@@ -236,7 +235,7 @@ void direction_control(fPID* topid_steer,float zhongxian,float target)
             }
             else if(speedflag == 2)
             {
-              Motor_1Target = CIRCLE_SPEED+0.6*(*topid_steer).err;
+              Motor_1Target = CIRCLE_SPEED+0.8*(*topid_steer).err;
               Motor_2Target = CIRCLE_SPEED;
             }else if(speedflag == 5)
             {

@@ -1051,96 +1051,84 @@ void Image_Init(void) {
     image_thre = Image_threSum / Image_threCnt_Thre;
     system_delay_ms(10000);
 }
-//void Image_FindCorners(void){
-//        Image_YptLeft_Found = false;
-//        Image_YptRight_Found = false;
-//        Image_LptLeft_Found = false;
-//        Image_LptRight_Found = false;
-//
-//
-//}
-//void Image_FindCorners(void) {
-//    // 识别 Y,L拐点
-//    //把角点判断置false
-//    Image_YptLeft_Found = false;
-//    Image_YptRight_Found = false;
-//    Image_LptLeft_Found = false;
-//    Image_LptRight_Found = false;
-//    //判断是否是直道
-//    //判断是否超过50个像素点,如果没有超过,那就说明肯定不是直道了
-//    Image_isStraightLeft = Image_rptsLeftsNum > 0.5 / Image_sampleDist;
-//    Image_isStraightRight = Image_rptsRightsNum > 0.5 / Image_sampleDist;
-//
-//    //左边线判断 - 初始角点不参与判断
-//    for (uint8 i = 5; i < Image_rptsLeftanNum; ++i) {
-//        if (Image_rptsLeftan[i] == 0)
-//            continue;
-//        //当检测到有角度的点然后去判断
-//        uint8 im1 = bf_clip(i - (uint8)round(Image_angleDist / Image_sampleDist), 0, Image_rptsLeftsNum - 1);
-//        uint8 ip1 = bf_clip(i + (uint8)round(Image_angleDist / Image_sampleDist), 0, Image_rptsLeftsNum - 1);
-//        float conf = fabs(Image_rptsLefta[i]) - fabs(Image_rptsLefta[im1] + Image_rptsLefta[ip1]) / 2;
-//
-//        //Y角点判断
-//        if (Image_YptLeft_Found == false && 30 < conf && 65 > conf && i < 0.4 / Image_sampleDist) {
-//            Image_YptLeft_rptsLefts_id = i;
-//            Image_YptLeft_Found = true;
-//        }
-//        //L角点判断
-//        if (Image_LptLeft_Found == false && 80 < conf && 130 > conf && i < 0.4 / Image_sampleDist) {
-//            Image_LptLeft_rptsLefts_id = i;
-//            Image_LptLeft_Found = true;
-//        }
-//        //长直道判断
-//        if (conf > 15.0 && i < 0.5 / Image_sampleDist) {
-//            put_float(200, conf);
-//            put_int32(201, i);
-//            Image_isStraightLeft = false;
-//        }
-//
-//        //找到一组后,退出
-//        if (Image_isStraightLeft == false && Image_LptLeft_Found == true && Image_YptLeft_Found == true)
-//            break;
-//    }
-//
-//    //右边线判断 - 初始角点不参与判断
-//    for (uint8 i = 5; i < Image_rptsRightsNum; ++i) {
-//        if (Image_rptsRightan[i] == 0.0)
-//            continue;
-//        //当检测到有角度的点然后去判断
-//        uint8 im1 = bf_clip(i - (uint8)round(Image_angleDist / Image_sampleDist), 0, Image_rptsRightsNum - 1);
-//        uint8 ip1 = bf_clip(i + (uint8)round(Image_angleDist / Image_sampleDist), 0, Image_rptsRightsNum - 1);
-//        float conf = fabs(Image_rptsRighta[i]) - fabs(Image_rptsRighta[im1] + Image_rptsRighta[ip1]) / 2;
-//        //Y角点判断
-//        if (Image_YptRight_Found == false && 30 < conf && 65 > conf && i < 0.4 / Image_sampleDist) {
-//            Image_YptRight_rptsRights_id = i;
-//            Image_YptRight_Found = true;
-//        }
-//        //L角点判断
-//        if (Image_LptRight_Found == false && 80 < conf && 130 > conf && i < 0.4 / Image_sampleDist) {
-//            Image_LptRight_rptsRights_id = i;
-//            Image_LptRight_Found = true;
-//        }
-//        //长直道判断
-//        if (conf > 15.0 && i < 0.5 / Image_sampleDist) {
-//            put_float(202, conf);
-//            put_int32(203, i);
-//            Image_isStraightRight = false;
-//        }
-//
-//        //找到一组后,退出
-//        if (Image_isStraightRight == false && Image_LptRight_Found == true && Image_YptRight_Found == true)
-//            break;
-//    }
-//
-//    //时间紧迫,先搁置在这
-//    //Y角点二次检查,依据两角点距离及角点张开特性 (理论上不用做Y角点的 - 针对第十八届比赛赛道)
-//  //  if (Image_YptLeft_Found && Image_YptRight_Found) {
-//
-//  //  }
-//    //L角点二次检查 - 依据L角点距离及角点张开特性 (理论上,依据电磁寻迹,这个两个L角点同时出现的情况也不用做处理)        根据摄像头循迹，这个角点需要进行判断
-//  //  if (Image_LptLeft_Found && Image_LptRight_Found) {
-//  //  }
-//}
+void Image_FindCorners(void) {
+    // 识别 Y,L拐点
+    //把角点判断置false
+    Image_YptLeft_Found = false;
+    Image_YptRight_Found = false;
+    Image_LptLeft_Found = false;
+    Image_LptRight_Found = false;
+    //判断是否是直道
+    //判断是否超过50个像素点,如果没有超过,那就说明肯定不是直道了
+    Image_isStraightLeft = Image_rptsLeftsNum > 0.5 / Image_sampleDist;
+    Image_isStraightRight = Image_rptsRightsNum > 0.5 / Image_sampleDist;
+
+    //左边线判断 - 初始角点不参与判断
+    for (uint8 i = 5; i < Image_rptsLeftanNum; ++i) {
+        if (Image_rptsLeftan[i] == 0)
+            continue;
+        //当检测到有角度的点然后去判断
+        uint8 im1 = bf_clip(i - (uint8)round(Image_angleDist / Image_sampleDist), 0, Image_rptsLeftsNum - 1);
+        uint8 ip1 = bf_clip(i + (uint8)round(Image_angleDist / Image_sampleDist), 0, Image_rptsLeftsNum - 1);
+        float conf = fabs(Image_rptsLefta[i]) - fabs(Image_rptsLefta[im1] + Image_rptsLefta[ip1]) / 2;
+
+        //Y角点判断
+        if (Image_YptLeft_Found == false && 30 < conf && 65 > conf && i < 0.4 / Image_sampleDist) {
+            Image_YptLeft_rptsLefts_id = i;
+            Image_YptLeft_Found = true;
+        }
+        //L角点判断
+        if (Image_LptLeft_Found == false && 80 < conf && 130 > conf && i < 0.4 / Image_sampleDist) {
+            Image_LptLeft_rptsLefts_id = i;
+            Image_LptLeft_Found = true;
+        }
+        //长直道判断
+        if (conf > 15.0 && i < 0.5 / Image_sampleDist) {
+            Image_isStraightLeft = false;
+        }
+
+        //找到一组后,退出
+        if (Image_isStraightLeft == false && Image_LptLeft_Found == true && Image_YptLeft_Found == true)
+            break;
+    }
+
+    //右边线判断 - 初始角点不参与判断
+    for (uint8 i = 5; i < Image_rptsRightsNum; ++i) {
+        if (Image_rptsRightan[i] == 0.0)
+            continue;
+        //当检测到有角度的点然后去判断
+        uint8 im1 = bf_clip(i - (uint8)round(Image_angleDist / Image_sampleDist), 0, Image_rptsRightsNum - 1);
+        uint8 ip1 = bf_clip(i + (uint8)round(Image_angleDist / Image_sampleDist), 0, Image_rptsRightsNum - 1);
+        float conf = fabs(Image_rptsRighta[i]) - fabs(Image_rptsRighta[im1] + Image_rptsRighta[ip1]) / 2;
+        //Y角点判断
+        if (Image_YptRight_Found == false && 30 < conf && 65 > conf && i < 0.4 / Image_sampleDist) {
+            Image_YptRight_rptsRights_id = i;
+            Image_YptRight_Found = true;
+        }
+        //L角点判断
+        if (Image_LptRight_Found == false && 80 < conf && 130 > conf && i < 0.4 / Image_sampleDist) {
+            Image_LptRight_rptsRights_id = i;
+            Image_LptRight_Found = true;
+        }
+        //长直道判断
+        if (conf > 15.0 && i < 0.5 / Image_sampleDist) {
+            Image_isStraightRight = false;
+        }
+
+        //找到一组后,退出
+        if (Image_isStraightRight == false && Image_LptRight_Found == true && Image_YptRight_Found == true)
+            break;
+    }
+
+    //时间紧迫,先搁置在这
+    //Y角点二次检查,依据两角点距离及角点张开特性 (理论上不用做Y角点的 - 针对第十八届比赛赛道)
+  //  if (Image_YptLeft_Found && Image_YptRight_Found) {
+
+  //  }
+    //L角点二次检查 - 依据L角点距离及角点张开特性 (理论上,依据电磁寻迹,这个两个L角点同时出现的情况也不用做处理)        根据摄像头循迹，这个角点需要进行判断
+  //  if (Image_LptLeft_Found && Image_LptRight_Found) {
+  //  }
+}
 
 /*
  * @brief               大津法 - 通过类间方差,计算图像进行二值化的阈值(计算的时候使用的平均数,不是加权平均数)
@@ -1441,48 +1429,17 @@ void Image_LCornerCheck(void) {
 
     }
     else if (Image_LCornerJude_Status == IMAGE_LCORNER_BEGIN_LEFT) {
-        //车库判断
-//        if (abs(Encoder_sum_Motor1) < Circle_encoderLeft_Thre) {
-//            if (Image_LineIsClosed(0) == true && Image_LineIsClosed(1) == true) {
-//                Image_LCornerJude_Status = IMAGE_LCORNER_IS_GRAGE_LEFT;
-//                gpio_set_level(P20_9, GPIO_LOW);
-//            }
-//        }
         //环岛
         if (abs(Encoder_sum_Motor1) > Image_GrageJudge_Thre) {
             Image_LCornerJude_Status = IMAGE_LCORNER_IS_CIRCLE_LEFT;
         }
     }
     else if (Image_LCornerJude_Status == IMAGE_LCORNER_BEGIN_RIGHT) {
-//        if (abs(Encoder_sum_Motor2) < Circle_encoderRight_Thre) {
-////            if (Image_LineIsClosed(0) == true && Image_LineIsClosed(1) == true) {
-////                Image_LCornerJude_Status = IMAGE_LCORNER_IS_GRAGE_RIGHT;
-////                gpio_set_level(P20_8, GPIO_LOW);
-////            }
-//        }
         //环岛
         if (abs(Encoder_sum_Motor2) > Image_GrageJudge_Thre) {
             Image_LCornerJude_Status = IMAGE_LCORNER_IS_CIRCLE_RIGHT;
         }
     }
-    //入库开始状态机
-//    else if (Image_LCornerJude_Status == IMAGE_LCORNER_IS_GRAGE_LEFT) {
-//        Image_LCornerJude_Status = IMAGE_LCORNER_NONE;
-//        if (Grage_grageStatus == GRAGE_NONE) {
-//            Grage_grageStatus = GRAGE_IN_BEGIN_LEFT;
-//            Gyroscope_Begin(GYROSCOPE_GYRO_X);
-//        }
-//    }
-//    //入库开始状态机
-//    else if (Image_LCornerJude_Status == IMAGE_LCORNER_IS_GRAGE_RIGHT) {
-//        Image_LCornerJude_Status = IMAGE_LCORNER_NONE;
-//        if (Grage_grageStatus == GRAGE_NONE) {
-//            Grage_grageStatus = GRAGE_IN_BEGIN_RIGHT;
-//            Gyroscope_Begin(GYROSCOPE_GYRO_X);
-//        }
-//
-//
-//    }
     //环岛开始状态机
     else if (Image_LCornerJude_Status == IMAGE_LCORNER_IS_CIRCLE_LEFT) {
         Image_LCornerJude_Status = IMAGE_LCORNER_NONE;

@@ -9,9 +9,9 @@ uint8 none_leftshift_line=0;
 uint8 none_rightshift_line=0;
 SHIFT_STATUS Shift_Status=SHIFT_NONE;
 SHIFT_DIRECTION Shift_Direction=SHIFT_DNONE;
-int16 Shift_encoderLeft_Thre = 3000;              //左轮编码器积分阈值
-int16 Shift_encoderRight_Thre = 3000;             //右轮编码器积分阈值
-int16 Shift_encoderCross_Thre =5000;             //过十字路口的积分阈值
+int16 Shift_encoderLeft_Thre = 300;              //左轮编码器积分阈值
+int16 Shift_encoderRight_Thre = 300;             //右轮编码器积分阈值
+int16 Shift_encoderCross_Thre =2000;             //过十字路口的积分阈值
 void check_shiftroad(void){
     if (Image_iptsLeftNum < 0.1 / Image_sampleDist) {++none_leftshift_line;}
     if (Image_iptsRightNum < 0.1 / Image_sampleDist){++none_rightshift_line;}

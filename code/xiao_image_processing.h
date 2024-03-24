@@ -189,7 +189,7 @@ void Image_Process(uint8* image);
 void Image_GetAngleInit(void);
 void Image_GetAngle(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen);
 void Image_ShowCorners(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen);
-//void Image_FindCorners(void);
+void Image_FindCorners(void);
 uint8 IMAGE_AT(uint8* image, int16 x, int16 y);
 void Image_ShowCorner(uint8 x, uint8 y, rgb565_color_enum color);
 void Image_LCornerCheck(void);
