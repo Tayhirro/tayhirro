@@ -402,18 +402,14 @@ int core0_main(void)
     mt9v03x_init();                                                     //摄像头初始化
     ips200_init(IPS200_TYPE_PARALLEL8);                                 //屏幕初始化
    // cpu_wait_event_ready();
-<<<<<<< HEAD
 //   uart_init(UART_3, 3000000, UART3_TX_P15_6, UART3_RX_P15_7);         //图传对应串口初始化
-=======
-//    uart_init(UART_3, 3000000, UART3_TX_P15_6, UART3_RX_P15_7);         //图传对应串口初始化
->>>>>>> 72d22657f060f97c8aee407ba0ded44242264751
     // 设置逐飞助手使用DEBUG串口进行收发
-        seekfree_assistant_interface_init(SEEKFREE_ASSISTANT_WIRELESS_UART);
+       // seekfree_assistant_interface_init(SEEKFREE_ASSISTANT_WIRELESS_UART);
 
 
    // Elec_Init();                                                        //电感初始化
     //Show_Init();
-        wireless_uart_init();
+       // wireless_uart_init();
 
     steer_init();                                                       //舵机初始化
     Motor_Init();                                                       //电机初始化
@@ -516,13 +512,8 @@ int core0_main(void)
                                                   ips200_show_float(80,200,Image_centerLineNum,3,3);
         //seekfree_assistant_oscilloscope_send(&oscilloscope_data);
          //seekfree_assistant_oscilloscope_send(&oscilloscope_data);
-<<<<<<< HEAD
-          seekfree_assistant_interface_init(SEEKFREE_ASSISTANT_WIRELESS_UART);
-          seekfree_assistant_camera_information_config(SEEKFREE_ASSISTANT_MT9V03X,mt9v03x_image[0], MT9V03X_W, MT9V03X_H);
-=======
-         // seekfree_assistant_interface_init(SEEKFREE_ASSISTANT_WIRELESS_UART);
-          //seekfree_assistant_camera_information_config(SEEKFREE_ASSISTANT_MT9V03X,mt9v03x_image[0] , MT9V03X_W, MT9V03X_H);
->>>>>>> 72d22657f060f97c8aee407ba0ded44242264751
+        //  seekfree_assistant_interface_init(SEEKFREE_ASSISTANT_WIRELESS_UART);
+         // seekfree_assistant_camera_information_config(SEEKFREE_ASSISTANT_MT9V03X,mt9v03x_image[0], MT9V03X_W, MT9V03X_H);
           //int BOUNDARY_NUM=90;
           //uint8 xy_x1_boundary[BOUNDARY_NUM], xy_x2_boundary[BOUNDARY_NUM], xy_x3_boundary[BOUNDARY_NUM];
           //uint8 xy_y1_boundary[BOUNDARY_NUM], xy_y2_boundary[BOUNDARY_NUM], xy_y3_boundary[BOUNDARY_NUM];
@@ -549,11 +540,7 @@ int core0_main(void)
          seekfree_assistant_oscilloscope_send(&oscilloscope_data);
          oscilloscope_data.data[0] = Encoder_1Data;
          oscilloscope_data.data[1] = Encoder_2Data;
-<<<<<<< HEAD
-         seekfree_assistant_camera_send();
-=======
-         //seekfree_assistant_camera_send();
->>>>>>> 72d22657f060f97c8aee407ba0ded44242264751
+       //  seekfree_assistant_camera_send();
          //ips200_show_float(0,0, Motor_1PID.output_val, 3, 3);ips200_show_float(100,0, Motor_1PID.Kp, 3, 3);
          //ips200_show_float(0,50, Motor_1PID.ut, 3, 3);
          //ips200_show_float(0,100, Motor_2PID.output_val, 3, 3);ips200_show_float(100,100, Motor_2PID.Kp, 3, 3);
@@ -567,6 +554,10 @@ int core0_main(void)
         //ips200_show_float(0, 120, Encoder_2Data, 3, 3);
          ips200_show_float(0,0, Image_LptLeft_Found, 3, 3);
          ips200_show_float(150,0, Image_LptRight_Found, 3, 3);
+         ips200_show_float(150,30, Shift_Direction, 3, 3);
+         ips200_show_float(70,30, Shift_Status, 3, 3);
+         ips200_show_float(70,60,abs(Encoder_sum_Motor2),5, 3);
+         ips200_show_float(0,60,abs(Encoder_sum_Motor1),5, 3);
          ips200_show_string(0, 250, "Trace_angleError:");ips200_show_float(150, 250, Trace_angleError, 3, 3);
          ips200_show_string(0, 270, "output:");ips200_show_float(150, 270, Trace_cameraMidPID.output_val, 3, 3);
         // ips200_show_string(0, 250, "Trace_angleErrorTher:");ips200_show_float(150, 250, Trace_angleErrorTher, 3, 3);
@@ -575,7 +566,6 @@ int core0_main(void)
 
             //------------------------------图像处理------------------------------
                 //----------------------------------------
-<<<<<<< HEAD
          //对图像进行逆透视变换
 //                               for (uint8 y =0; y < IMAGE_HEIGHT/2; ++y) {
 //                                   for (uint8 x = 0; x < IMAGE_WIDTH; ++x) {
@@ -602,34 +592,37 @@ int core0_main(void)
 //                                       mapImage[y1][x1]=0;
 //                                   }
 //                               }
-=======
-
->>>>>>> 72d22657f060f97c8aee407ba0ded44242264751
 
                 //------------------------------元素判断------------------------------
                 //--------------------弯道判断------如果使用的origin--//
 
-                /*check_shiftroad();
-                       if(Shift_Direction==SHIFT_LEFT){
-                           handle_shiftroad_left();
-                       }
-                       else if(Shift_Direction==SHIFT_RIGHT){
-                           handle_shiftroad_right();
-                       }
-                       if(Shift_Direction==SHIFT_CROSS){
-                           handle_shiftroad_cross();
-                       }*/
+                check_shiftroad();
+                //       if(Shift_Direction==SHIFT_LEFT){
+                //          handle_shiftroad_left();
+                //       }
+                //       else if(Shift_Direction==SHIFT_RIGHT){
+                //           handle_shiftroad_right();
+                //       }
+                //       if(Shift_Direction==SHIFT_CROSS){
+                //           handle_shiftroad_cross();
+                //       }
 
                 //--------------------环岛-----十字---------------
                 //角点还是用逆透视进行判断
                 //角点判断
                 Image_FindCorners();
 //                //L角点判断
-               // Image_LCornerCheck();
+                Image_LCornerCheck();
                  // Image_FindConers2();
 //
 //                //十字检测
-               // Cross_CheckCamera();
+                Cross_CheckCamera();
+//                if(Shift_Direction==SHIFT_CROSS){
+//                                          handle_shiftroad_cross();
+//                }
+                if(Shift_Direction==SHIFT_CROSS){
+                                                          handle_shiftroad_cross_inside();
+                                }
 //                //环岛检测
 //                Circle_CheckCamera();
 //                //--------------------环岛处理----------------//

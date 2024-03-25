@@ -11,7 +11,8 @@ SHIFT_STATUS Shift_Status=SHIFT_NONE;
 SHIFT_DIRECTION Shift_Direction=SHIFT_DNONE;
 int16 Shift_encoderLeft_Thre = 300;              //左轮编码器积分阈值
 int16 Shift_encoderRight_Thre = 300;             //右轮编码器积分阈值
-int16 Shift_encoderCross_Thre =2000;             //过十字路口的积分阈值
+int16 Shift_encoderCross_Thre =25000;             //过十字路口的积分阈值
+int16 Shift_encoderCross_RUNNING_Thre=110000;
 void check_shiftroad(void){
     if (Image_iptsLeftNum < 0.1 / Image_sampleDist) {++none_leftshift_line;}
     if (Image_iptsRightNum < 0.1 / Image_sampleDist){++none_rightshift_line;}
@@ -51,19 +52,86 @@ void check_shiftroad(void){
 }
 void handle_shiftroad_cross(void){
     if(Shift_Status==SHIFT_BEGIN){
-        if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))/2>Shift_encoderCross_Thre){
-                       Shift_Status=SHIFT_END;
+        PWMSetSteer(90.0);
+        if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>Shift_encoderCross_Thre){
+
                        Encoder_End(ENCODER_MOTOR_2);
                        Encoder_Clear(ENCODER_MOTOR_2);
                        Encoder_End(ENCODER_MOTOR_1);
                        Encoder_Clear(ENCODER_MOTOR_1);
+                       Encoder_Begin(ENCODER_MOTOR_1);
+                       Encoder_Begin(ENCODER_MOTOR_2);
+                       Shift_Status=SHIFT_RUNNING;
                    }
     }
+    if(Shift_Status==SHIFT_RUNNING){
+        PWMSetSteer(70.0);
+       if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>Shift_encoderCross_RUNNING_Thre){
+        Shift_Status=SHIFT_END;
+        Encoder_End(ENCODER_MOTOR_2);
+        Encoder_Clear(ENCODER_MOTOR_2);
+        Encoder_End(ENCODER_MOTOR_1);
+        Encoder_Clear(ENCODER_MOTOR_1);
+        Encoder_Begin(ENCODER_MOTOR_1);
+        Encoder_Begin(ENCODER_MOTOR_2);
+        Shift_Status=SHIFT_END;
+       }
+       }
     if(Shift_Status==SHIFT_END){
-            Shift_Status=SHIFT_NONE;
-            Trace_Status=TRACE_CENTERLINENEAR;
-            Shift_Direction=SHIFT_DNONE;
-     }
+        PWMSetSteer(90.0);
+        if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>Shift_encoderCross_Thre){
+                              Shift_Status=SHIFT_NONE;
+                              Trace_Status=TRACE_CENTERLINENEAR;
+                              Shift_Direction=SHIFT_DNONE;
+                              Shift_Status=SHIFT_RUNNING;
+                              Encoder_End(ENCODER_MOTOR_2);
+                              Encoder_Clear(ENCODER_MOTOR_2);
+                              Encoder_End(ENCODER_MOTOR_1);
+                              Encoder_Clear(ENCODER_MOTOR_1);
+                          }
+    }
+}
+void handle_shiftroad_cross_inside(){
+    if(Shift_Status==SHIFT_BEGIN){
+           PWMSetSteer(90.0);
+           if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>Shift_encoderCross_Thre){
+                          Encoder_End(ENCODER_MOTOR_2);
+                          Encoder_Clear(ENCODER_MOTOR_2);
+                          Encoder_End(ENCODER_MOTOR_1);
+                          Encoder_Clear(ENCODER_MOTOR_1);
+                          Encoder_Begin(ENCODER_MOTOR_1);
+                          Encoder_Begin(ENCODER_MOTOR_2);
+                          Shift_Status=SHIFT_RUNNING;
+                      }
+       }
+       if(Shift_Status==SHIFT_RUNNING){
+           Trace_Status=TRACE_CENTERLINENEAR;
+           if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>Shift_encoderCross_RUNNING_Thre){
+                   Shift_Status=SHIFT_END;
+                   Encoder_End(ENCODER_MOTOR_2);
+                   Encoder_Clear(ENCODER_MOTOR_2);
+                   Encoder_End(ENCODER_MOTOR_1);
+                   Encoder_Clear(ENCODER_MOTOR_1);
+                   Encoder_Begin(ENCODER_MOTOR_1);
+                   Encoder_Begin(ENCODER_MOTOR_2);
+                   Shift_Status=SHIFT_END;
+                  }
+
+          }
+       if(Shift_Status==SHIFT_END){
+           PWMSetSteer(90.0);
+           if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>Shift_encoderCross_Thre){
+                                 Shift_Status=SHIFT_NONE;
+                                 Trace_Status=TRACE_CENTERLINENEAR;
+                                 Shift_Direction=SHIFT_DNONE;
+                                 Shift_Status=SHIFT_RUNNING;
+                                 Encoder_End(ENCODER_MOTOR_2);
+                                 Encoder_Clear(ENCODER_MOTOR_2);
+                                 Encoder_End(ENCODER_MOTOR_1);
+                                 Encoder_Clear(ENCODER_MOTOR_1);
+                             }
+       }
+
 
 
 }

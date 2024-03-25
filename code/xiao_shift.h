@@ -31,10 +31,11 @@ extern SHIFT_DIRECTION Shift_Direction;
 
 extern int16 Shift_encoderLeft_Thre;              //左轮编码器积分阈值
 extern int16 Shift_encoderRight_Thre;             //右轮编码器积分阈值
+extern int16 Shift_encoderCross_Thre;             //过十字路口的积分阈值
 void check_shiftroad();
 void handle_shiftroad_left(void);
 void handle_shiftroad_right(void);
 void handle_shiftroad_cross(void);
-
+void handle_shiftroad_cross_inside();
 
 #endif /* CODE_XIAO_SHIFT_H_ */

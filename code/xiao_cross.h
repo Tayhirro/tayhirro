@@ -12,6 +12,7 @@
 #include "xiao_trace.h"
 #include "xiao_gyroscope.h"
 #include "../user/cpu0_main.h"
+#include "xiao_shift.h"
 
 //Ê®×Ö´¦Àí
 typedef enum {

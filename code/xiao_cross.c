@@ -56,11 +56,14 @@ GYROSCOPE_MEASURE_TYPE Cross_measureType = GYROSCOPE_GYRO_X;
 
 void Cross_CheckCamera(void) {
     //Ê®×Ö
-    if (Trace_Status==TRACE_CENTERLINENEAR&&Cross_status == CROSS_NONE && Image_LptLeft_Found && Image_LptRight_Found) {
+    if (Trace_Status==TRACE_CENTERLINENEAR&&Shift_Status==SHIFT_NONE && Image_LptLeft_Found && Image_LptRight_Found) {//Cross_status == CROSS_NONE
         //²âÊÔ´úÂë
         Cross_status = CROSS_BEGIN;
         Trace_Status = TRACE_CROSS;
+        Shift_Direction=SHIFT_CROSS;
+        Shift_Status=SHIFT_BEGIN;
         Encoder_Begin(ENCODER_MOTOR_1);
+        Encoder_Begin(ENCODER_MOTOR_2);
 //        put_int32(70, 1);
         gpio_set_level(P20_8, GPIO_LOW);
         gpio_set_level(P20_9, GPIO_LOW);
@@ -209,7 +212,7 @@ void Cross_RunCamera(){
                                     none_left_line_cross = 0;
                                     none_right_line_cross = 0;
                                     Cross_status = CROSS_RUNNING;
-                                    Trace_traceType=TRACE_Camera_Far;
+                                    Trace_traceType=TRACE_Camera_Near;
                                     Gyroscope_Begin(Cross_measureType);     //¿ªÆôÍÓÂÝÒÇ
                                 }
     }

@@ -22,11 +22,7 @@ float Trace_angleError = 0.0;                   //角度误差
 
 float Trace_angleError_bak[counter_number];               //备份
 float Trace_angleErrorTher = 7.0;               //角度误差阈值
-<<<<<<< HEAD
-uint8 Trace_aimLine = 23;//电机1600 前瞻22 电机1800 前瞻24                      //中线向上找的第n个点作为目标前瞻
-=======
-uint8 Trace_aimLine = 24;//电机1600 前瞻22 电机1800 前瞻24                      //中线向上找的第n个点作为目标前瞻
->>>>>>> 72d22657f060f97c8aee407ba0ded44242264751
+uint8 Trace_aimLine = 26;//电机1600 前瞻22 电机1800 前瞻24                      //中线向上找的第n个点作为目标前瞻
 int counter=0;
 
 float Trace_lineWeight[] = {0.5, 0.3, 0.2};     //处理中线时候三行计算的权重
@@ -125,7 +121,7 @@ static float Trace_GetAngelError() {
     }
 
     if(pid_type==PID_INV){
-        if (Trace_Status == TRACE_CENTERLINENEAR) {
+        if (Trace_Status == TRACE_CENTERLINENEAR&&Shift_Status！=SHIFT_RUNNING) {
                   /*Trace_angleError = Trace_lineWeight[0] * (float)Image_centerLine[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
                                   + Trace_lineWeight[1] * (float)Image_centerLine[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
                                   + Trace_lineWeight[2] * (float)Image_centerLine[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];*/
@@ -160,9 +156,44 @@ static float Trace_GetAngelError() {
                                + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
                return Trace_angleError;
            }
+        if (Trace_Status == TRACE_CENTERLINENEAR&&Shift_Status==SHIFT_RUNNING) {
+                         /*Trace_angleError = Trace_lineWeight[0] * (float)Image_centerLine[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
+                                         + Trace_lineWeight[1] * (float)Image_centerLine[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
+                                         + Trace_lineWeight[2] * (float)Image_centerLine[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];*/
+
+
+                   Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsRightc[bf_clip(Trace_aimLine, 0, Image_rptsRightcNum - 1)][0]
+                                                             + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
+                                                             + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
+                   if(Trace_angleError!=0 && flag==0){Trace_angleError_bak[counter]=Trace_angleError;counter++;}
+                                     if(counter==counter_number){flag=1;}
+                                     if(Trace_angleError!=0 && flag==1){
+                                         for(int i=0;i<counter_number-1;i++){
+                                             Trace_angleError_bak[i]=Trace_angleError_bak[i+1];
+
+                                         }
+                                         Trace_angleError_bak[counter-1]=Trace_angleError;
+                                     }
+                                     //if(Trace_angleError!=0&& flag==1){counter=counter%counter_number;Trace_angleError_bak[counter]=Trace_angleError;counter++;}
+                                     if(Trace_angleError==0){Trace_angleError=Trace_angleError_bak[0];}
+                                      return Trace_angleError;
+                         return Trace_angleError;
+                     }
+                  else if (Trace_Status == TRACE_RIGHTLOST) {
+                      Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
+                                      + Trace_lineWeight[1] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
+                                      + Trace_lineWeight[2] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];
+                      return Trace_angleError;
+                  }
+                  else if (Trace_Status == TRACE_LEFTLOST) {
+                      Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsRightc[bf_clip(Trace_aimLine, 0, Image_rptsRightcNum - 1)][0]
+                                      + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
+                                      + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
+                      return Trace_angleError;
+                  }
     }
 
-    return 94;
+    return 84;
 
 }
 
@@ -218,7 +249,7 @@ float Trace_Run() {
            //Trace_GetAngelError();
 
            //direction_control(&Trace_cameraMidPID,Trace_angleError,94);
-        direction_control(&Trace_cameraMidPID,Trace_GetAngelError(),94);
+        direction_control(&Trace_cameraMidPID,Trace_GetAngelError(),84);
 
            //Trace_PID_Set(Trace_cameraLeftPID.Kp_Set, Trace_cameraLeftPID.Kd_Set, Trace_cameraLeftPID.utLimit, 1.0, Trace_traceType);
            //PID_PostionalPID(&Trace_cameraLeftPID, 0, Trace_angleError);
