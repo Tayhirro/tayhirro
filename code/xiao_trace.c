@@ -22,7 +22,11 @@ float Trace_angleError = 0.0;                   //角度误差
 
 float Trace_angleError_bak[counter_number];               //备份
 float Trace_angleErrorTher = 7.0;               //角度误差阈值
+<<<<<<< HEAD
 uint8 Trace_aimLine = 23;//电机1600 前瞻22 电机1800 前瞻24                      //中线向上找的第n个点作为目标前瞻
+=======
+uint8 Trace_aimLine = 24;//电机1600 前瞻22 电机1800 前瞻24                      //中线向上找的第n个点作为目标前瞻
+>>>>>>> 72d22657f060f97c8aee407ba0ded44242264751
 int counter=0;
 
 float Trace_lineWeight[] = {0.5, 0.3, 0.2};     //处理中线时候三行计算的权重
