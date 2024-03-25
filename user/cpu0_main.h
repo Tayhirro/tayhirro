@@ -107,7 +107,6 @@ extern float Elec_A;    extern float Elec_B;    extern float Elec_C;
 //-----------------------------
 extern double H[3][3] ;
 extern int picturetime;
-void Image_FindCorners(void);
 //-----------------------------
 //摄像头PID(左边线找到的中线)
 extern float Camera_leftP;     extern float Camera_leftI;     extern float Camera_leftD;   extern float Camera_leftCor;
@@ -130,4 +129,5 @@ extern uint8 inv_map_x[120][188];
 extern uint8 inv_map_y[120][188];
 extern uint8 Isr_FinishFlat_CCU60_CH0; //中断CCU60_CH0中断完成表示位
 extern uint8 Isr_sendDataCnt;
+
 #endif

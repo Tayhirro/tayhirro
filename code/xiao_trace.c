@@ -19,12 +19,14 @@ uint8 Trace_middleStandard = 94;                //ÉãÏñÍ·Ëø¶¨µÄÖĞµãËùÔÚµÄÁĞ(»ù±¾É
 //------------------------------------------------------------
 //ÖĞÏßÑ²Ïß´¦Àí
 float Trace_angleError = 0.0;                   //½Ç¶ÈÎó²î
+
+float Trace_angleError_bak[counter_number];               //±¸·İ
 float Trace_angleErrorTher = 7.0;               //½Ç¶ÈÎó²îãĞÖµ
-uint8 Trace_aimLine = 30;                       //ÖĞÏßÏòÉÏÕÒµÄµÚn¸öµã×÷ÎªÄ¿±êÇ°Õ°
+uint8 Trace_aimLine = 23;//µç»ú1600 Ç°Õ°22 µç»ú1800 Ç°Õ°24                      //ÖĞÏßÏòÉÏÕÒµÄµÚn¸öµã×÷ÎªÄ¿±êÇ°Õ°
+int counter=0;
 
 float Trace_lineWeight[] = {0.5, 0.3, 0.2};     //´¦ÀíÖĞÏßÊ±ºòÈıĞĞ¼ÆËãµÄÈ¨ÖØ
-int counter=1;
-
+int flag=0;
 
 TRACE_CIRCLE_TYPE Trace_Circle_Type=TRACE_CIRCLE_CAREMA_GYROSCOPE_ENCODER;      //³õÊ¼»¯Îª¹²Í¬
 TRACE_CROSS_TYPE Trace_Cross_Type=TRACE_CROSS_CAREMA_GYROSCOPE_ENCODER;         //³õÊ¼»¯Îª¹²Í¬
@@ -87,6 +89,17 @@ static float Trace_GetAngelError() {
                                   + Trace_lineWeight[2] * (float)Image_centerLine[bf_clip(Trace_aimLine + 2, 0, Image_centerLineNum - 1)][0];
                   //ips200_show_float(0,270, Trace_angleError, 3, 3);
                   //counter++;
+                  if(Trace_angleError!=0 && flag==0){Trace_angleError_bak[counter]=Trace_angleError;counter++;}
+                  if(counter==counter_number){flag=1;}
+                  if(Trace_angleError!=0 && flag==1){
+                      for(int i=0;i<counter_number-1;i++){
+                          Trace_angleError_bak[i]=Trace_angleError_bak[i+1];
+
+                      }
+                      Trace_angleError_bak[counter-1]=Trace_angleError;
+                  }
+                  //if(Trace_angleError!=0&& flag==1){counter=counter%counter_number;Trace_angleError_bak[counter]=Trace_angleError;counter++;}
+                  if(Trace_angleError==0){Trace_angleError=Trace_angleError_bak[0];}
                    return Trace_angleError;
                   /*Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
                                              + Trace_lineWeight[1] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
@@ -114,13 +127,21 @@ static float Trace_GetAngelError() {
                                   + Trace_lineWeight[2] * (float)Image_centerLine[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];*/
 
 
-                  Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
-                                             + Trace_lineWeight[1] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
-                                             + Trace_lineWeight[2] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0]
-                                             + Trace_lineWeight[0] * (float)Image_rptsRightc[bf_clip(Trace_aimLine, 0, Image_rptsRightcNum - 1)][0]
-                                             + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
-                                             + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
-                  Trace_angleError/=2.0;
+            Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsRightc[bf_clip(Trace_aimLine, 0, Image_rptsRightcNum - 1)][0]
+                                                      + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
+                                                      + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
+            if(Trace_angleError!=0 && flag==0){Trace_angleError_bak[counter]=Trace_angleError;counter++;}
+                              if(counter==counter_number){flag=1;}
+                              if(Trace_angleError!=0 && flag==1){
+                                  for(int i=0;i<counter_number-1;i++){
+                                      Trace_angleError_bak[i]=Trace_angleError_bak[i+1];
+
+                                  }
+                                  Trace_angleError_bak[counter-1]=Trace_angleError;
+                              }
+                              //if(Trace_angleError!=0&& flag==1){counter=counter%counter_number;Trace_angleError_bak[counter]=Trace_angleError;counter++;}
+                              if(Trace_angleError==0){Trace_angleError=Trace_angleError_bak[0];}
+                               return Trace_angleError;
                   return Trace_angleError;
               }
            else if (Trace_Status == TRACE_RIGHTLOST) {

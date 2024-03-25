@@ -13,7 +13,7 @@
 #include "xiao_image_processing.h"
 #include "xiao_motor.h"
 #include "xiao_pid.h"
-
+#define counter_number 2
 //==============================需要使用到的枚举==============================
 typedef enum {
 TRACE_CENTERLINENEAR=0x00,   //中线搜索
@@ -77,6 +77,7 @@ void Trace_SetPIDSumLimit(float sumLimit, TRACE_TYPE traceType);
 void Trace_SetPIDCoLimit(float coLimit, TRACE_TYPE traceType);
 extern float Trace_angleError;
 extern float Trace_angleErrorTher ;               //角度误差阈值
+extern float Trace_angleError_bak[counter_number];
 extern uint8 Trace_aimLine ;
 extern fPID Trace_cameraLeftPID;                       //左边线获取的中线的PID
 extern fPID Trace_cameraRightPID;                      //右边线获取的中线的PID

@@ -200,7 +200,7 @@ float Motor_1PID_control(float target,float cur){
     Motor_1PID.Kp_output_val = Motor_1PID.Kp*(Motor_1PID.err-Motor_1PID.err_last);
     Motor_1PID.Ki_output_val=Motor_1PID.Ki*Motor_1PID.err;
     Motor_1PID.Kd_output_val=Motor_1PID.Kd*(Motor_1PID.err - 2 * Motor_1PID.err_last + Motor_1PID.err_llast);
-    Motor_1PID.ut=Motor_1PID.Kp_output_val+Motor_1PID.Ki_output_val+Motor_1PID.Kd_output_val;
+    Motor_1PID.ut=Motor_1PID.Kp_output_val+Motor_1PID.Ki_output_val+Motor_1PID.Kd_output_val+42;//1600Æ«ÖÃ14 µç»ú1800Æ«ÖÃ42
     Motor_1PID.output_val=Motor_1PID.boost*(Motor_1PID.ut+target);
 
     Motor_1PID.err_llast=Motor_1PID.err_last;
