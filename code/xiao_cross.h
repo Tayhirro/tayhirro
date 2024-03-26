@@ -22,7 +22,8 @@ typedef enum {
     CROSS_IN = 0x03,
     CROSS_IN2 =0x04,
     CROSS_BEGIN2=0x05,
-    CROSS_RUNNING2=0x06
+    CROSS_RUNNING2=0x06,
+    CROSS_END=0x07
 }CROSS_STATUS;
 
 
@@ -38,6 +39,7 @@ extern int16 Circle_encoderRight_Thre;           //右环岛编码器阈值         -   
 
 //------------------------------_处理数据_------------------------------
 void Cross_CheckCamera(void);
-void Cross_RunGyscopAndEncoder();
-void Cross_RunCamera();
+//void Cross_RunGyscopAndEncoder();
+//void Cross_RunCamera();
+void handle_cross();
 #endif /* CODE_XIAO_CROSS_H_ */

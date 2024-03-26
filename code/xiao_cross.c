@@ -13,30 +13,11 @@
 
 
 CROSS_STATUS Cross_status=CROSS_NONE;
-int16 Cross_encoderLeft_Thre = 15500;              //×óÂÖ±àÂëÆ÷»ý·ÖãÐÖµ
-int16 Cross_encoderRight_Thre = 15500;             //ÓÒÂÖ±àÂëÆ÷»ý·ÖãÐÖµ
-uint8 Cross_forceAngle_Status = 0;             //Ê®×ÖÂ·¿ÚÇ¿ÖÆ´ò½Ç×´Ì¬»ú
 //----------------------------------------
 uint8 Cross_SteerVar    =   -13;    //´ò½ÇÖµ
 uint8 Cross_Targetangle;            //Ä¿±ê½Ç¶ÈÖµ
 uint8 Cross_Steer_Angle;        //Íâ²¿
-//----------------------------------------
-//Ê®×Ö¼ì²â×´Ì¬
-uint8 Cross_BeginStatus_Camera = 0;    //ÉãÏñÍ·ÅÐ¶Ï¿ªÊ¼×´Ì¬»ú
-//uint8 Cross_leftBeginStatus_Elec = 0;      //µç´ÅÅÐ¶Ï×ó¿ªÊ¼×´Ì¬»ú
-//uint8 Cross_rightBeginStatus_Elec = 0;     //µç´ÅÅÐ¶ÏÓÒ¿ªÊ¼×´Ì¬»ú
-
-//----------------------------------------
-//ÉãÏñÍ· - ÅÐ¶Ï±ßÏßÊÇ·ñÏûÊ§
-uint8 none_left_line_cross = 0,                   //ÅÐ¶Ï×ó±ßÏßÊÇ·ñÏûÊ§
-        none_right_line_cross = 0;                //ÅÐ¶ÏÓÒ±ßÏßÊÇ·ñÏûÊ§
-uint8 have_left_line_cross = 0,                   //ÅÐ¶ÏÊÇ·ñ´æÔÚ×ó±ßÏß
-        have_right_line_cross = 0;                //ÅÐ¶ÏÊÇ·ñ´æÔÚÓÒ±ßÏß
-//------------------------------Ô¤ÈëÊ®×Ö²¿·Ö------------------------------
-int16 Cross_encoderLeft = 0;                       //×óÂÖ±àÂëÆ÷»ý·Ö
-int16 Cross_encoderRight = 0;                      //ÓÒÂÖ±àÂëÆ÷»ý·Ö
 //------------------------------ÈëÊ®×Ö²¿·Ö------------------------------
-//------------¸Õ½øÈëÊ®×ÖÂ·¿Ú---------------------//
 //ÉãÏñÍ· - »·µº´óÓÚãÐÖµ´ÎÊý¼ÆÊý (sc - satisfy condition)
 uint8 Cross_camera_scCnt = 0;                  //Ê®×ÖÅÐ¶ÏÉãÏñÍ·²¿·ÖÂú×ã´ÎÊý
 const uint8 Cross_camera_scCnt_Thre = 0;       //Ê®×ÖÅÐ¶ÏÉãÏñÍ·Âú×ã´ÎÊýãÐÖµ(´ÎÊý´óÓÚãÐÖµ¾ÍÅÐ¶ÏÔ¤Èë»·)
@@ -45,6 +26,9 @@ const uint8 Cross_camera_nscCnt_Thre = 0;      //»·µºÅÐ¶ÏÉãÏñÍ·²¿·Ö²»Âú×ã´ÎÊýãÐÖ
 //----------------------------------------
 float Cross_angleEntry_Thre = 45.0;            //ÈëÊ®×Ö½Ç¶È»ý·ÖãÐÖµ
 
+
+int16 EncoderCross_Thre=16000;
+int16 EncoderCross_RUNNING_Thre=80000;
 
 //ÍÓÂÝÒÇ²âÁ¿½Ç¶ÈµÄÊ±ºòÊ¹ÓÃµÄ±äÁ¿ - (¼Ù¶¨ÏÈÊ¹ÓÃxÖáÍÓÂÝÒÇ)
 GYROSCOPE_MEASURE_TYPE Cross_measureType = GYROSCOPE_GYRO_X;
@@ -56,12 +40,10 @@ GYROSCOPE_MEASURE_TYPE Cross_measureType = GYROSCOPE_GYRO_X;
 
 void Cross_CheckCamera(void) {
     //Ê®×Ö
-    if (Trace_Status==TRACE_CENTERLINENEAR&&Shift_Status==SHIFT_NONE && Image_LptLeft_Found && Image_LptRight_Found) {//Cross_status == CROSS_NONE
+    if (Trace_Status==TRACE_CENTERLINENEAR&& Image_LptLeft_Found && Image_LptRight_Found&&Cross_status == CROSS_NONE) {//Cross_status == CROSS_NONE
         //²âÊÔ´úÂë
+        Trace_Status=TRACE_CROSS;
         Cross_status = CROSS_BEGIN;
-        Trace_Status = TRACE_CROSS;
-        Shift_Direction=SHIFT_CROSS;
-        Shift_Status=SHIFT_BEGIN;
         Encoder_Begin(ENCODER_MOTOR_1);
         Encoder_Begin(ENCODER_MOTOR_2);
 //        put_int32(70, 1);
@@ -79,241 +61,280 @@ void Cross_CheckCamera(void) {
 //    }
 //
 //}
-void Cross_RunGyscopAndEncoder(){
-    if (Cross_status == CROSS_BEGIN) {
-        Trace_Status=TRACE_CROSS;
-        Trace_traceType = TRACE_Camera_Near;
+//void Cross_RunGyscopAndEncoder(){
+//    if (Cross_status == CROSS_BEGIN) {
+//        Trace_Status=TRACE_CROSS;
+//        Trace_traceType = TRACE_Camera_Near;
+//
+//
+//                //µ±Á½²à½Çµã½Ï½üµÄÊ±ºò£¬¿ªÆôrunningÄ£Ê½//»òÕß¶ªÏßÊ±
+//               // if(Image_LptLeft_Found&&Image_LptRight_Found){
+//                  // Cross_status = CROSS_RUNNING;
+//                  // Trace_traceType = TRACE_Camera_Far_Both;
+//                //}
+//                   if (Image_rptsLeftsNum < 0.2 / Image_sampleDist) ++none_left_line_cross;
+//                                if (Image_rptsLeftsNum <0.2/ Image_sampleDist) ++none_right_line_cross;
+//                                    if (none_left_line_cross>2&&none_right_line_cross>2) {
+//                                        none_left_line_cross = 0;
+//                                        none_right_line_cross = 0;
+//                                        Cross_status = CROSS_RUNNING;
+//                                        Trace_traceType = TRACE_Camera_Far_Both;
+//                                        Gyroscope_Begin(Cross_measureType);     //¿ªÆôÍÓÂÝÒÇ
+//                                    }
+//            //------------------------------------------------------------------------------------
+//            //------------------------------------------------------------------------------------
+//                        //Ñ­¼£³õÊ¼ÐÐÏòÉÏÒÆ¶¯
+//            //------------------------------------------------------------------------------------
+//            //------------------------------------------------------------------------------------
+//            //------------------------------------------------------------------------------------
+//               //
+//        }
+//                //µ±½Çµã½Ï½üÊ±£¬ÇÐ»»CROSS_RUNNINGÄ£Ê½  //´ËÊ±½øÐÐÍ¬Ê±½üÏßÔ¶ÏßËÑË÷£¬Ô¶ÏßÖ÷µ¼ËÑË÷//»òÕß±àÂëÆ÷»ý·Ö//»òÕßÍÓÂÝÒÇ»ý·Ö//»òÕßÍ¬Ê±¸¨Öú
+//                else if (Cross_status == CROSS_RUNNING) {
+//                              //½ü´¦ËÑÑ°µ½Ïß
+//                            if(Image_rptsLeftsNum > 0.2 / Image_sampleDist&&Image_rptsRightsNum > 0.2 / Image_sampleDist||abs(Encoder_sum_Motor1)>Cross_encoderRight_Thre){  //¿ÉÒÔÐÞ¸Ä||
+//                                Encoder_End(ENCODER_MOTOR_1);
+//                                Encoder_Clear(ENCODER_MOTOR_1);
+//                                Trace_traceType=TRACE_Camera_Near;      //Ö»Ñ°½üÏß
+//                                Cross_status=CROSS_IN;
+//                            }
+//
+//
+//
+//
+//                                //----------------------------------------
+//                }
+//
+//                else if(Cross_status==CROSS_IN){        //½øÈëÊ®×ÖÂ·¿ÚµÄÍäµÀ²¿·Ö
+//                                                //ÍÓÂÝÒÇ·½Ê½À´ÅÐ¶ÏÊÇ·ñµ½´ï×îÖÕ½×¶Î
+//                                        if (Cross_measureType == GYROSCOPE_GYRO_X) {
+//                                                                               if (fabs(Gyro_x) > Cross_angleEntry_Thre) {
+//                                                                                   //½øÈë»·µº
+//                                                                                   Cross_forceAngle_Status = 0;
+//                                                                                   Elec_pidStatus = 1;
+//                                                                                   Cross_status = CROSS_IN2;
+//
+//
+//                                                                                   Cross_Steer_Angle=Cross_Targetangle+Cross_SteerVar;  //²ÎÊý´«µÝ//»á¸ü¸Ä
+//
+//
+//                                                                                   Gyroscope_End(Cross_measureType);
+//                                                                                   Gyroscope_Clear(Cross_measureType);
+//                                                                                   Gyroscope_Begin(Cross_measureType);
+//                                                                               }
+//                                                                           }
+//                                                                           else if (Cross_measureType == GYROSCOPE_GYRO_Y) {
+//                                                                               if (fabs(Gyro_y) > Cross_angleEntry_Thre) {
+//                                                                                   //½øÈë»·µº
+//                                                                                   Cross_forceAngle_Status = 0;
+//                                                                                   Elec_pidStatus = 1;
+//                                                                                   Cross_status = CROSS_IN2;
+//                                                                                   Gyroscope_End(Cross_measureType);
+//                                                                                   Gyroscope_Clear(Cross_measureType);
+//                                                                                   Gyroscope_Begin(Cross_measureType);
+//                                                                               }
+//                                                                           }
+//                                                                           else if (Cross_measureType == GYROSCOPE_GYRO_Z) {
+//                                                                               if (fabs(Gyro_z) > Cross_angleEntry_Thre) {
+//                                                                                   //½øÈë»·µº
+//                                                                                   Cross_forceAngle_Status = 0;
+//                                                                                   Elec_pidStatus = 1;
+//                                                                                   Speed_set = 30;
+//                                                                                   Cross_status = CROSS_IN2;
+//                                                                                   Gyroscope_End(Cross_measureType);
+//                                                                                   Gyroscope_Clear(Cross_measureType);
+//                                                                                   Gyroscope_Begin(Cross_measureType);
+//                                                                               }
+//                                                                           }
+//
+//                                    }
+//                     else if (Cross_status==CROSS_IN2) {
+//                                 //¿ªÊ¼ËÑË÷×óÏß£¬¸ú×Å×óÏßµÄÖÐÏß×ß,Í¬Ê±×îºóÓÃfabs(Gyro_)À´ÅÐ¶ÏÊÇ·ñµ½´ïcross_begin_2½×¶Î
+//
+//                                if((Image_LptLeft_Found &&!Image_LptRight_Found)||(Image_LptLeft_Found&&Image_LptRight_Found)){          //×ó½Çµã·¢ÏÖÖ®ºó
+//                                                Cross_status=CROSS_BEGIN2;
+//                                                Encoder_Begin(ENCODER_MOTOR_2);
+//                                           }
+//                            }
+//                     else if (Cross_status==CROSS_BEGIN2) {
+//
+//                         if (Image_rptsLeftsNum < 0.2 / Image_sampleDist) ++none_left_line_cross;
+//                                                     if (Image_rptsLeftsNum <0.2/ Image_sampleDist) ++none_right_line_cross;
+//                                                         if (none_left_line_cross>2&&none_right_line_cross>2) {
+//                                                             none_left_line_cross = 0;
+//                                                             none_right_line_cross = 0;
+//                                                             Cross_status = CROSS_RUNNING2;
+//                                                             Trace_traceType = TRACE_Camera_Far;
+//                                                             Gyroscope_Begin(Cross_measureType);     //¿ªÆôÍÓÂÝÒÇ
+//                                                         }
+//                                             }
+//                     else if(Cross_status==CROSS_RUNNING2){
+//                         if(Image_rptsLeftsNum > 0.2 / Image_sampleDist&&Image_rptsRightsNum > 0.2 / Image_sampleDist||abs(Encoder_sum_Motor1)>Cross_encoderRight_Thre){  //¿ÉÒÔÐÞ¸Ä||
+//                                                     Encoder_End(ENCODER_MOTOR_2);
+//                                                     Encoder_Clear(ENCODER_MOTOR_2);
+//                                                     Trace_traceType=TRACE_Camera_Near;
+//                                                     Cross_status=CROSS_NONE;
+//                                                     Trace_Status=TRACE_CENTERLINENEAR;
+//                                                 }
+//                     }
+//
+//}
+//void Cross_RunCamera(){
+//    if (Cross_status == CROSS_BEGIN) {
+//            Trace_traceType = TRACE_Camera_Near;
+//
+//            //µ±Á½²à½Çµã½Ï½üµÄÊ±ºò£¬¿ªÆôrunningÄ£Ê½//»òÕß¶ªÏßÊ±
+//           // if(Image_LptLeft_Found&&Image_LptRight_Found){
+//              // Cross_status = CROSS_RUNNING;
+//              // Trace_traceType = TRACE_Camera_Far_Both;
+//            //}
+//               if (Image_rptsLeftsNum < 0.2 / Image_sampleDist) ++none_left_line_cross;
+//                            if (Image_rptsLeftsNum <0.2/ Image_sampleDist) ++none_right_line_cross;
+//                                if (none_left_line_cross>2&&none_right_line_cross>2) {
+//                                    none_left_line_cross = 0;
+//                                    none_right_line_cross = 0;
+//                                    Cross_status = CROSS_RUNNING;
+//                                    Trace_traceType=TRACE_Camera_Near;
+//                                    Gyroscope_Begin(Cross_measureType);     //¿ªÆôÍÓÂÝÒÇ
+//                                }
+//    }
+//            //µ±½Çµã½Ï½üÊ±£¬ÇÐ»»CROSS_RUNNINGÄ£Ê½  //´ËÊ±½øÐÐÍ¬Ê±½üÏßÔ¶ÏßËÑË÷£¬Ô¶ÏßÖ÷µ¼ËÑË÷//»òÕß±àÂëÆ÷»ý·Ö//»òÕßÍÓÂÝÒÇ»ý·Ö//»òÕßÍ¬Ê±¸¨Öú
+//            else if (Cross_status == CROSS_RUNNING) {
+//                          //½ü´¦ËÑÑ°µ½Ïß
+//                        if(Image_rptsLeftsNum > 0.2 / Image_sampleDist&&Image_rptsRightsNum > 0.2 / Image_sampleDist||abs(Encoder_sum_Motor1)>Cross_encoderRight_Thre){  //¿ÉÒÔÐÞ¸Ä||
+//                            Encoder_End(ENCODER_MOTOR_2);
+//                            Encoder_Clear(ENCODER_MOTOR_2);
+//                            Trace_traceType=TRACE_Camera_Near;      //Ö»Ñ°½üÏß
+//                            //¼ÌÐø»ý·Ö
+//                            Encoder_Begin(ENCODER_MOTOR_2);
+//                            Cross_status=CROSS_IN;
+//                        }
+//
+//
+//
+//
+//                            //----------------------------------------
+//            }
+//
+//            else if(Cross_status==CROSS_IN){        //½øÈëÊ®×ÖÂ·¿ÚµÄÍäµÀ²¿·Ö
+//                                            //ÍÓÂÝÒÇ·½Ê½À´ÅÐ¶ÏÊÇ·ñµ½´ï×îÖÕ½×¶Î
+//                                    if(1){}
+//
+//
+//
+//                                    //ÍÓÂÝÒÇ»ý·Ö²¿·Ö
+//                                    if (Cross_measureType == GYROSCOPE_GYRO_X) {
+//                                                                           if (fabs(Gyro_x) > Cross_angleEntry_Thre) {
+//                                                                               //½øÈëÊ®×Ö»·µº
+//                                                                               Cross_forceAngle_Status = 0;
+//                                                                               Elec_pidStatus = 1;
+//                                                                               Cross_status = CROSS_IN2;
+//                                                                               Gyroscope_Clear(Cross_measureType);
+//                                                                               Gyroscope_Begin(Cross_measureType);
+//                                                                           }
+//                                                                       }
+//                                                                       else if (Cross_measureType == GYROSCOPE_GYRO_Y) {
+//                                                                           if (fabs(Gyro_y) > Cross_angleEntry_Thre) {
+//                                                                               //½øÈëÊ®×Ö»·µº
+//                                                                               Cross_forceAngle_Status = 0;
+//                                                                               Elec_pidStatus = 1;
+//                                                                               Cross_status = CROSS_IN2;
+//                                                                               Gyroscope_End(Cross_measureType);
+//                                                                               Gyroscope_Clear(Cross_measureType);
+//                                                                               Gyroscope_Begin(Cross_measureType);
+//                                                                           }
+//                                                                       }
+//                                                                       else if (Cross_measureType == GYROSCOPE_GYRO_Z) {
+//                                                                           if (fabs(Gyro_z) > Cross_angleEntry_Thre) {
+//                                                                               //½øÈëÊ®×Ö»·µº
+//                                                                               Cross_forceAngle_Status = 0;
+//                                                                               Elec_pidStatus = 1;
+//                                                                               Speed_set = 30;
+//                                                                               Cross_status = CROSS_IN2;
+//                                                                               Gyroscope_End(Cross_measureType);
+//                                                                               Gyroscope_Clear(Cross_measureType);
+//                                                                               Gyroscope_Begin(Cross_measureType);
+//                                                                           }
+//                                                                       }
+//
+//                                }
+//
+//
+//
+//
+//
+//
+//
+//                 else if (Cross_status==CROSS_IN2) {
+//                             //¿ªÊ¼ËÑË÷×óÏß£¬¸ú×Å×óÏßµÄÖÐÏß×ß,Í¬Ê±×îºóÓÃfabs(Gyro_)À´ÅÐ¶ÏÊÇ·ñµ½´ïcross_begin_2½×¶Î
+//
+//
+//
+//                            if((Image_LptLeft_Found &&!Image_LptRight_Found)||(Image_LptLeft_Found&&Image_LptRight_Found)){          //×ó½Çµã·¢ÏÖÖ®ºó
+//                                            Cross_status=CROSS_BEGIN2;
+//                                            Encoder_Begin(ENCODER_MOTOR_2);
+//                                       }
+//                        }
+//                 else if (Cross_status==CROSS_BEGIN2) {
+//
+//                     if (Image_rptsLeftsNum < 0.2 / Image_sampleDist) ++none_left_line_cross;
+//                                                 if (Image_rptsLeftsNum <0.2/ Image_sampleDist) ++none_right_line_cross;
+//                                                     if (none_left_line_cross>2&&none_right_line_cross>2) {
+//                                                         none_left_line_cross = 0;
+//                                                         none_right_line_cross = 0;
+//                                                         Cross_status = CROSS_RUNNING2;
+//                                                         Trace_traceType = TRACE_Camera_Far;
+//                                                         Gyroscope_Begin(Cross_measureType);     //¿ªÆôÍÓÂÝÒÇ
+//                                                     }
+//                                         }
+//                 else if(Cross_status==CROSS_RUNNING2){
+//                     if(Image_rptsLeftsNum > 0.2 / Image_sampleDist&&Image_rptsRightsNum > 0.2 / Image_sampleDist||abs(Encoder_sum_Motor1)>Cross_encoderRight_Thre){  //¿ÉÒÔÐÞ¸Ä||
+//                                                 Encoder_End(ENCODER_MOTOR_1);
+//                                                 Encoder_Clear(ENCODER_MOTOR_1);
+//                                                 Trace_traceType=TRACE_Camera_Near;
+//                                                 Cross_status=CROSS_NONE;
+//                                                 Trace_Status=TRACE_CENTERLINENEAR;
+//                                             }
+//                 }
+//}
+void handle_cross(){
+    if(Cross_status == CROSS_BEGIN){
+           PWMSetSteer(90.0);
+           if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>EncoderCross_Thre){
+                          Encoder_End(ENCODER_MOTOR_2);
+                          Encoder_Clear(ENCODER_MOTOR_2);
+                          Encoder_End(ENCODER_MOTOR_1);
+                          Encoder_Clear(ENCODER_MOTOR_1);
+                          Encoder_Begin(ENCODER_MOTOR_1);
+                          Encoder_Begin(ENCODER_MOTOR_2);
+                          Cross_status = CROSS_RUNNING;
+                      }
+       }
+       if(Cross_status == CROSS_RUNNING){
+           if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>4.6*EncoderCross_Thre){
+                   Encoder_End(ENCODER_MOTOR_2);
+                   Encoder_Clear(ENCODER_MOTOR_2);
+                   Encoder_End(ENCODER_MOTOR_1);
+                   Encoder_Clear(ENCODER_MOTOR_1);
+                   Encoder_Begin(ENCODER_MOTOR_1);
+                   Encoder_Begin(ENCODER_MOTOR_2);
+                   Cross_status = CROSS_END;
+                  }
+
+          }
+       if(Cross_status == CROSS_END){
+           PWMSetSteer(90.0);
+           if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>EncoderCross_Thre){
+                                 Cross_status = CROSS_NONE;
+                                 Trace_Status=TRACE_CENTERLINENEAR;
+                                 Encoder_End(ENCODER_MOTOR_2);
+                                 Encoder_Clear(ENCODER_MOTOR_2);
+                                 Encoder_End(ENCODER_MOTOR_1);
+                                 Encoder_Clear(ENCODER_MOTOR_1);
+                             }
+       }
 
 
-                //µ±Á½²à½Çµã½Ï½üµÄÊ±ºò£¬¿ªÆôrunningÄ£Ê½//»òÕß¶ªÏßÊ±
-               // if(Image_LptLeft_Found&&Image_LptRight_Found){
-                  // Cross_status = CROSS_RUNNING;
-                  // Trace_traceType = TRACE_Camera_Far_Both;
-                //}
-                   if (Image_rptsLeftsNum < 0.2 / Image_sampleDist) ++none_left_line_cross;
-                                if (Image_rptsLeftsNum <0.2/ Image_sampleDist) ++none_right_line_cross;
-                                    if (none_left_line_cross>2&&none_right_line_cross>2) {
-                                        none_left_line_cross = 0;
-                                        none_right_line_cross = 0;
-                                        Cross_status = CROSS_RUNNING;
-                                        Trace_traceType = TRACE_Camera_Far_Both;
-                                        Gyroscope_Begin(Cross_measureType);     //¿ªÆôÍÓÂÝÒÇ
-                                    }
-            //------------------------------------------------------------------------------------
-            //------------------------------------------------------------------------------------
-                        //Ñ­¼£³õÊ¼ÐÐÏòÉÏÒÆ¶¯
-            //------------------------------------------------------------------------------------
-            //------------------------------------------------------------------------------------
-            //------------------------------------------------------------------------------------
-               //
-        }
-                //µ±½Çµã½Ï½üÊ±£¬ÇÐ»»CROSS_RUNNINGÄ£Ê½  //´ËÊ±½øÐÐÍ¬Ê±½üÏßÔ¶ÏßËÑË÷£¬Ô¶ÏßÖ÷µ¼ËÑË÷//»òÕß±àÂëÆ÷»ý·Ö//»òÕßÍÓÂÝÒÇ»ý·Ö//»òÕßÍ¬Ê±¸¨Öú
-                else if (Cross_status == CROSS_RUNNING) {
-                              //½ü´¦ËÑÑ°µ½Ïß
-                            if(Image_rptsLeftsNum > 0.2 / Image_sampleDist&&Image_rptsRightsNum > 0.2 / Image_sampleDist||abs(Encoder_sum_Motor1)>Cross_encoderRight_Thre){  //¿ÉÒÔÐÞ¸Ä||
-                                Encoder_End(ENCODER_MOTOR_1);
-                                Encoder_Clear(ENCODER_MOTOR_1);
-                                Trace_traceType=TRACE_Camera_Near;      //Ö»Ñ°½üÏß
-                                Cross_status=CROSS_IN;
-                            }
-
-
-
-
-                                //----------------------------------------
-                }
-
-                else if(Cross_status==CROSS_IN){        //½øÈëÊ®×ÖÂ·¿ÚµÄÍäµÀ²¿·Ö
-                                                //ÍÓÂÝÒÇ·½Ê½À´ÅÐ¶ÏÊÇ·ñµ½´ï×îÖÕ½×¶Î
-                                        if (Cross_measureType == GYROSCOPE_GYRO_X) {
-                                                                               if (fabs(Gyro_x) > Cross_angleEntry_Thre) {
-                                                                                   //½øÈë»·µº
-                                                                                   Cross_forceAngle_Status = 0;
-                                                                                   Elec_pidStatus = 1;
-                                                                                   Cross_status = CROSS_IN2;
-
-
-                                                                                   Cross_Steer_Angle=Cross_Targetangle+Cross_SteerVar;  //²ÎÊý´«µÝ//»á¸ü¸Ä
-
-
-                                                                                   Gyroscope_End(Cross_measureType);
-                                                                                   Gyroscope_Clear(Cross_measureType);
-                                                                                   Gyroscope_Begin(Cross_measureType);
-                                                                               }
-                                                                           }
-                                                                           else if (Cross_measureType == GYROSCOPE_GYRO_Y) {
-                                                                               if (fabs(Gyro_y) > Cross_angleEntry_Thre) {
-                                                                                   //½øÈë»·µº
-                                                                                   Cross_forceAngle_Status = 0;
-                                                                                   Elec_pidStatus = 1;
-                                                                                   Cross_status = CROSS_IN2;
-                                                                                   Gyroscope_End(Cross_measureType);
-                                                                                   Gyroscope_Clear(Cross_measureType);
-                                                                                   Gyroscope_Begin(Cross_measureType);
-                                                                               }
-                                                                           }
-                                                                           else if (Cross_measureType == GYROSCOPE_GYRO_Z) {
-                                                                               if (fabs(Gyro_z) > Cross_angleEntry_Thre) {
-                                                                                   //½øÈë»·µº
-                                                                                   Cross_forceAngle_Status = 0;
-                                                                                   Elec_pidStatus = 1;
-                                                                                   Speed_set = 30;
-                                                                                   Cross_status = CROSS_IN2;
-                                                                                   Gyroscope_End(Cross_measureType);
-                                                                                   Gyroscope_Clear(Cross_measureType);
-                                                                                   Gyroscope_Begin(Cross_measureType);
-                                                                               }
-                                                                           }
-
-                                    }
-                     else if (Cross_status==CROSS_IN2) {
-                                 //¿ªÊ¼ËÑË÷×óÏß£¬¸ú×Å×óÏßµÄÖÐÏß×ß,Í¬Ê±×îºóÓÃfabs(Gyro_)À´ÅÐ¶ÏÊÇ·ñµ½´ïcross_begin_2½×¶Î
-
-                                if((Image_LptLeft_Found &&!Image_LptRight_Found)||(Image_LptLeft_Found&&Image_LptRight_Found)){          //×ó½Çµã·¢ÏÖÖ®ºó
-                                                Cross_status=CROSS_BEGIN2;
-                                                Encoder_Begin(ENCODER_MOTOR_2);
-                                           }
-                            }
-                     else if (Cross_status==CROSS_BEGIN2) {
-
-                         if (Image_rptsLeftsNum < 0.2 / Image_sampleDist) ++none_left_line_cross;
-                                                     if (Image_rptsLeftsNum <0.2/ Image_sampleDist) ++none_right_line_cross;
-                                                         if (none_left_line_cross>2&&none_right_line_cross>2) {
-                                                             none_left_line_cross = 0;
-                                                             none_right_line_cross = 0;
-                                                             Cross_status = CROSS_RUNNING2;
-                                                             Trace_traceType = TRACE_Camera_Far;
-                                                             Gyroscope_Begin(Cross_measureType);     //¿ªÆôÍÓÂÝÒÇ
-                                                         }
-                                             }
-                     else if(Cross_status==CROSS_RUNNING2){
-                         if(Image_rptsLeftsNum > 0.2 / Image_sampleDist&&Image_rptsRightsNum > 0.2 / Image_sampleDist||abs(Encoder_sum_Motor1)>Cross_encoderRight_Thre){  //¿ÉÒÔÐÞ¸Ä||
-                                                     Encoder_End(ENCODER_MOTOR_2);
-                                                     Encoder_Clear(ENCODER_MOTOR_2);
-                                                     Trace_traceType=TRACE_Camera_Near;
-                                                     Cross_status=CROSS_NONE;
-                                                     Trace_Status=TRACE_CENTERLINENEAR;
-                                                 }
-                     }
 
 }
-void Cross_RunCamera(){
-    if (Cross_status == CROSS_BEGIN) {
-            Trace_traceType = TRACE_Camera_Near;
-
-            //µ±Á½²à½Çµã½Ï½üµÄÊ±ºò£¬¿ªÆôrunningÄ£Ê½//»òÕß¶ªÏßÊ±
-           // if(Image_LptLeft_Found&&Image_LptRight_Found){
-              // Cross_status = CROSS_RUNNING;
-              // Trace_traceType = TRACE_Camera_Far_Both;
-            //}
-               if (Image_rptsLeftsNum < 0.2 / Image_sampleDist) ++none_left_line_cross;
-                            if (Image_rptsLeftsNum <0.2/ Image_sampleDist) ++none_right_line_cross;
-                                if (none_left_line_cross>2&&none_right_line_cross>2) {
-                                    none_left_line_cross = 0;
-                                    none_right_line_cross = 0;
-                                    Cross_status = CROSS_RUNNING;
-                                    Trace_traceType=TRACE_Camera_Near;
-                                    Gyroscope_Begin(Cross_measureType);     //¿ªÆôÍÓÂÝÒÇ
-                                }
-    }
-            //µ±½Çµã½Ï½üÊ±£¬ÇÐ»»CROSS_RUNNINGÄ£Ê½  //´ËÊ±½øÐÐÍ¬Ê±½üÏßÔ¶ÏßËÑË÷£¬Ô¶ÏßÖ÷µ¼ËÑË÷//»òÕß±àÂëÆ÷»ý·Ö//»òÕßÍÓÂÝÒÇ»ý·Ö//»òÕßÍ¬Ê±¸¨Öú
-            else if (Cross_status == CROSS_RUNNING) {
-                          //½ü´¦ËÑÑ°µ½Ïß
-                        if(Image_rptsLeftsNum > 0.2 / Image_sampleDist&&Image_rptsRightsNum > 0.2 / Image_sampleDist||abs(Encoder_sum_Motor1)>Cross_encoderRight_Thre){  //¿ÉÒÔÐÞ¸Ä||
-                            Encoder_End(ENCODER_MOTOR_2);
-                            Encoder_Clear(ENCODER_MOTOR_2);
-                            Trace_traceType=TRACE_Camera_Near;      //Ö»Ñ°½üÏß
-                            //¼ÌÐø»ý·Ö
-                            Encoder_Begin(ENCODER_MOTOR_2);
-                            Cross_status=CROSS_IN;
-                        }
-
-
-
-
-                            //----------------------------------------
-            }
-
-            else if(Cross_status==CROSS_IN){        //½øÈëÊ®×ÖÂ·¿ÚµÄÍäµÀ²¿·Ö
-                                            //ÍÓÂÝÒÇ·½Ê½À´ÅÐ¶ÏÊÇ·ñµ½´ï×îÖÕ½×¶Î
-                                    if(1){}
-
-
-
-                                    //ÍÓÂÝÒÇ»ý·Ö²¿·Ö
-                                    if (Cross_measureType == GYROSCOPE_GYRO_X) {
-                                                                           if (fabs(Gyro_x) > Cross_angleEntry_Thre) {
-                                                                               //½øÈëÊ®×Ö»·µº
-                                                                               Cross_forceAngle_Status = 0;
-                                                                               Elec_pidStatus = 1;
-                                                                               Cross_status = CROSS_IN2;
-                                                                               Gyroscope_Clear(Cross_measureType);
-                                                                               Gyroscope_Begin(Cross_measureType);
-                                                                           }
-                                                                       }
-                                                                       else if (Cross_measureType == GYROSCOPE_GYRO_Y) {
-                                                                           if (fabs(Gyro_y) > Cross_angleEntry_Thre) {
-                                                                               //½øÈëÊ®×Ö»·µº
-                                                                               Cross_forceAngle_Status = 0;
-                                                                               Elec_pidStatus = 1;
-                                                                               Cross_status = CROSS_IN2;
-                                                                               Gyroscope_End(Cross_measureType);
-                                                                               Gyroscope_Clear(Cross_measureType);
-                                                                               Gyroscope_Begin(Cross_measureType);
-                                                                           }
-                                                                       }
-                                                                       else if (Cross_measureType == GYROSCOPE_GYRO_Z) {
-                                                                           if (fabs(Gyro_z) > Cross_angleEntry_Thre) {
-                                                                               //½øÈëÊ®×Ö»·µº
-                                                                               Cross_forceAngle_Status = 0;
-                                                                               Elec_pidStatus = 1;
-                                                                               Speed_set = 30;
-                                                                               Cross_status = CROSS_IN2;
-                                                                               Gyroscope_End(Cross_measureType);
-                                                                               Gyroscope_Clear(Cross_measureType);
-                                                                               Gyroscope_Begin(Cross_measureType);
-                                                                           }
-                                                                       }
-
-                                }
-
-
-
-
-
-
-
-                 else if (Cross_status==CROSS_IN2) {
-                             //¿ªÊ¼ËÑË÷×óÏß£¬¸ú×Å×óÏßµÄÖÐÏß×ß,Í¬Ê±×îºóÓÃfabs(Gyro_)À´ÅÐ¶ÏÊÇ·ñµ½´ïcross_begin_2½×¶Î
-
-
-
-                            if((Image_LptLeft_Found &&!Image_LptRight_Found)||(Image_LptLeft_Found&&Image_LptRight_Found)){          //×ó½Çµã·¢ÏÖÖ®ºó
-                                            Cross_status=CROSS_BEGIN2;
-                                            Encoder_Begin(ENCODER_MOTOR_2);
-                                       }
-                        }
-                 else if (Cross_status==CROSS_BEGIN2) {
-
-                     if (Image_rptsLeftsNum < 0.2 / Image_sampleDist) ++none_left_line_cross;
-                                                 if (Image_rptsLeftsNum <0.2/ Image_sampleDist) ++none_right_line_cross;
-                                                     if (none_left_line_cross>2&&none_right_line_cross>2) {
-                                                         none_left_line_cross = 0;
-                                                         none_right_line_cross = 0;
-                                                         Cross_status = CROSS_RUNNING2;
-                                                         Trace_traceType = TRACE_Camera_Far;
-                                                         Gyroscope_Begin(Cross_measureType);     //¿ªÆôÍÓÂÝÒÇ
-                                                     }
-                                         }
-                 else if(Cross_status==CROSS_RUNNING2){
-                     if(Image_rptsLeftsNum > 0.2 / Image_sampleDist&&Image_rptsRightsNum > 0.2 / Image_sampleDist||abs(Encoder_sum_Motor1)>Cross_encoderRight_Thre){  //¿ÉÒÔÐÞ¸Ä||
-                                                 Encoder_End(ENCODER_MOTOR_1);
-                                                 Encoder_Clear(ENCODER_MOTOR_1);
-                                                 Trace_traceType=TRACE_Camera_Near;
-                                                 Cross_status=CROSS_NONE;
-                                                 Trace_Status=TRACE_CENTERLINENEAR;
-                                             }
-                 }
-}
-
 

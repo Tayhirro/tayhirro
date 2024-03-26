@@ -14,6 +14,7 @@
 #include "xiao_motor.h"
 #include "xiao_pid.h"
 #include "xiao_shift.h"
+#include "xiao_cross.h"
 #define counter_number 2
 //==============================需要使用到的枚举==============================
 typedef enum {

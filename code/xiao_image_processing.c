@@ -1439,6 +1439,8 @@ void Image_LCornerCheck(void) {
         if (abs(Encoder_sum_Motor2) > Image_GrageJudge_Thre) {
             Image_LCornerJude_Status = IMAGE_LCORNER_IS_CIRCLE_RIGHT;
         }
+
+
     }
     //环岛开始状态机
     else if (Image_LCornerJude_Status == IMAGE_LCORNER_IS_CIRCLE_LEFT) {
