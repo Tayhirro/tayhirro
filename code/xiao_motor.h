@@ -9,7 +9,6 @@
 #define CODE_XIAO_MOTOR_H_
 
 #include "xiao_common.h"
-#include "xiao_pid.h"
 #include "cpu0_main.h"
 
 #if DIRVER_WITH_DIRECTION       //带方向的驱动板
@@ -28,15 +27,13 @@
 
 #define MOTOR_FREQ              (17000)
 
-extern fPID Motor_1PID;
-extern fPID Motor_2PID;
-//电机的枚举
 typedef enum {
     MOTOR_2 = 0x00,
     MOTOR_1 = 0x01
 }MOTOR_PWM_enum;
 
-
+extern float Motor_1Target;
+extern float Motor_2Target;
 //对外接口
 void Motor_Init(void);
 void Motor_SetSpeed(MOTOR_PWM_enum motor, int16 speed);

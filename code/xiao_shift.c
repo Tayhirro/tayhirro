@@ -5,6 +5,10 @@
  *      Author: Tayhirro
  */
 #include "xiao_shift.h"
+#include "xiao_image_processing.h"
+#include "xiao_trace.h"
+#include "xiao_gyroscope.h"
+#include "xiao_pid.h"
 uint8 none_leftshift_line=0;
 uint8 none_rightshift_line=0;
 SHIFT_DIRECTION Shift_Direction=SHIFT_DNONE;
@@ -18,6 +22,7 @@ void check_shiftroad(void){
     if(none_leftshift_line>=25){
         //Trace_Status=TRACE_LEFTLOST;
         Shift_Direction=SHIFT_LEFT;
+        NORMAL_SPEED=50;
         none_leftshift_line=0;
         //Encoder_Begin(ENCODER_MOTOR_2);
         return;
@@ -25,14 +30,19 @@ void check_shiftroad(void){
     }
     if(none_rightshift_line>=25){
         //Trace_Status=TRACE_RIGHTLOST;
+        NORMAL_SPEED=50;
         Shift_Direction=SHIFT_RIGHT;
         none_rightshift_line=0;
         //Encoder_Begin(ENCODER_MOTOR_1);
         return;
         //pid_type==PID_INV
     }
-
-
+    else{
+        NORMAL_SPEED=50;
+        Shift_Direction=SHIFT_DNONE;
+        none_leftshift_line=0;
+        none_rightshift_line=0;
+    }
 }
 
 

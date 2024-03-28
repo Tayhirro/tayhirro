@@ -10,13 +10,9 @@
 
 #include "../libraries/zf_common/zf_common_headfile.h"
 #include "../libraries/zf_common/zf_common_font.h"
-#include "xiao_camera_processing.h"
 #include "xiao_basic_function.h"
 #include "pico_link_ii.h"
 #include "pico_gy.h"
-#include "xiao_grage.h"
-#include "xiao_circle.h"
-#include "xiao_show.h"
 
 //CAMERA_SELECTIONÄÚÈÝ½âÊÍ
 //Îª 1 µÄÊ±ºò,Ñ¡Ôñ×Ü×ê·ç
@@ -34,6 +30,7 @@
 #define IMAGE_WIDTH             (SCC8660_W)
 #endif
 
+#define BOUNDARY_NUM 90
 #define IMAGE_LINE_MAX_NUM (90)         //Í¼Æ¬±ßÏßÏñËØµã×î´ó¸öÊý
 //------------------------------------------------------------
 //ËùÓÐ×´Ì¬»ú
@@ -55,7 +52,8 @@ extern uint8 Image_rptsRight[90][2];            //ÓÒ±ßÏßÈ¥»û±ä+ÄæÍ¸ÊÓ±ä»»×ø±ê´æ´
 extern uint8 Image_rptsLeftNum;                 //×ó±ßÏßÈ¥»û±ä+ÄæÍ¸ÊÓ±ä»»ÏñËØµã¸öÊý
 extern uint8 Image_rptsRightNum;                //ÓÒ±ßÏßÈ¥»û±ä+ÄæÍ¸ÊÓ±ä»»ÏñËØµã¸öÊý
 
-
+extern uint8 xy_x1_boundary[BOUNDARY_NUM], xy_x2_boundary[BOUNDARY_NUM], xy_x3_boundary[BOUNDARY_NUM];
+extern uint8 xy_y1_boundary[BOUNDARY_NUM], xy_y2_boundary[BOUNDARY_NUM], xy_y3_boundary[BOUNDARY_NUM];
 
 //------------------------------
 //µã¼¯Èý½ÇÂË²¨Ïà¹Ø

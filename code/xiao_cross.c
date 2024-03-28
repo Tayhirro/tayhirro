@@ -5,8 +5,12 @@
  *      Author: Tayhirro
  */
 #include "xiao_cross.h"
-
-
+#include "xiao_encoder.h"
+#include "xiao_image_processing.h"
+#include "xiao_trace.h"
+#include "xiao_gyroscope.h"
+#include "xiao_shift.h"
+#include "xiao_pid.h"
 //----------------------------------------
 //----------------------------------------
 
@@ -24,12 +28,11 @@ const uint8 Cross_camera_scCnt_Thre = 0;       //十字判断摄像头满足次数阈值(次数
 uint8 Cross_camera_nscCnt = 0;                 //十字判断摄像头部分不满足次数
 const uint8 Cross_camera_nscCnt_Thre = 0;      //环岛判断摄像头部分不满足次数阈值(次数大于阈值就判断非环岛)
 //----------------------------------------
-float Cross_angleEntry_Thre = 45.0;            //入十字角度积分阈值
-
-
-int16 EncoderCross_Thre=16000;
-int16 EncoderCross_RUNNING_Thre=80000;
-
+float Cross_angleEntry_Thre = 180.0;            //入十字角度积分阈值
+int16 EncoderCross_In_Thre=3000;
+int16 EncoderCross_Thre=9000;
+int32 EncoderCross_RUNNING_Thre=64000;
+int16 EncoderCross_IN2_Thre=8000;
 //陀螺仪测量角度的时候使用的变量 - (假定先使用x轴陀螺仪)
 GYROSCOPE_MEASURE_TYPE Cross_measureType = GYROSCOPE_GYRO_X;
 
@@ -42,8 +45,13 @@ void Cross_CheckCamera(void) {
     //十字
     if (Trace_Status==TRACE_CENTERLINENEAR&& Image_LptLeft_Found && Image_LptRight_Found&&Cross_status == CROSS_NONE) {//Cross_status == CROSS_NONE
         //测试代码
+        NORMAL_SPEED=40;
         Trace_Status=TRACE_CROSS;
         Cross_status = CROSS_BEGIN;
+        Encoder_End(ENCODER_MOTOR_2);
+        Encoder_Clear(ENCODER_MOTOR_2);
+        Encoder_End(ENCODER_MOTOR_1);
+        Encoder_Clear(ENCODER_MOTOR_1);
         Encoder_Begin(ENCODER_MOTOR_1);
         Encoder_Begin(ENCODER_MOTOR_2);
 //        put_int32(70, 1);
@@ -299,42 +307,66 @@ void Cross_CheckCamera(void) {
 //}
 void handle_cross(){
     if(Cross_status == CROSS_BEGIN){
-           PWMSetSteer(90.0);
-           if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>EncoderCross_Thre){
+           PWMSetSteer(85.0);
+           if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>EncoderCross_In_Thre){
                           Encoder_End(ENCODER_MOTOR_2);
                           Encoder_Clear(ENCODER_MOTOR_2);
                           Encoder_End(ENCODER_MOTOR_1);
                           Encoder_Clear(ENCODER_MOTOR_1);
                           Encoder_Begin(ENCODER_MOTOR_1);
                           Encoder_Begin(ENCODER_MOTOR_2);
-                          Cross_status = CROSS_RUNNING;
+                          Cross_status = CROSS_IN;
                       }
        }
+    if(Cross_status == CROSS_IN){
+        Trace_traceType=TRACE_Camera_Far;
+        if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>EncoderCross_Thre){
+                                      Encoder_End(ENCODER_MOTOR_2);
+                                      Encoder_Clear(ENCODER_MOTOR_2);
+                                      Encoder_End(ENCODER_MOTOR_1);
+                                      Encoder_Clear(ENCODER_MOTOR_1);
+                                      Encoder_Begin(ENCODER_MOTOR_1);
+                                      Encoder_Begin(ENCODER_MOTOR_2);
+
+                                      Cross_status = CROSS_RUNNING;
+        }
+    }
        if(Cross_status == CROSS_RUNNING){
-           if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>4.6*EncoderCross_Thre){
+           Trace_traceType=TRACE_Camera_MID;
+           if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>5.2*EncoderCross_Thre&&Image_LptLeft_Found){
                    Encoder_End(ENCODER_MOTOR_2);
                    Encoder_Clear(ENCODER_MOTOR_2);
                    Encoder_End(ENCODER_MOTOR_1);
                    Encoder_Clear(ENCODER_MOTOR_1);
                    Encoder_Begin(ENCODER_MOTOR_1);
                    Encoder_Begin(ENCODER_MOTOR_2);
-                   Cross_status = CROSS_END;
+                   Cross_status = CROSS_IN2;
                   }
-
           }
-       if(Cross_status == CROSS_END){
+       if(Cross_status == CROSS_IN2){
+               PWMSetSteer(82.0);
+             if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>EncoderCross_IN2_Thre){
+                     Encoder_End(ENCODER_MOTOR_2);
+                     Encoder_Clear(ENCODER_MOTOR_2);
+                     Encoder_End(ENCODER_MOTOR_1);
+                     Encoder_Clear(ENCODER_MOTOR_1);
+                     Encoder_Begin(ENCODER_MOTOR_1);
+                     Encoder_Begin(ENCODER_MOTOR_2);
+                     Cross_status = CROSS_END;
+                    }
+            }
+       if(Cross_status == CROSS_END){   //循远线
            PWMSetSteer(90.0);
-           if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>EncoderCross_Thre){
+          // Trace_traceType=TRACE_Camera_Far;
+           if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>EncoderCross_Thre&&Image_iptsLeftNum>10&&Image_iptsRightNum>10){           //重新找到左右线
                                  Cross_status = CROSS_NONE;
                                  Trace_Status=TRACE_CENTERLINENEAR;
                                  Encoder_End(ENCODER_MOTOR_2);
                                  Encoder_Clear(ENCODER_MOTOR_2);
                                  Encoder_End(ENCODER_MOTOR_1);
                                  Encoder_Clear(ENCODER_MOTOR_1);
+                                 NORMAL_SPEED=72;
                              }
        }
-
-
-
 }
 

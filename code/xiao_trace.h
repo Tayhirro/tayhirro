@@ -10,11 +10,6 @@
 
 //==============================需要使用到的头文件==============================
 #include "xiao_common.h"
-#include "xiao_image_processing.h"
-#include "xiao_motor.h"
-#include "xiao_pid.h"
-#include "xiao_shift.h"
-#include "xiao_cross.h"
 #define counter_number 2
 //==============================需要使用到的枚举==============================
 typedef enum {
@@ -81,7 +76,4 @@ extern float Trace_angleError;
 extern float Trace_angleErrorTher ;               //角度误差阈值
 extern float Trace_angleError_bak[counter_number];
 extern uint8 Trace_aimLine ;
-extern fPID Trace_cameraLeftPID;                       //左边线获取的中线的PID
-extern fPID Trace_cameraRightPID;                      //右边线获取的中线的PID
-extern fPID Trace_cameraMidPID;                       //左+右获取的中线的PID
 #endif /* CODE_XIAO_TRACE_H_ */

@@ -6,7 +6,12 @@
  */
 
 #include "xiao_image_processing.h"
-
+#include "xiao_grage.h"
+#include "xiao_circle.h"
+#include "xiao_show.h"
+#include "xiao_camera_processing.h"
+#include "xiao_trace.h"
+#include "xiao_pid.h"
 //------------------------------------------------------------
 //图像坐标为
 // :------------------>x
@@ -118,7 +123,7 @@ uint8 Image_iptsRightbNum;                              //三角滤波后的右边线长度
 
 //------------------------------
 //等距采样相关
-const float Image_sampleDist = 0.01;                    //等距采用采样的距离
+const float Image_sampleDist = 0.035;                    //等距采用采样的距离
 uint8 Image_rptsLefts[IMAGE_LINE_MAX_NUM][2];           //等距采样后的左边线坐标存储
 uint8 Image_rptsRights[IMAGE_LINE_MAX_NUM][2];          //等距采样后的右边线坐标存储
 uint8 Image_rptsLefts_Bak[IMAGE_LINE_MAX_NUM][2];       //等距采样后的左边线坐标存储 - 备份
@@ -139,7 +144,7 @@ uint8 Image_iptsRightsNum_Bak;                          //等距采样后的右边线长度
 //------------------------------
 //------------------------------
 //边线局部角度变化率相关
-const float Image_angleDist = 0.1;                      //计算边线转角时,三个计算点的距离
+const float Image_angleDist = 0.2;                      //计算边线转角时,三个计算点的距离
 float Image_rptsLefta[IMAGE_LINE_MAX_NUM];              //左边线对应点处的角度大小
 float Image_rptsRighta[IMAGE_LINE_MAX_NUM];             //右边线对应点处的角度大小
 uint8 Image_rptsLeftaNum;                               //左边线点的个数
@@ -235,11 +240,15 @@ uint16 Image_GrageJudge_Thre = 10000;                   //车库判断的编码器积分距
 //用于调试的参数(为了作区分,这里的标头起始字母用小写处理, 同时使用下划线命名法)
 uint8 image_thre = 140;                                  //边线处理的初始阈值
 uint8 image_begin_x = IMAGE_WIDTH / 2;                  //边线处理的起始x坐标偏离中心的距离
-uint8 image_begin_y = IMAGE_HEIGHT -10;                //边线处理起始的y坐标
+uint8 image_begin_y = IMAGE_HEIGHT-40;                //边线处理起始的y坐标
 uint8 image_block_size = 5;                             //区域二值化的区域边长
 uint8 image_block_clip_value = 3;                       //修正的经验参数(一般为2~5)
 
-
+#define BOUNDARY_NUM 90
+uint8 xy_x1_boundary[BOUNDARY_NUM], xy_x2_boundary[BOUNDARY_NUM];
+uint8 xy_y1_boundary[BOUNDARY_NUM], xy_y2_boundary[BOUNDARY_NUM];
+uint8 xy_x3_boundary[BOUNDARY_NUM];
+uint8 xy_y3_boundary[BOUNDARY_NUM];
 
 /*
  * @brief               获取图像数据
@@ -907,8 +916,8 @@ void Image_Process(uint8* image) {
     }
 
     if(Trace_Status==TRACE_CROSS){
-        if(Trace_traceType==TRACE_Camera_Far){image_begin_y=IMAGE_HEIGHT-70;}
-        if(Trace_traceType==TRACE_Camera_Near){image_begin_y=IMAGE_HEIGHT-10;}
+        if(Trace_traceType==TRACE_Camera_Far){image_begin_y=IMAGE_HEIGHT-80;}
+        if(Trace_traceType==TRACE_Camera_MID){image_begin_y=IMAGE_HEIGHT-40;}
     }
 
 
@@ -917,7 +926,7 @@ void Image_Process(uint8* image) {
     //找左边线
     Image_iptsLeftNum = sizeof(Image_iptsLeft) / sizeof(Image_iptsLeft[0]);
     uint8 x1 = image_begin_x;
-    uint8 y1 = image_begin_y-30;
+    uint8 y1 = image_begin_y;
     for (; x1 > 0; --x1) if (IMAGE_AT(image, x1 - 1, y1) < image_thre) break;           //查找边界上的第一个点
     if (IMAGE_AT(image, x1, y1) >= image_thre){//没有到边界就正常处理
         Image_FindLine_LeftHand_Adaptive(image,image_block_size,image_block_clip_value, x1,y1);
@@ -931,7 +940,7 @@ void Image_Process(uint8* image) {
     //找右边线
     Image_iptsRightNum = sizeof(Image_iptsRight) / sizeof(Image_iptsRight[0]);
     uint8 x2 = image_begin_x;
-    uint8 y2 = image_begin_y-30;
+    uint8 y2 = image_begin_y;
     for (; x2 < IMAGE_WIDTH - 1; ++x2) if (IMAGE_AT(image, x2 + 1, y2) < image_thre) break;     //查找边界上的第一个点
     if (IMAGE_AT(image, x2, y2) >= image_thre)                                                  //没有到边界就正常处理
         Image_FindLine_RightHand_Adaptive(image,image_block_size,image_block_clip_value, x2,y2);
@@ -941,10 +950,6 @@ void Image_Process(uint8* image) {
     Image_getcenterLine();
    }
 
-      if(Trace_Status==TRACE_CROSS){
-          if(Trace_traceType==TRACE_Camera_Far){image_begin_y=IMAGE_HEIGHT-70;}
-          if(Trace_traceType==TRACE_Camera_Near){image_begin_y=IMAGE_HEIGHT-10;}
-      }
    // ----------------------------------------
    // 对边线进行去畸变 + 逆透视变换
     for (uint8 i = 0; i < Image_iptsLeftNum; ++i) {
@@ -961,20 +966,28 @@ void Image_Process(uint8* image) {
 
 
     //去除(0,0)点
-    for (uint8 i = 1; i < Image_rptsLeftNum - 1; ++i) {
-        if (Image_rptsLeft[i + 1][0] != 0 || Image_rptsLeft[i + 1][1] != 0) {
-            Image_rptsLeft[i][0] = Image_rptsLeft[i + 1][0];
-            Image_rptsLeft[i][1] = Image_rptsLeft[i + 1][1];
+    uint8 j=0;
+    for (uint8 i = 0; i < Image_rptsLeftNum; ++i) {
+        if (Image_rptsLeft[i][0] != 0 || Image_rptsLeft[i][1] != 0) {
+            Image_rptsLeft[i-j][0] = Image_rptsLeft[i][0];
+            Image_rptsLeft[i-j][1] = Image_rptsLeft[i][1];
             ++Image_rptsLeftrNum;
+        }
+        else{
+            j++;
         }
     }
     Image_rptsLeftNum = Image_rptsLeftrNum;
     Image_rptsLeftrNum = 0;
-    for (uint8 i = 1; i < Image_rptsRightNum - 1; ++i) {
-        if (Image_rptsRight[i + 1][0] != 0 || Image_rptsRight[i + 1][1] != 0) {
-            Image_rptsRight[i][0] = Image_rptsRight[i + 1][0];
-            Image_rptsRight[i][1] = Image_rptsRight[i + 1][1];
+    j=0;
+    for (uint8 i = 0; i < Image_rptsRightNum; ++i) {
+        if (Image_rptsRight[i][0] != 0 || Image_rptsRight[i][1] != 0) {
+            Image_rptsRight[i-j][0] = Image_rptsRight[i][0];
+            Image_rptsRight[i-j][1] = Image_rptsRight[i][1];
             ++Image_rptsRightrNum;
+        }
+        else{
+            j++;
         }
     }
     Image_rptsRightNum = Image_rptsRightrNum;
@@ -1021,7 +1034,24 @@ void Image_Process(uint8* image) {
     Image_rptsLeftcNum = Image_rptsLeftsNum;
     Image_TrackRightLine(Image_rptsRights, Image_rptsRightsNum, Image_rptsRightc, (uint8)round(Image_angleDist / Image_sampleDist), Image_pixelPreMeter * Image_roadWidth / 2);
     Image_rptsRightcNum = Image_rptsRightsNum;
-
+    for(int i=0;i<BOUNDARY_NUM;i++){
+        xy_x1_boundary[i]=Image_rptsLeft[i][0];
+    }
+    for(int i=0;i<BOUNDARY_NUM;i++){
+        xy_y1_boundary[i]=Image_rptsLeft[i][1];
+              }
+    for(int i=0;i<BOUNDARY_NUM;i++){
+        xy_x2_boundary[i]=Image_rptsRight[i][0];
+              }
+    for(int i=0;i<BOUNDARY_NUM;i++){
+        xy_y2_boundary[i]=Image_rptsRight[i][1];
+              }
+    for(int i=0;i<BOUNDARY_NUM;i++){
+        xy_x3_boundary[i]=Image_rptsLeftc[i][0];
+              }
+    for(int i=0;i<BOUNDARY_NUM;i++){
+        xy_y3_boundary[i]=Image_rptsLeftc[i][1];
+              }
     if (Image_isUsefulData_Status == 0) {
         Image_isUsefulData_Status = 1;
     }

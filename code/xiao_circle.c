@@ -6,6 +6,10 @@
  */
 
 #include "xiao_circle.h"
+#include "xiao_encoder.h"
+#include "xiao_image_processing.h"
+#include "xiao_trace.h"
+#include "xiao_gyroscope.h"
 //------------------------------------------------------------
 //×´Ì¬»ú
 CIRCLE_STATUS Circle_status = CIRCLE_NONE;

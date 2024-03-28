@@ -8,9 +8,7 @@
 #include "xiao_motor.h"
 #include "cpu0_main.h"
 #include "xiao_pid.h"
-//电机PID
-fPID Motor_1PID;
-fPID Motor_2PID;
+
 //逼近控制
 float Motor_1preTarget;
 float Motor_2preTarget;

@@ -7,6 +7,7 @@
 
 #ifndef CODE_XIAO_PID_H_
 #define CODE_XIAO_PID_H_
+
 //typedef struct pid{
 //            float kP;
 //            float kPSet;
@@ -63,7 +64,15 @@ typedef struct pidcc_controller_float fPID,*tofPID;
 
 
 extern fPID Trace_cameraLeftPID;                       //左边线获取的中线的PID
-extern fPID Trace_cameraRightPID;    /*
+extern fPID Trace_cameraRightPID;                      //右边线获取的中线的PID
+extern fPID Trace_cameraMidPID;                       //左+右获取的中线的PID
+
+extern float NORMAL_SPEED;
+extern float STOP_SPEED;
+extern float CIRCLE_SPEED;
+extern fPID Motor_1PID;
+extern fPID Motor_2PID;/*
+
  * xiao_pid.h
  *
  *  Created on: 2024年2月28日

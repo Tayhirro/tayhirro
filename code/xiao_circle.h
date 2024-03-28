@@ -8,9 +8,6 @@
 #ifndef CODE_XIAO_CIRCLE_H_
 #define CODE_XIAO_CIRCLE_H_
 #include "xiao_common.h"
-#include "xiao_image_processing.h"
-#include "xiao_trace.h"
-#include "xiao_gyroscope.h"
 #include "../user/cpu0_main.h"
 
 //ª∑µ∫¥¶¿Ì

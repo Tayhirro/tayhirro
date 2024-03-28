@@ -8,18 +8,14 @@
 #ifndef CODE_XIAO_CROSS_H_
 #define CODE_XIAO_CROSS_H_
 #include "xiao_common.h"
-#include "xiao_image_processing.h"
-#include "xiao_trace.h"
-#include "xiao_gyroscope.h"
 #include "../user/cpu0_main.h"
-#include "xiao_shift.h"
 
 //Ê®×Ö´¦Àí
 typedef enum {
     CROSS_NONE = 0x00,
     CROSS_BEGIN = 0x01,
-    CROSS_RUNNING = 0x02,
-    CROSS_IN = 0x03,
+    CROSS_IN = 0x02,
+    CROSS_RUNNING = 0x03,
     CROSS_IN2 =0x04,
     CROSS_BEGIN2=0x05,
     CROSS_RUNNING2=0x06,
