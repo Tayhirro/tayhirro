@@ -10,6 +10,7 @@
 #include "xiao_image_processing.h"
 #include "xiao_trace.h"
 #include "xiao_gyroscope.h"
+#include "xiao_pid.h"
 //------------------------------------------------------------
 //状态机
 CIRCLE_STATUS Circle_status = CIRCLE_NONE;
@@ -159,8 +160,10 @@ int16 Circle_encoderExitRight_Thre = 5000;             //出右环编码器积分阈值
 uint8 Circle_multiCircle_Status = 0;
 //------------------------------出环岛加速------------------------------
 uint8 Circle_speedAcc_Status = 0;
-
-
+int16 EncoderCircle_In_Thre =2000;
+int16 EncoderCircle_Running_Thre =1500;
+int16 EncoderCircle_Out_Thre=6400;
+int16 EncoderCircle_End_Thre=5000;
 //陀螺仪测量角度的时候使用的变量 - (假定先使用x轴陀螺仪)
 GYROSCOPE_MEASURE_TYPE Circle_measureType = GYROSCOPE_GYRO_X;
 
@@ -169,31 +172,8 @@ GYROSCOPE_MEASURE_TYPE Circle_measureType = GYROSCOPE_GYRO_X;
  * @attention           需要图传进行初始化,否则无法使用
  */
 void Circle_PutStatus(void) {
-    put_int32(72, Circle_status);
+   // put_int32(72, Circle_status);
 }
-
-/*
- * @brief               通过检测角点的值,判断是左环岛还是右环岛
- * @attention           使用摄像头检测,需要对摄像头进行初始化
- */
-void Circle_CheckCamera(void) {
-    //左环岛
-    if (Circle_status == CIRCLE_NONE && Image_LptLeft_Found && !Image_LptRight_Found && Image_isStraightRight&&Trace_Status==TRACE_CENTERLINENEAR) {
-        //测试代码
-        Circle_status = CIRCLE_LEFT_BEGIN;
-        Encoder_Begin(ENCODER_MOTOR_2);
-//        put_int32(70, 1);
-        gpio_set_level(P20_8, GPIO_LOW);
-    }
-    //右环岛
-    if (Circle_status == CIRCLE_NONE && Image_LptRight_Found && !Image_LptLeft_Found && Image_isStraightLeft) {
-        Circle_status = CIRCLE_RIGHT_BEGIN;
-        Encoder_Begin(ENCODER_MOTOR_1);
-//        put_int32(71, 1);
-        gpio_set_level(P20_9, GPIO_LOW);
-    }
-}
-
 /*
  * @brief               电磁检测是否进入环岛
  * @attention           目前使用最边缘两侧横电感和中间一个电感进行环岛的判断
@@ -743,7 +723,7 @@ void Circle_RunCamera() {
     //------------------------------
     //开始
     if (Circle_status == CIRCLE_LEFT_BEGIN) {
-        Trace_traceType = TRACE_Camera_RIGHT;
+        Trace_traceType = TRACE_Camera_Near_RIGHT;
 
         //先丢左线后右线
         if (Image_rptsLeftsNum < 0.2 / Image_sampleDist) {++none_left_line;Trace_Status=TRACE_LEFTLOST;}
@@ -759,7 +739,7 @@ void Circle_RunCamera() {
     }
     //入环,寻内圆左线
     else if (Circle_status == CIRCLE_LEFT_IN) {
-        Trace_traceType = TRACE_Camera_LEFT;
+        Trace_traceType = TRACE_Camera_Near_LEFT;
         if (Circle_measureType == GYROSCOPE_GYRO_X) {
             //这里暂定为>= 90.0,实际的测量可能是负值,这里需要做一下改变
             if (Gyro_x >= 90.0 || Image_rptsLeftsNum < 0.1 / Image_sampleDist) {
@@ -782,7 +762,7 @@ void Circle_RunCamera() {
     }
     //在环内,正常巡线 (先做摄像头巡线)
     else if (Circle_status == CIRCLE_LEFT_RUNNING) {
-        Trace_traceType = TRACE_Camera_RIGHT;
+        Trace_traceType = TRACE_Camera_Near_RIGHT;
 
         //当找到右L角点的时候
         if (Image_LptRight_Found) Image_rptsRightsNum = Image_rptsRightcNum = Image_LptRight_rptsRights_id;
@@ -792,7 +772,7 @@ void Circle_RunCamera() {
     }
     //出环,寻内圆
     else if (Circle_status == CIRCLE_LEFT_OUT) {
-        Trace_traceType = TRACE_Camera_LEFT;
+        Trace_traceType = TRACE_Camera_Near_LEFT;
 
         //右线为长直道
         if (Image_isStraightRight) {
@@ -801,7 +781,7 @@ void Circle_RunCamera() {
     }
     //走出圆环,寻右线(用电磁跑)
     else if (Circle_status == CIRCLE_LEFT_END) {
-        Trace_traceType = TRACE_Camera_RIGHT;
+        Trace_traceType = TRACE_Camera_Near_RIGHT;
 
         //左线先丢后有
         if (Image_rptsLeftsNum < 0.2 / Image_sampleDist)
@@ -822,7 +802,7 @@ void Circle_RunCamera() {
     //------------------------------
     //1. 开始,寻左边线
     else if (Circle_status == CIRCLE_RIGHT_BEGIN) {
-        Trace_traceType = TRACE_Camera_LEFT;
+        Trace_traceType = TRACE_Camera_Near_LEFT;
         //先丢右线后有线
         if (Image_rptsRightsNum < 0.2 / Image_sampleDist){
             ++none_right_line;
@@ -840,7 +820,7 @@ void Circle_RunCamera() {
     }
     //2. 入环,寻内圆边线
     else if (Circle_status == CIRCLE_RIGHT_IN) {
-        Trace_traceType = TRACE_Camera_RIGHT;
+        Trace_traceType = TRACE_Camera_Near_RIGHT;
         //----------------------------------------
         //陀螺仪计数
         if (Circle_measureType == GYROSCOPE_GYRO_X) {
@@ -865,7 +845,7 @@ void Circle_RunCamera() {
     }
     //3. 在环内,正常巡线(直接用电磁 - 后者用摄像头寻外圆右线)
     else if (Circle_status == CIRCLE_RIGHT_RUNNING) {
-        Trace_traceType = TRACE_Camera_LEFT;
+        Trace_traceType = TRACE_Camera_Near_LEFT;
         //当找到右L角点的时候
         if (Image_LptLeft_Found) Image_rptsLeftsNum = Image_rptsLeftcNum = Image_LptLeft_rptsLefts_id;
         //外环拐点
@@ -874,13 +854,13 @@ void Circle_RunCamera() {
     }
     //4. 出环,寻内圆
     else if (Circle_status == CIRCLE_RIGHT_OUT) {
-        Trace_traceType = TRACE_Camera_RIGHT;
+        Trace_traceType = TRACE_Camera_Near_RIGHT;
         if (Image_isStraightLeft)
             Circle_status = CIRCLE_RIGHT_END;
     }
     //5. 走出圆环,寻左线(或者用电磁跑)
     else if (Circle_status == CIRCLE_RIGHT_END) {
-        Trace_traceType = TRACE_Camera_LEFT;
+        Trace_traceType = TRACE_Camera_Near_LEFT;
         //右线先丢后有
         if (Image_rptsRightsNum < 0.2 / Image_sampleDist)
             ++none_right_line;
@@ -976,5 +956,118 @@ void Circle_Handler(CIRCLE_CHECK_METHOD checkMethod, CIRCLE_RUN_METHOD runMethod
 //    }
 }
 void Circle_RunGyscopAndEncoder(){
+}
+/*
+ * @brief               通过检测角点的值,判断是左环岛还是右环岛
+ * @attention           使用摄像头检测,需要对摄像头进行初始化
+ */
+void Circle_CheckCamera(void) {
+    //左环岛
+    if (Circle_status == CIRCLE_NONE && Image_LptLeft_Found && !Image_LptRight_Found && Image_isStraightRight&&Trace_Status==TRACE_CENTERLINENEAR) {
+        //测试代码
+        Trace_Status=TRACE_CIRCLE;
+        Circle_status = CIRCLE_LEFT_BEGIN;
+        Trace_traceType = TRACE_Camera_Near_RIGHT;
+        Encoder_Begin(ENCODER_MOTOR_2);
+
+//        put_int32(70, 1);
+        gpio_set_level(P20_8, GPIO_LOW);
+        NORMAL_SPEED=48;
+    }
+    //右环岛
+    if (Circle_status == CIRCLE_NONE && Image_LptRight_Found && !Image_LptLeft_Found && Image_isStraightLeft) {
+        Trace_Status=TRACE_CIRCLE;
+        Circle_status = CIRCLE_RIGHT_BEGIN;
+        Trace_traceType = TRACE_Camera_Near_LEFT;
+        Encoder_Begin(ENCODER_MOTOR_1);
+//        put_int32(71, 1);
+        gpio_set_level(P20_9, GPIO_LOW);
+        NORMAL_SPEED=48;
+    }
+}
+void handle_circle_left(){
+    //------------------------------处理左环岛------------------------------
+    //------------------------------
+    //1. 开始,寻右边线
+    //2. 入环,寻内圆左线
+    //3. 在环内,正常巡线(直接用电磁 - 后者用摄像头寻外圆右线)
+    //4. 出环,寻内圆
+    //5. 走出圆环,寻右线(或者用电磁跑)
+    //------------------------------
+    //开始
+    if (Circle_status == CIRCLE_LEFT_BEGIN) {
+        Trace_traceType = TRACE_Camera_Near_RIGHT;           //近处寻右线
+
+        //先丢左线后右线
+        if (Image_rptsLeftsNum < 0.2 / Image_sampleDist) {++none_left_line;}
+        if (Image_rptsLeftsNum > 1.0 / Image_sampleDist && none_left_line > 2) {
+            ++have_left_line;
+            if (have_left_line > 1&&Image_rptsLeftNum!=0&&abs(Encoder_sum_Motor2)>EncoderCircle_In_Thre) {
+                Circle_status = CIRCLE_LEFT_IN;
+                none_left_line = 0;
+                have_left_line = 0;
+                Encoder_End(ENCODER_MOTOR_2);
+                Encoder_Clear(ENCODER_MOTOR_2);
+                Encoder_Begin(ENCODER_MOTOR_1);
+                Encoder_Begin(ENCODER_MOTOR_2);
+                Trace_traceType = TRACE_Camera_Far;
+            }
+        }
+    }
+    //入环,寻内圆左线
+    else if (Circle_status == CIRCLE_LEFT_IN) {
+        Trace_traceType = TRACE_Camera_Far;     //远线寻找
+        //检测到右边线时切换到下一个状态
+
+        if(Image_rptsRight!=0&&(abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>EncoderCircle_Running_Thre){
+            Circle_status=CIRCLE_LEFT_RUNNING;
+            Encoder_End(ENCODER_MOTOR_2);
+            Encoder_Clear(ENCODER_MOTOR_2);
+            Encoder_End(ENCODER_MOTOR_1);
+            Encoder_Clear(ENCODER_MOTOR_1);
+            Encoder_Begin(ENCODER_MOTOR_1);
+            Encoder_Begin(ENCODER_MOTOR_2);
+            Trace_traceType = TRACE_Camera_Near_RIGHT;
+        }
+    }
+    //在环内,正常巡线 (先做摄像头巡线)
+    else if (Circle_status == CIRCLE_LEFT_RUNNING) {
+        Trace_traceType = TRACE_Camera_Near_RIGHT;
+
+        //当找到右L角点的时候
+        if (Image_LptRight_Found) Image_rptsRightsNum = Image_rptsRightcNum = Image_LptRight_rptsRights_id;
+        //外环拐点
+        if (Image_LptRight_Found && Image_LptRight_rptsRights_id < 0.4 / Image_sampleDist&&(abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>EncoderCircle_Out_Thre){
+            Circle_status = CIRCLE_LEFT_OUT;
+                        Encoder_End(ENCODER_MOTOR_2);
+                        Encoder_Clear(ENCODER_MOTOR_2);
+                        Encoder_End(ENCODER_MOTOR_1);
+                        Encoder_Clear(ENCODER_MOTOR_1);
+                        Encoder_Begin(ENCODER_MOTOR_1);
+                        Encoder_Begin(ENCODER_MOTOR_2);
+                        Trace_traceType = TRACE_Camera_Far_RIGHT;
+        }
+    }
+    //出环,寻内圆
+    else if (Circle_status == CIRCLE_LEFT_OUT) {
+        Trace_traceType = TRACE_Camera_Far_RIGHT;
+        if (Image_rptsLeftNum>5&&(abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>EncoderCircle_End_Thre) {
+            Circle_status = CIRCLE_LEFT_END;
+            Encoder_End(ENCODER_MOTOR_2);
+            Encoder_Clear(ENCODER_MOTOR_2);
+            Encoder_End(ENCODER_MOTOR_1);
+            Encoder_Clear(ENCODER_MOTOR_1);
+            Trace_traceType = TRACE_Camera_Near;
+        }
+    }
+    else if (Circle_status == CIRCLE_LEFT_END) {
+        Trace_traceType=TRACE_Camera_MID;
+        Trace_Status=TRACE_CENTERLINENEAR;
+        Circle_status = CIRCLE_NONE;
+        NORMAL_SPEED=72;
+    }
+
+}
+void handle_circle_right(){
 
 }

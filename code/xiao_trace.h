@@ -28,12 +28,13 @@ TRACE_CIRCLE=0x05   //环岛
 
 typedef enum {
     TRACE_Camera_MID = 0x01,
-    TRACE_Camera_LEFT = 0x02,      //使用摄像头寻近处左线
-    TRACE_Camera_RIGHT = 0x03,     //使用摄像头寻近处右线
+    TRACE_Camera_Near_LEFT = 0x02,      //使用摄像头寻近处左线
+    TRACE_Camera_Near_RIGHT = 0x03,     //使用摄像头寻近处右线
 //--------------------------------------------------------------
-    TRACE_Camera_Near=0x04,         //十字路口使用
-    TRACE_Camera_Far=0x05,          //十字路口使用
-    TRACE_Camera_Far_Both=0x06      //十字路口使用
+    TRACE_Camera_Near=0x04,         //近线不清楚是寻左还是寻右时
+    TRACE_Camera_Far=0x05,          //远线不清楚是寻左还是寻右时
+    TRACE_Camera_Far_LEFT=0x06,
+    TRACE_Camera_Far_RIGHT=0x07
 }TRACE_TYPE;
 
 

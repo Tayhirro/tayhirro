@@ -233,12 +233,11 @@ void Gyroscope_Conut(void) {
     //角度单位为度
     //--------------------获取数据--------------------
     Gyroscope_GetData();
-    //IMUupdate(imu660ra_gyro_x, imu660ra_gyro_y, imu660ra_gyro_z, imu660ra_acc_x,imu660ra_acc_y, imu660ra_acc_z, alpha, halfT);
 
     //--------------------数据处理--------------------
     if (Gyro_x_status == 1) {
         if (Gyroscope_device == GYROSCOPE_IMU660RA) {
-            //Gyro_x += imu660ra_gyro_transitionFloat((float)imu660ra_gyro_x - Gyro_Offset.Gyro_Xdata) * Gyroscope_time * 0.001;
+            Gyro_x += imu660ra_gyro_transition((float)imu660ra_gyro_x - Gyro_Offset.Gyro_Xdata) * Gyroscope_time * 0.001;
         }
         else if (Gyroscope_device == GYROSCOPE_IMU963RA) {
             Gyro_x += imu963ra_gyro_transition(imu963ra_gyro_x) * Gyroscope_time * 0.001;
@@ -250,7 +249,7 @@ void Gyroscope_Conut(void) {
 
     if (Gyro_y_status == 1) {
         if (Gyroscope_device == GYROSCOPE_IMU660RA) {
-            //Gyro_y += imu660ra_gyro_transitionFloat((float)imu660ra_gyro_y - Gyro_Offset.Gyro_Ydata) * Gyroscope_time * 0.001;
+            Gyro_y += imu660ra_gyro_transition((float)imu660ra_gyro_y - Gyro_Offset.Gyro_Ydata) * Gyroscope_time * 0.001;
         }
         else if (Gyroscope_device == GYROSCOPE_IMU963RA) {
             Gyro_y += imu963ra_gyro_transition(imu963ra_gyro_y) * Gyroscope_time * 0.001;
@@ -262,7 +261,7 @@ void Gyroscope_Conut(void) {
 
     if (Gyro_z_status == 1) {
         if (Gyroscope_device == GYROSCOPE_IMU660RA) {
-            //Gyro_z += imu660ra_gyro_transitionFloat((float)imu660ra_gyro_z - Gyro_Offset.Gyro_Zdata) * Gyroscope_time * 0.001;
+            Gyro_z += imu660ra_gyro_transition((float)imu660ra_gyro_z - Gyro_Offset.Gyro_Zdata) * Gyroscope_time * 0.001;
         }
         else if (Gyroscope_device == GYROSCOPE_IMU963RA) {
             Gyro_z += imu963ra_gyro_transition(imu963ra_gyro_z) * Gyroscope_time * 0.001;
@@ -274,7 +273,7 @@ void Gyroscope_Conut(void) {
 
     if (Acc_x_status == 1) {
         if (Gyroscope_device == GYROSCOPE_IMU660RA) {
-            //Acc_x += imu660ra_acc_transitionFloat((float)imu660ra_acc_x - Gyro_Offset.ACC_Xdata) * Gyroscope_time * 0.001;
+            Acc_x += imu660ra_acc_transition((float)imu660ra_acc_x - Gyro_Offset.ACC_Xdata) * Gyroscope_time * 0.001;
         }
         else if (Gyroscope_device == GYROSCOPE_IMU963RA) {
             Acc_x += imu963ra_acc_transition(imu963ra_acc_x) * Gyroscope_time * 0.001;
@@ -286,7 +285,7 @@ void Gyroscope_Conut(void) {
 
     if (Acc_y_status == 1) {
         if (Gyroscope_device == GYROSCOPE_IMU660RA) {
-            //Acc_y += imu660ra_acc_transitionFloat((float)imu660ra_acc_y - Gyro_Offset.ACC_Ydata) * Gyroscope_time * 0.001;
+            Acc_y += imu660ra_acc_transition((float)imu660ra_acc_y - Gyro_Offset.ACC_Ydata) * Gyroscope_time * 0.001;
         }
         else if (Gyroscope_device == GYROSCOPE_IMU963RA) {
             Acc_y += imu963ra_acc_transition(imu963ra_acc_y) * Gyroscope_time * 0.001;
@@ -298,7 +297,7 @@ void Gyroscope_Conut(void) {
 
     if (Acc_z_status == 1) {
         if (Gyroscope_device == GYROSCOPE_IMU660RA) {
-            //Acc_z += imu660ra_acc_transitionFloat((float)imu660ra_acc_z - Gyro_Offset.ACC_Zdata) * Gyroscope_time * 0.001;
+            Acc_z += imu660ra_acc_transition((float)imu660ra_acc_z - Gyro_Offset.ACC_Zdata) * Gyroscope_time * 0.001;
         }
         else if (Gyroscope_device == GYROSCOPE_IMU963RA) {
             Acc_z += imu963ra_acc_transition(imu963ra_acc_z) * Gyroscope_time * 0.001;
@@ -308,6 +307,7 @@ void Gyroscope_Conut(void) {
         }
     }
 }
+
 
 /*
  * @brief                   清空积分的数据
@@ -342,8 +342,8 @@ void Prepare_Data(void)
     //MPU6050_AccRead(&Acc_filt);//获取加速度计原始数据，并进行卡尔曼滤波
     //MPU6050_GyroRead(&Gyr_filt);//获取角速度计原始数据，并进行一阶低通滤波
 
-//  Aver_FilterXYZ(&Acc_filt,12);//此处对加速度计进行滑动窗口滤波处理
-//  Aver_FilterXYZ(&Gyr_filt,12);//此处对角速度计进行滑动窗口滤波处理
+   // Aver_FilterXYZ(&Acc_filt,12);//此处对加速度计进行滑动窗口滤波处理
+   // Aver_FilterXYZ(&Gyr_filt,12);//此处对角速度计进行滑动窗口滤波处理
 
     //加速度AD值 转换成 米/平方秒
     Acc_filtX = (float)Acc_corrX * Acc_Gain * G;

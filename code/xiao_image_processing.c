@@ -12,6 +12,7 @@
 #include "xiao_camera_processing.h"
 #include "xiao_trace.h"
 #include "xiao_pid.h"
+#include "xiao_shift.h"
 //------------------------------------------------------------
 //图像坐标为
 // :------------------>x
@@ -123,7 +124,7 @@ uint8 Image_iptsRightbNum;                              //三角滤波后的右边线长度
 
 //------------------------------
 //等距采样相关
-const float Image_sampleDist = 0.035;                    //等距采用采样的距离
+const float Image_sampleDist = 0.025;                    //等距采用采样的距离
 uint8 Image_rptsLefts[IMAGE_LINE_MAX_NUM][2];           //等距采样后的左边线坐标存储
 uint8 Image_rptsRights[IMAGE_LINE_MAX_NUM][2];          //等距采样后的右边线坐标存储
 uint8 Image_rptsLefts_Bak[IMAGE_LINE_MAX_NUM][2];       //等距采样后的左边线坐标存储 - 备份
@@ -915,9 +916,9 @@ void Image_Process(uint8* image) {
         }
     }
 
-    if(Trace_Status==TRACE_CROSS){
-        if(Trace_traceType==TRACE_Camera_Far){image_begin_y=IMAGE_HEIGHT-80;}
-        if(Trace_traceType==TRACE_Camera_MID){image_begin_y=IMAGE_HEIGHT-40;}
+    if(Trace_Status==TRACE_CROSS||Trace_Status==TRACE_CIRCLE){
+        if(Trace_traceType==TRACE_Camera_Far||Trace_traceType==TRACE_Camera_Far_RIGHT||Trace_traceType==TRACE_Camera_Far_LEFT){image_begin_y=IMAGE_HEIGHT-100;}
+        if(Trace_traceType==TRACE_Camera_MID||Trace_traceType==TRACE_Camera_Near_RIGHT||Trace_traceType==TRACE_Camera_Near_LEFT||Trace_traceType==TRACE_Camera_Near){image_begin_y=IMAGE_HEIGHT-40;}
     }
 
 
@@ -1046,12 +1047,61 @@ void Image_Process(uint8* image) {
     for(int i=0;i<BOUNDARY_NUM;i++){
         xy_y2_boundary[i]=Image_rptsRight[i][1];
               }
+    if(Trace_Status==TRACE_CENTERLINENEAR){
+    if(Shift_Direction== SHIFT_DNONE||Shift_Direction==SHIFT_RIGHT){
     for(int i=0;i<BOUNDARY_NUM;i++){
         xy_x3_boundary[i]=Image_rptsLeftc[i][0];
               }
     for(int i=0;i<BOUNDARY_NUM;i++){
         xy_y3_boundary[i]=Image_rptsLeftc[i][1];
               }
+    }
+    else if(Shift_Direction== SHIFT_LEFT){
+        for(int i=0;i<BOUNDARY_NUM;i++){
+                xy_x3_boundary[i]=Image_rptsRightc[i][0];
+                      }
+            for(int i=0;i<BOUNDARY_NUM;i++){
+                xy_y3_boundary[i]=Image_rptsRightc[i][1];
+                      }
+    }
+    }
+    if(Trace_Status==TRACE_CROSS){
+        if(Image_rptsLeftNum>=Image_rptsRightNum||Image_rptsRightNum==0){
+            for(int i=0;i<BOUNDARY_NUM;i++){
+                           xy_x3_boundary[i]=Image_rptsLeftc[i][0];
+                                 }
+                       for(int i=0;i<BOUNDARY_NUM;i++){
+                           xy_y3_boundary[i]=Image_rptsLeftc[i][1];
+                                 }
+        }
+        else{
+            for(int i=0;i<BOUNDARY_NUM;i++){
+                    xy_x3_boundary[i]=Image_rptsRightc[i][0];
+                          }
+                for(int i=0;i<BOUNDARY_NUM;i++){
+                    xy_y3_boundary[i]=Image_rptsRightc[i][1];
+                          }
+        }
+    }
+    if(Trace_Status==TRACE_CIRCLE){
+           if(Image_rptsLeftNum>=Image_rptsRightNum||Image_rptsRightNum==0){
+               for(int i=0;i<BOUNDARY_NUM;i++){
+                              xy_x3_boundary[i]=Image_rptsLeftc[i][0];
+                                    }
+                          for(int i=0;i<BOUNDARY_NUM;i++){
+                              xy_y3_boundary[i]=Image_rptsLeftc[i][1];
+                                    }
+           }
+           else{
+               for(int i=0;i<BOUNDARY_NUM;i++){
+                       xy_x3_boundary[i]=Image_rptsRightc[i][0];
+                             }
+                   for(int i=0;i<BOUNDARY_NUM;i++){
+                       xy_y3_boundary[i]=Image_rptsRightc[i][1];
+                             }
+           }
+       }
+
     if (Image_isUsefulData_Status == 0) {
         Image_isUsefulData_Status = 1;
     }
@@ -1108,7 +1158,7 @@ void Image_FindCorners(void) {
             Image_YptLeft_Found = true;
         }
         //L角点判断
-        if (Image_LptLeft_Found == false && 80 < conf && 130 > conf && i < 0.4 / Image_sampleDist) {
+        if (Image_LptLeft_Found == false && 70 < conf && 130 > conf && i < 0.4 / Image_sampleDist) {
             Image_LptLeft_rptsLefts_id = i;
             Image_LptLeft_Found = true;
         }

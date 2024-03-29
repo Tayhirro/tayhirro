@@ -58,11 +58,13 @@ extern uint8 Circle_speedAcc_Status;             //出环岛加速状态机         -   
 //------------------------------_处理数据_------------------------------
 
 
-void Circle_CheckCamera(void);
 void Circle_RunElec(CIRCLE_PRE_ENTRY_METHOD entryMethod);
 void Grage_Departure_Check(void);
 void Circle_RunCamera();
 void Circle_RunGyscopAndEncoder();
 
 
+void Circle_CheckCamera(void);
+void handle_circle_left();
+void handle_circle_right();
 #endif /* CODE_XIAO_CIRCLE_H_ */
