@@ -16,15 +16,17 @@ typedef enum {
 
     CIRCLE_LEFT_BEGIN = 0x01,
     CIRCLE_LEFT_IN = 0x02,
-    CIRCLE_LEFT_RUNNING = 0x03,
-    CIRCLE_LEFT_OUT = 0x04,
-    CIRCLE_LEFT_END = 0x05,
+    CIRCLE_LEFT_IN_PRE=0x03,
+    CIRCLE_LEFT_RUNNING = 0x04,
+    CIRCLE_LEFT_OUT = 0x05,
+    CIRCLE_LEFT_END = 0x06,
 
-    CIRCLE_RIGHT_BEGIN = 0x11,
-    CIRCLE_RIGHT_IN = 0x12,
-    CIRCLE_RIGHT_RUNNING = 0x13,
-    CIRCLE_RIGHT_OUT = 0x14,
-    CIRCLE_RIGHT_END = 0x15,
+    CIRCLE_RIGHT_BEGIN = 0x12,
+    CIRCLE_RIGHT_IN = 0x13,
+    CIRCLE_RIGHT_IN_PRE=0x14,
+    CIRCLE_RIGHT_RUNNING = 0x15,
+    CIRCLE_RIGHT_OUT = 0x16,
+    CIRCLE_RIGHT_END = 0x17,
 
     CIRCLE_ONLY_ONE = 0x20,
 }CIRCLE_STATUS;
@@ -57,7 +59,8 @@ extern uint8 Circle_multiCircle_Status;          //多环岛状态机            -    
 extern uint8 Circle_speedAcc_Status;             //出环岛加速状态机         -        0:不加速;1,加速
 //------------------------------_处理数据_------------------------------
 
-
+extern uint8 none_left_line;
+extern uint8 have_left_line;
 void Circle_RunElec(CIRCLE_PRE_ENTRY_METHOD entryMethod);
 void Grage_Departure_Check(void);
 void Circle_RunCamera();

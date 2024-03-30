@@ -494,6 +494,9 @@ int core0_main(void)
         // ips200_show_float(0,250, Trace_angleError, 3, 3);
          ips200_show_float(0,300, Trace_Status, 3, 3);
          ips200_show_float(40,300, Cross_status, 3, 3);
+         ips200_show_float(80,300,Circle_status,3,3);
+         ips200_show_float(0,270,none_left_line,3,3);
+         ips200_show_float(40,270,have_left_line,3,3);
         //------------------------------出入库处理------------------------------
         //Motor_pidStatus = 0;
         //ips200_show_float(0, 0, Encoder_1Data, 3, 3);
@@ -502,15 +505,15 @@ int core0_main(void)
          ips200_show_float(0,0, Image_LptLeft_Found, 3, 3);
          ips200_show_float(150,0, Image_LptRight_Found, 3, 3);
          ips200_show_float(150,30, Shift_Direction, 3, 3);
-         //ips200_show_float(70,60,abs(Encoder_sum_Motor2),5, 3);
-        // ips200_show_float(0,60,abs(Encoder_sum_Motor1),5, 3);
+         ips200_show_float(70,60,abs(Encoder_sum_Motor2),5, 3);
+         ips200_show_float(0,60,abs(Encoder_sum_Motor1),5, 3);
          //ips200_show_float(70,30,none_leftshift_line,5, 3);
         // ips200_show_float(0,30,none_rightshift_line,5, 3);
          //ips200_show_float(0,0,abs(Gyro_z),3,3);
        //  ips200_show_float(0,300,Image_rptsLeftc[5][0],3,3);
        //  ips200_show_float(40,300,Image_rptsLeftc[5][1],3,3);
          ips200_show_string(0, 250, "Trace_angleError:");ips200_show_float(150, 250, Trace_angleError, 3, 3);
-         ips200_show_string(0, 270, "output:");ips200_show_float(150, 270, Trace_cameraMidPID.output_val, 3, 3);
+        // ips200_show_string(0, 270, "output:");ips200_show_float(150, 270, Trace_cameraMidPID.output_val, 3, 3);
         // ips200_show_string(0, 250, "Trace_angleErrorTher:");ips200_show_float(150, 250, Trace_angleErrorTher, 3, 3);
          //ips200_show_float(150, 250, Trace_cameraMidPID.output_val, 3, 3);
          //ips200_show_string(0, 300, "Trace_aimLine:");ips200_show_float(150, 300, Trace_aimLine, 3, 3);
@@ -561,7 +564,7 @@ int core0_main(void)
                         handle_cross();
                 }
                 if(Trace_Status==TRACE_CIRCLE){
-                    if(Circle_status == CIRCLE_LEFT_BEGIN){
+                    if(Circle_status!=CIRCLE_NONE){
                                        handle_circle_left();
                                        }
                                        else{

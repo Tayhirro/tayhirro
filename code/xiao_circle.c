@@ -164,6 +164,7 @@ int16 EncoderCircle_In_Thre =2000;
 int16 EncoderCircle_Running_Thre =1500;
 int16 EncoderCircle_Out_Thre=6400;
 int16 EncoderCircle_End_Thre=5000;
+int16 EncoderCircle_Pre_Thre=4000;
 //陀螺仪测量角度的时候使用的变量 - (假定先使用x轴陀螺仪)
 GYROSCOPE_MEASURE_TYPE Circle_measureType = GYROSCOPE_GYRO_X;
 
@@ -999,33 +1000,39 @@ void handle_circle_left(){
         Trace_traceType = TRACE_Camera_Near_RIGHT;           //近处寻右线
 
         //先丢左线后右线
-        if (Image_rptsLeftsNum < 0.2 / Image_sampleDist) {++none_left_line;}
-        if (Image_rptsLeftsNum > 1.0 / Image_sampleDist && none_left_line > 2) {
+        if (Image_rptsLeftNum < 0.2 / Image_sampleDist) {++none_left_line;}
+        if (Image_rptsLeftNum > 0.7 / Image_sampleDist && none_left_line > 2) {
             ++have_left_line;
             if (have_left_line > 1&&Image_rptsLeftNum!=0&&abs(Encoder_sum_Motor2)>EncoderCircle_In_Thre) {
-                Circle_status = CIRCLE_LEFT_IN;
+                Circle_status = CIRCLE_LEFT_IN_PRE;
                 none_left_line = 0;
                 have_left_line = 0;
                 Encoder_End(ENCODER_MOTOR_2);
                 Encoder_Clear(ENCODER_MOTOR_2);
-                Encoder_Begin(ENCODER_MOTOR_1);
                 Encoder_Begin(ENCODER_MOTOR_2);
-                Trace_traceType = TRACE_Camera_Far;
+                Trace_traceType = TRACE_Camera_Near_LEFT;
             }
+        }
+    }
+    else if(Circle_status == CIRCLE_LEFT_IN_PRE){
+        Trace_traceType = TRACE_Camera_Near_LEFT;
+        if(Image_rptsRightNum==0&&abs(Encoder_sum_Motor2)>EncoderCircle_Pre_Thre){
+                        Circle_status=CIRCLE_LEFT_IN;
+                        Encoder_End(ENCODER_MOTOR_2);
+                        Encoder_Clear(ENCODER_MOTOR_2);
+                        Encoder_Begin(ENCODER_MOTOR_2);
+                        Trace_traceType = TRACE_Camera_Near_LEFT;
         }
     }
     //入环,寻内圆左线
     else if (Circle_status == CIRCLE_LEFT_IN) {
-        Trace_traceType = TRACE_Camera_Far;     //远线寻找
+        Trace_traceType = TRACE_Camera_Near_LEFT;     //远线寻找
         //检测到右边线时切换到下一个状态
 
-        if(Image_rptsRight!=0&&(abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>EncoderCircle_Running_Thre){
+        if(Image_rptsRightNum!=0&&abs(Encoder_sum_Motor2)*2>EncoderCircle_Running_Thre){
             Circle_status=CIRCLE_LEFT_RUNNING;
             Encoder_End(ENCODER_MOTOR_2);
             Encoder_Clear(ENCODER_MOTOR_2);
-            Encoder_End(ENCODER_MOTOR_1);
-            Encoder_Clear(ENCODER_MOTOR_1);
-            Encoder_Begin(ENCODER_MOTOR_1);
             Encoder_Begin(ENCODER_MOTOR_2);
             Trace_traceType = TRACE_Camera_Near_RIGHT;
         }
@@ -1037,26 +1044,21 @@ void handle_circle_left(){
         //当找到右L角点的时候
         if (Image_LptRight_Found) Image_rptsRightsNum = Image_rptsRightcNum = Image_LptRight_rptsRights_id;
         //外环拐点
-        if (Image_LptRight_Found && Image_LptRight_rptsRights_id < 0.4 / Image_sampleDist&&(abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>EncoderCircle_Out_Thre){
+        if (Image_LptRight_Found && Image_LptRight_rptsRights_id < 0.4 / Image_sampleDist&&abs(Encoder_sum_Motor2)*2>EncoderCircle_Out_Thre){
             Circle_status = CIRCLE_LEFT_OUT;
                         Encoder_End(ENCODER_MOTOR_2);
                         Encoder_Clear(ENCODER_MOTOR_2);
-                        Encoder_End(ENCODER_MOTOR_1);
-                        Encoder_Clear(ENCODER_MOTOR_1);
-                        Encoder_Begin(ENCODER_MOTOR_1);
                         Encoder_Begin(ENCODER_MOTOR_2);
                         Trace_traceType = TRACE_Camera_Far_RIGHT;
         }
     }
-    //出环,寻内圆
+    //出环
     else if (Circle_status == CIRCLE_LEFT_OUT) {
         Trace_traceType = TRACE_Camera_Far_RIGHT;
-        if (Image_rptsLeftNum>5&&(abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>EncoderCircle_End_Thre) {
+        if (Image_rptsLeftNum>5&&abs(Encoder_sum_Motor2)>EncoderCircle_End_Thre) {
             Circle_status = CIRCLE_LEFT_END;
             Encoder_End(ENCODER_MOTOR_2);
             Encoder_Clear(ENCODER_MOTOR_2);
-            Encoder_End(ENCODER_MOTOR_1);
-            Encoder_Clear(ENCODER_MOTOR_1);
             Trace_traceType = TRACE_Camera_Near;
         }
     }

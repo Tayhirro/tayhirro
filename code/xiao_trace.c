@@ -173,12 +173,12 @@ static float Trace_GetAngelError() {
                          return Trace_angleError;
                      }
         if(Trace_Status ==TRACE_CIRCLE){
-            if(Circle_status == CIRCLE_LEFT_BEGIN||Circle_status == CIRCLE_LEFT_RUNNING||Circle_status ==CIRCLE_LEFT_OUT||Circle_status ==CIRCLE_LEFT_END){
+            if(Circle_status == CIRCLE_LEFT_BEGIN||Circle_status == CIRCLE_LEFT_RUNNING||Circle_status ==CIRCLE_LEFT_OUT||Circle_status ==CIRCLE_LEFT_END||Circle_status ==CIRCLE_RIGHT_IN||Circle_status ==CIRCLE_RIGHT_IN_PRE){
             Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsRightc[bf_clip(Trace_aimLine, 0, Image_rptsRightcNum - 1)][0]
                                       + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
                                       + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
             }
-            if(Circle_status == CIRCLE_RIGHT_BEGIN||Circle_status == CIRCLE_RIGHT_RUNNING||Circle_status ==CIRCLE_RIGHT_OUT||Circle_status ==CIRCLE_RIGHT_END){
+            if(Circle_status == CIRCLE_RIGHT_BEGIN||Circle_status == CIRCLE_RIGHT_RUNNING||Circle_status ==CIRCLE_RIGHT_OUT||Circle_status ==CIRCLE_RIGHT_END||Circle_status ==CIRCLE_LEFT_IN||Circle_status ==CIRCLE_LEFT_IN_PRE){
                         Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
                                                   + Trace_lineWeight[1] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 1, 0, Image_rptsLeftcNum - 1)][0]
                                                   + Trace_lineWeight[2] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine + 2, 0, Image_rptsLeftcNum - 1)][0];
@@ -304,7 +304,9 @@ float Trace_Run() {
                return Trace_cameraMidPID.output_val;
            }
     if(Trace_Status==TRACE_CIRCLE){
-        if(Circle_status==CIRCLE_LEFT_BEGIN||Circle_status==CIRCLE_LEFT_RUNNING||Circle_status==CIRCLE_LEFT_END){
+        if(Circle_status==CIRCLE_LEFT_BEGIN||Circle_status==CIRCLE_LEFT_RUNNING||Circle_status==CIRCLE_LEFT_END||Circle_status==CIRCLE_LEFT_IN||Circle_status==CIRCLE_LEFT_IN_PRE){
+            if(Circle_status==CIRCLE_LEFT_IN_PRE){direction_control(&Trace_cameraRightPID,Trace_angleError,91);return Trace_cameraMidPID.output_val;}
+
             if(Image_rptsLeftNum<8){
                                 direction_control(&Trace_cameraLeftPID,Trace_GetAngelError(),84);
                             }
