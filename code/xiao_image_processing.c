@@ -920,7 +920,9 @@ void Image_Process(uint8* image) {
         if(Trace_traceType==TRACE_Camera_Far||Trace_traceType==TRACE_Camera_Far_RIGHT||Trace_traceType==TRACE_Camera_Far_LEFT){image_begin_y=IMAGE_HEIGHT-100;}
         if(Trace_traceType==TRACE_Camera_MID||Trace_traceType==TRACE_Camera_Near_RIGHT||Trace_traceType==TRACE_Camera_Near_LEFT||Trace_traceType==TRACE_Camera_Near){image_begin_y=IMAGE_HEIGHT-40;}
     }
-
+    if(Trace_Status==TRACE_CENTERLINENEAR){
+        image_begin_y=IMAGE_HEIGHT-40;
+    }
 
     //-----------------------------------------
 

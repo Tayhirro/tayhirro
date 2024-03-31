@@ -304,8 +304,8 @@ float Trace_Run() {
                return Trace_cameraMidPID.output_val;
            }
     if(Trace_Status==TRACE_CIRCLE){
-        if(Circle_status==CIRCLE_LEFT_BEGIN||Circle_status==CIRCLE_LEFT_RUNNING||Circle_status==CIRCLE_LEFT_END||Circle_status==CIRCLE_LEFT_IN||Circle_status==CIRCLE_LEFT_IN_PRE){
-            if(Circle_status==CIRCLE_LEFT_IN_PRE){direction_control(&Trace_cameraRightPID,Trace_angleError,91);return Trace_cameraMidPID.output_val;}
+        if(Circle_status==CIRCLE_LEFT_BEGIN||Circle_status==CIRCLE_LEFT_RUNNING||Circle_status==CIRCLE_LEFT_END){
+           // if(Circle_status==CIRCLE_LEFT_IN_PRE){direction_control(&Trace_cameraRightPID,Trace_angleError,91);return Trace_cameraMidPID.output_val;}
 
             if(Image_rptsLeftNum<8){
                                 direction_control(&Trace_cameraLeftPID,Trace_GetAngelError(),84);

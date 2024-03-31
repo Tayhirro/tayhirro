@@ -370,6 +370,10 @@ uint8 inv_map_y[120][188] = {
 
 
 
+
+
+
+
 #endif
 int picturetime=0;
 double H[3][3] ={{0.389118,-0.301862,11.499040},{-0.000000,0.038070,5.193636},{-0.000000,-0.003369,0.540386}};
@@ -520,32 +524,32 @@ int core0_main(void)
 
             //------------------------------图像处理------------------------------
                 //----------------------------------------
-//         //对图像进行逆透视变换
-//                               for (uint8 y =0; y < IMAGE_HEIGHT/2; ++y) {
-//                                   for (uint8 x = 0; x < IMAGE_WIDTH; ++x) {
-//                                      if (inv_map_x[y][x] == 0 || inv_map_y[y][x] == 0) {
-//                                          mapImage[y][x] = 0;
-//                                          continue;
-//                                      }
-//                                       mapImage[y][x] = mt9v03x_image[inv_map_y[y][x]][inv_map_x[y][x]];
-//                                   }
-//                               }   //上半部分
-//                               for (uint8 y =IMAGE_HEIGHT/2; y < IMAGE_HEIGHT; ++y) {
-//                                   for (uint8 x = 0; x < IMAGE_WIDTH; ++x) {
-//                                       Camera_GetInverse(x, y,inv);
-//               //                       if (inv_map_x[y][x] == 0 || inv_map_y[y][x] == 0) {
-//               //                           mapImage[y][x] = 0;
-//               //                           continue;
-//               //                       }
-//                                       if(inv[0]==0||inv[1]==0){mapImage[y][x] = 0;continue;}
-//                                       mapImage[y][x] = mt9v03x_image[inv[1]][inv[0]];
-//                                   }
-//                               }   //上半部分
-//                               for(uint8 y1=90;y1<IMAGE_HEIGHT;++y1){
-//                                   for(uint8 x1=0;x1<IMAGE_WIDTH;++x1){
-//                                       mapImage[y1][x1]=0;
-//                                   }
-//                               }
+         //对图像进行逆透视变换
+                               for (uint8 y =0; y < IMAGE_HEIGHT/2; ++y) {
+                                   for (uint8 x = 0; x < IMAGE_WIDTH; ++x) {
+                                      if (inv_map_x[y][x] == 0 || inv_map_y[y][x] == 0) {
+                                          mapImage[y][x] = 0;
+                                          continue;
+                                      }
+                                       mapImage[y][x] = mt9v03x_image[inv_map_y[y][x]][inv_map_x[y][x]];
+                                   }
+                               }   //上半部分
+                               for (uint8 y =IMAGE_HEIGHT/2; y < IMAGE_HEIGHT; ++y) {
+                                   for (uint8 x = 0; x < IMAGE_WIDTH; ++x) {
+                                       Camera_GetInverse(x, y,inv);
+               //                       if (inv_map_x[y][x] == 0 || inv_map_y[y][x] == 0) {
+               //                           mapImage[y][x] = 0;
+               //                           continue;
+               //                       }
+                                       if(inv[0]==0||inv[1]==0){mapImage[y][x] = 0;continue;}
+                                       mapImage[y][x] = mt9v03x_image[inv[1]][inv[0]];
+                                   }
+                               }   //上半部分
+                               for(uint8 y1=90;y1<IMAGE_HEIGHT;++y1){
+                                   for(uint8 x1=0;x1<IMAGE_WIDTH;++x1){
+                                       mapImage[y1][x1]=0;
+                                   }
+                               }
 
                 //------------------------------元素判断------------------------------
 
@@ -608,7 +612,7 @@ int core0_main(void)
                 }
     //显示原图和逆透视变换后的图
     //ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
-   // ips200_show_gray_image(0, 130,mapImage[0] , MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
+    ips200_show_gray_image(0, 130,mapImage[0] , MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
     //ips200_show_float(0,150,Encoder_2Data, 3, 3);
     //ips200_show_float(50,150,Encoder_sum_Motor2,3,3);
     mt9v03x_finish_flag = 0;

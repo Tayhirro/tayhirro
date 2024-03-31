@@ -163,7 +163,7 @@ uint8 Circle_speedAcc_Status = 0;
 int16 EncoderCircle_In_Thre =2000;
 int16 EncoderCircle_Running_Thre =1500;
 int16 EncoderCircle_Out_Thre=6400;
-int16 EncoderCircle_End_Thre=5000;
+int16 EncoderCircle_End_Thre=4000;
 int16 EncoderCircle_Pre_Thre=4000;
 //陀螺仪测量角度的时候使用的变量 - (假定先使用x轴陀螺仪)
 GYROSCOPE_MEASURE_TYPE Circle_measureType = GYROSCOPE_GYRO_X;
@@ -1001,9 +1001,9 @@ void handle_circle_left(){
 
         //先丢左线后右线
         if (Image_rptsLeftNum < 0.2 / Image_sampleDist) {++none_left_line;}
-        if (Image_rptsLeftNum > 0.7 / Image_sampleDist && none_left_line > 2) {
+        if (Image_rptsLeftNum > 0.5 / Image_sampleDist && none_left_line > 2) {
             ++have_left_line;
-            if (have_left_line > 1&&Image_rptsLeftNum!=0&&abs(Encoder_sum_Motor2)>EncoderCircle_In_Thre) {
+            if (have_left_line >= 1&&abs(Encoder_sum_Motor2)>EncoderCircle_In_Thre) {
                 Circle_status = CIRCLE_LEFT_IN_PRE;
                 none_left_line = 0;
                 have_left_line = 0;
@@ -1015,20 +1015,20 @@ void handle_circle_left(){
         }
     }
     else if(Circle_status == CIRCLE_LEFT_IN_PRE){
-        Trace_traceType = TRACE_Camera_Near_LEFT;
+        PWMSetSteer(98.0);
         if(Image_rptsRightNum==0&&abs(Encoder_sum_Motor2)>EncoderCircle_Pre_Thre){
                         Circle_status=CIRCLE_LEFT_IN;
                         Encoder_End(ENCODER_MOTOR_2);
                         Encoder_Clear(ENCODER_MOTOR_2);
                         Encoder_Begin(ENCODER_MOTOR_2);
-                        Trace_traceType = TRACE_Camera_Near_LEFT;
+             //           Trace_traceType = TRACE_Camera_Near_LEFT;
         }
     }
     //入环,寻内圆左线
     else if (Circle_status == CIRCLE_LEFT_IN) {
-        Trace_traceType = TRACE_Camera_Near_LEFT;     //远线寻找
+        //Trace_traceType = TRACE_Camera_Near_LEFT;
         //检测到右边线时切换到下一个状态
-
+        PWMSetSteer(100.0);
         if(Image_rptsRightNum!=0&&abs(Encoder_sum_Motor2)*2>EncoderCircle_Running_Thre){
             Circle_status=CIRCLE_LEFT_RUNNING;
             Encoder_End(ENCODER_MOTOR_2);
@@ -1049,20 +1049,25 @@ void handle_circle_left(){
                         Encoder_End(ENCODER_MOTOR_2);
                         Encoder_Clear(ENCODER_MOTOR_2);
                         Encoder_Begin(ENCODER_MOTOR_2);
-                        Trace_traceType = TRACE_Camera_Far_RIGHT;
+                        Trace_traceType = TRACE_Camera_Near_RIGHT;
         }
     }
     //出环
     else if (Circle_status == CIRCLE_LEFT_OUT) {
-        Trace_traceType = TRACE_Camera_Far_RIGHT;
-        if (Image_rptsLeftNum>5&&abs(Encoder_sum_Motor2)>EncoderCircle_End_Thre) {
+        Trace_traceType = TRACE_Camera_Near_RIGHT;
+        PWMSetSteer(100.0);
+        if (Image_rptsRightNum>5&&abs(Encoder_sum_Motor2)>EncoderCircle_End_Thre) {
             Circle_status = CIRCLE_LEFT_END;
             Encoder_End(ENCODER_MOTOR_2);
             Encoder_Clear(ENCODER_MOTOR_2);
-            Trace_traceType = TRACE_Camera_Near;
+            Encoder_Begin(ENCODER_MOTOR_2);
+            Trace_traceType = TRACE_Camera_Far_RIGHT;
         }
     }
     else if (Circle_status == CIRCLE_LEFT_END) {
+        Trace_traceType = TRACE_Camera_Far_RIGHT;
+        if(
+                abs(Encoder_sum_Motor2)>1.5*EncoderCircle_End_Thre)
         Trace_traceType=TRACE_Camera_MID;
         Trace_Status=TRACE_CENTERLINENEAR;
         Circle_status = CIRCLE_NONE;
