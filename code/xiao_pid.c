@@ -96,18 +96,18 @@ if(Trace_Status==TRACE_CROSS){speedflag =2;}
             (*topid_steer).Kp_output_val=(*topid_steer).Kp* (*topid_steer).err;
             if(speedflag == 1)
             {
-                Motor_2Target = NORMAL_SPEED+0.5*(*topid_steer).err;
+                Motor_2Target = NORMAL_SPEED-0.5*(*topid_steer).err;
                 Motor_1Target = NORMAL_SPEED;
             }
             else if(speedflag == 2)
             {
-                Motor_2Target = CIRCLE_SPEED+0.8*(*topid_steer).err;
+                Motor_2Target = CIRCLE_SPEED-0.8*(*topid_steer).err;
                 Motor_1Target = CIRCLE_SPEED;
             }
             else if(speedflag == 5)
             {
               Motor_1Target = STOP_SPEED;
-                Motor_2Target = STOP_SPEED+0.5*(*topid_steer).err;
+                Motor_2Target = STOP_SPEED-0.5*(*topid_steer).err;
             }
         }
 
@@ -118,18 +118,18 @@ if(Trace_Status==TRACE_CROSS){speedflag =2;}
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
             if(speedflag == 1)
             {
-              Motor_2Target = NORMAL_SPEED+0.5*(*topid_steer).err;
+              Motor_2Target = NORMAL_SPEED-0.5*(*topid_steer).err;
               Motor_1Target = NORMAL_SPEED;
             }
             else if(speedflag == 2)
             {
-                Motor_2Target = CIRCLE_SPEED+0.8*(*topid_steer).err;
+                Motor_2Target = CIRCLE_SPEED-0.8*(*topid_steer).err;
                 Motor_1Target = CIRCLE_SPEED;
             }
             else if(speedflag == 5)
             {
               Motor_1Target = STOP_SPEED;
-                Motor_2Target = STOP_SPEED+0.5*(*topid_steer).err;
+                Motor_2Target = STOP_SPEED-0.5*(*topid_steer).err;
             }
         }
         else if(-13>(*topid_steer).err && (*topid_steer).err>-18)//右偏较小
@@ -138,18 +138,18 @@ if(Trace_Status==TRACE_CROSS){speedflag =2;}
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
             if(speedflag == 1)
             {
-              Motor_2Target = NORMAL_SPEED+0.1*(*topid_steer).err;
+              Motor_2Target = NORMAL_SPEED-0.1*(*topid_steer).err;
               Motor_1Target =NORMAL_SPEED ;
             }
             else if(speedflag == 2)
             {
-                Motor_2Target = CIRCLE_SPEED+0.1*(*topid_steer).err;
+                Motor_2Target = CIRCLE_SPEED-0.1*(*topid_steer).err;
                 Motor_1Target = CIRCLE_SPEED;
             }
             else if(speedflag == 5)
             {
               Motor_1Target = STOP_SPEED;
-                Motor_2Target = STOP_SPEED+0.5*(*topid_steer).err;
+                Motor_2Target = STOP_SPEED-0.5*(*topid_steer).err;
             }
         }
         else if(-13<=(*topid_steer).err && (*topid_steer).err<0)//基本无右偏

@@ -56,12 +56,12 @@ float Elec_pLimit=5.0;     float Elec_coLimit=50.0;    float Elec_boost=1;
 //------------------------------
 //电机1PID
 //float Motor_1P = 145.8 ;      float Motor_1I = 3.6 ;       float Motor_1D = 0;     float Motor_1Target=0;      float Motor_1cor=0.0;
-float Motor_1P = 20.6 ;      float Motor_1I = 7.8 ;       float Motor_1D = 0;     float Motor_1Target=72;      float Motor_1cor=0.0;
+float Motor_1P = 11;      float Motor_1I = 4.12 ;       float Motor_1D = 0;     float Motor_1Target=72;      float Motor_1cor=0.0;
 float Motor_1Puse;         float Motor_1Pcor=0.0;      float Motor_1Icor=0.0;       float Motor_1Dcor=0.0;
 //------------------------------
 //电机2PID
 //float Motor_2P = 192.375 ;      float Motor_2I = 14.175 ;       float Motor_2D = 0   ;     float Motor_2Target=0;       float Motor_2cor=0.0;
-float Motor_2P =16.7  ;      float Motor_2I =1.5;       float Motor_2D = 0   ;     float Motor_2Target=72;       float Motor_2cor=0.0;
+float Motor_2P =10.2 ;      float Motor_2I =5.04;       float Motor_2D = 0   ;     float Motor_2Target=72;       float Motor_2cor=0.0;
 float Motor_2Puse;         float Motor_2Pcor=0.0;      float Motor_2Icor=0.0;       float Motor_2Dcor=0.0;
 //------------------------------
 //电机限幅
@@ -97,9 +97,6 @@ float Speed_accVar = 20;
 
 
 //==============================屏幕==============================
-//------------------------------
-//选择内容显示
-SHOW_MODE_enum Show_list[5]={Page1,Page2,Page3,Page4,Page5};        //需要显示的内容
 //==============================差比和差==============================
 //------------------------------
 //差比和差
@@ -479,28 +476,21 @@ int core0_main(void)
                                                   ips200_show_float(0,200,Image_iptsLeftNum, 3, 3);
                                                   ips200_show_float(40,200,Image_iptsRightNum,3,3);
                                                   ips200_show_float(80,200,Image_rptsLeftcNum,3,3);
-                                                 // ips200_show_float(120,200,Gyro_x,3,3);
-                                                 // Motor_SetSpeed(MOTOR_1,1800);
-                                                      //    Motor_SetSpeed(MOTOR_2,1800);
-       // seekfree_assistant_oscilloscope_send(&oscilloscope_data);
-       //  seekfree_assistant_oscilloscope_send(&oscilloscope_data);
-         //seekfree_assistant_interface_init(SEEKFREE_ASSISTANT_WIRELESS_UART);
+
 
 
        // seekfree_assistant_oscilloscope_send(&oscilloscope_data);
         // oscilloscope_data.data[0] = Encoder_1Data;
         // oscilloscope_data.data[1] = Encoder_2Data;
          seekfree_assistant_camera_send();
-         //ips200_show_float(0,0, Motor_1PID.output_val, 3, 3);ips200_show_float(100,0, Motor_1PID.Kp, 3, 3);
-         //ips200_show_float(0,50, Motor_1PID.ut, 3, 3);
-         //ips200_show_float(0,100, Motor_2PID.output_val, 3, 3);ips200_show_float(100,100, Motor_2PID.Kp, 3, 3);
-         //ips200_show_float(0,150, Motor_2PID.ut, 3, 3);
-        // ips200_show_float(0,250, Trace_angleError, 3, 3);
          ips200_show_float(0,300, Trace_Status, 3, 3);
          ips200_show_float(40,300, Cross_status, 3, 3);
          ips200_show_float(80,300,Circle_status,3,3);
          ips200_show_float(0,270,none_left_line,3,3);
          ips200_show_float(40,270,have_left_line,3,3);
+         //ips200_show_float(0,285,isConvexHull_left(Image_rptsLeftNum),3,3);//isConvexHull_left_origin(Image_iptsLeftNum)   isConvexHull_left(Image_rptsLeftNum)
+         //ips200_show_float(40,285,isConvexHull_right(Image_rptsRightNum),3,3);//isConvexHull_right_origin(Image_iptsRightNum)   isConvexHull_right(Image_rptsRightNum)
+         ips200_show_float(120,300,Grage_grageStatus,3,3);
         //------------------------------出入库处理------------------------------
         //Motor_pidStatus = 0;
         //ips200_show_float(0, 0, Encoder_1Data, 3, 3);
@@ -525,7 +515,7 @@ int core0_main(void)
             //------------------------------图像处理------------------------------
                 //----------------------------------------
          //对图像进行逆透视变换
-                               for (uint8 y =0; y < IMAGE_HEIGHT/2; ++y) {
+                               /*for (uint8 y =0; y < IMAGE_HEIGHT/2; ++y) {
                                    for (uint8 x = 0; x < IMAGE_WIDTH; ++x) {
                                       if (inv_map_x[y][x] == 0 || inv_map_y[y][x] == 0) {
                                           mapImage[y][x] = 0;
@@ -550,7 +540,7 @@ int core0_main(void)
                                        mapImage[y1][x1]=0;
                                    }
                                }
-
+*/
                 //------------------------------元素判断------------------------------
 
                 check_shiftroad();
@@ -577,6 +567,9 @@ int core0_main(void)
                          handle_circle_right();
                     }
                 }
+                if (Grage_grageStatus == GRAGE_NONE && (Trace_Status==TRACE_CENTERLINENEAR||Trace_Status==TRACE_RIGHTLOST||Trace_Status==TRACE_LEFTLOST)) {
+                                     garage_check();
+                                }
 //                //环岛检测
 //                Circle_CheckCamera();
 //                //--------------------环岛处理----------------//
@@ -614,7 +607,7 @@ int core0_main(void)
                 }
     //显示原图和逆透视变换后的图
     //ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
-    ips200_show_gray_image(0, 130,mapImage[0] , MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
+    //ips200_show_gray_image(0, 130,mapImage[0] , MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
     //ips200_show_float(0,150,Encoder_2Data, 3, 3);
     //ips200_show_float(50,150,Encoder_sum_Motor2,3,3);
     mt9v03x_finish_flag = 0;

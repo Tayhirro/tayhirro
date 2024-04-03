@@ -8,7 +8,6 @@
 #include "xiao_image_processing.h"
 #include "xiao_grage.h"
 #include "xiao_circle.h"
-#include "xiao_show.h"
 #include "xiao_camera_processing.h"
 #include "xiao_trace.h"
 #include "xiao_pid.h"
@@ -364,7 +363,7 @@ void Image_ShowLine(uint16 beg_x, uint16 beg_y, IMAGE_SCREEN screen, IMAGE_SHOW_
  * @example             Image_ShowCorners(0, 130, IMAGE_IPS200);
  */
 void Image_ShowCorners(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen) {
-    if (screen == SCREEN_IPS200) {
+
         //----------------------------------------
         //显示左边线的角点
         for (uint8 i = 0; i < Image_rptsLeftanNum; ++i) {
@@ -379,7 +378,7 @@ void Image_ShowCorners(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen) {
                 ips200_draw_point(beg_x + Image_rptsRights[i][0],beg_y + Image_rptsRights[i][1], RGB565_BLUE);
             }
         }
-    }
+
 }
 
 /*

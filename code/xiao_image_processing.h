@@ -11,8 +11,6 @@
 #include "../libraries/zf_common/zf_common_headfile.h"
 #include "../libraries/zf_common/zf_common_font.h"
 #include "xiao_basic_function.h"
-#include "pico_link_ii.h"
-#include "pico_gy.h"
 
 //CAMERA_SELECTION内容解释
 //为 1 的时候,选择总钻风

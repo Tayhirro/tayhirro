@@ -1104,7 +1104,7 @@ void handle_circle_right(){
         }
     }
     else if(Circle_status == CIRCLE_RIGHT_IN_PRE){
-        PWMSetSteer(82.0);
+        PWMSetSteer(85.0);
         if(Image_rptsLeftNum==0&&abs(Encoder_sum_Motor1)>EncoderCircle_Pre_Thre){
                         Circle_status=CIRCLE_RIGHT_IN;
                         Encoder_End(ENCODER_MOTOR_1);
