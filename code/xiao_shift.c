@@ -33,8 +33,7 @@ void check_shiftroad(void){
         NORMAL_SPEED=64;
         Shift_Direction=SHIFT_RIGHT;
         none_rightshift_line=0;
-        //Encoder_Begin(ENCODER_MOTOR_1);
-        //pid_type==PID_INV
+
         return;
     }
     else if(none_rightshift_line&&none_leftshift_line){

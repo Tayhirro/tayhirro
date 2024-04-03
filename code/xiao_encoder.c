@@ -28,9 +28,9 @@ float Encoder_filterWeight[ENCODER_FILTER_MAX] = {0.8, 0.1, 0.06, 0.04};
 
 //------------------------------电机积分------------------------------
 int32 Encoder_sum_Motor1 = 0;                           //电机1积分
-uint8 Encoder_sumStatus_Motor1 = 1;                     //电机1积分状态
+uint8 Encoder_sumStatus_Motor1 = 0;                     //电机1积分状态
 int32 Encoder_sum_Motor2 = 0;                           //电机2积分
-uint8 Encoder_sumStatus_Motor2 = 1;                     //电机2积分状态
+uint8 Encoder_sumStatus_Motor2 = 0;                     //电机2积分状态
 //uint8 Encoder_sumStatus = 0;                          //记录本次中断是否积分
 
 /**

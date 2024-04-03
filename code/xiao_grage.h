@@ -49,4 +49,7 @@ extern uint8 Grage_outWarehous_Status;                  //³ö¿â×´Ì¬»ú
 void Grage_Departure_Check(void);
 void Grage_Storage(void);
 void Grage_Storage_Check(GRAGE_DETECTION_MODE detectMode);
+extern double isConvexHull_left(int numPoints);
+extern double isConvexHull_right(int numPoints) ;
+extern void garage_check();
 #endif /* CODE_XIAO_GRAGE_H_ */

@@ -8,7 +8,6 @@
 #include "xiao_image_processing.h"
 #include "xiao_grage.h"
 #include "xiao_circle.h"
-#include "xiao_show.h"
 #include "xiao_camera_processing.h"
 #include "xiao_trace.h"
 #include "xiao_pid.h"
@@ -364,7 +363,7 @@ void Image_ShowLine(uint16 beg_x, uint16 beg_y, IMAGE_SCREEN screen, IMAGE_SHOW_
  * @example             Image_ShowCorners(0, 130, IMAGE_IPS200);
  */
 void Image_ShowCorners(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen) {
-    if (screen == SCREEN_IPS200) {
+
         //----------------------------------------
         //显示左边线的角点
         for (uint8 i = 0; i < Image_rptsLeftanNum; ++i) {
@@ -379,7 +378,7 @@ void Image_ShowCorners(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen) {
                 ips200_draw_point(beg_x + Image_rptsRights[i][0],beg_y + Image_rptsRights[i][1], RGB565_BLUE);
             }
         }
-    }
+
 }
 
 /*
@@ -916,7 +915,7 @@ void Image_Process(uint8* image) {
         }
     }
 
-    if(Trace_Status==TRACE_CROSS||Trace_Status==TRACE_CIRCLE){
+    if(Trace_Status==TRACE_CROSS||Trace_Status==TRACE_CIRCLE_RIGHT||Trace_Status==TRACE_CIRCLE_LEFT){
         if(Trace_traceType==TRACE_Camera_Far||Trace_traceType==TRACE_Camera_Far_RIGHT||Trace_traceType==TRACE_Camera_Far_LEFT){image_begin_y=IMAGE_HEIGHT-100;}
         if(Trace_traceType==TRACE_Camera_MID||Trace_traceType==TRACE_Camera_Near_RIGHT||Trace_traceType==TRACE_Camera_Near_LEFT||Trace_traceType==TRACE_Camera_Near){image_begin_y=IMAGE_HEIGHT-40;}
     }
@@ -1085,7 +1084,7 @@ void Image_Process(uint8* image) {
                           }
         }
     }
-    if(Trace_Status==TRACE_CIRCLE){
+    if(Trace_Status==TRACE_CIRCLE_RIGHT||Trace_Status==TRACE_CIRCLE_LEFT){
            if(Image_rptsLeftNum>=Image_rptsRightNum||Image_rptsRightNum==0){
                for(int i=0;i<BOUNDARY_NUM;i++){
                               xy_x3_boundary[i]=Image_rptsLeftc[i][0];
@@ -1493,54 +1492,54 @@ bool Image_LineIsClosed(uint8 select) {
  * @brief               当检测到L角点的时候进行判断处理
  * @return              NULL
  */
-void Image_LCornerCheck(void) {
-    if (Image_LCornerJude_Status == IMAGE_LCORNER_NONE) {
-        //左角点检测
-        if (Image_LptLeft_Found && !Image_LptRight_Found && Image_isStraightRight) {
-            gpio_set_level(P20_8, GPIO_LOW);
-            Image_LCornerJude_Status = IMAGE_LCORNER_BEGIN_LEFT;
-            Encoder_Begin(ENCODER_MOTOR_2);
-        }
-
-        //右角点检测
-        if (Image_LptRight_Found && !Image_LptLeft_Found && Image_isStraightLeft) {
-            gpio_set_level(P20_9, GPIO_LOW);
-            Image_LCornerJude_Status = IMAGE_LCORNER_BEGIN_RIGHT;
-            Encoder_Begin(ENCODER_MOTOR_1);
-        }
-
-    }
-    else if (Image_LCornerJude_Status == IMAGE_LCORNER_BEGIN_LEFT) {
-        //环岛
-        if (abs(Encoder_sum_Motor1) > Image_GrageJudge_Thre) {
-            Image_LCornerJude_Status = IMAGE_LCORNER_IS_CIRCLE_LEFT;
-        }
-    }
-    else if (Image_LCornerJude_Status == IMAGE_LCORNER_BEGIN_RIGHT) {
-        //环岛
-        if (abs(Encoder_sum_Motor2) > Image_GrageJudge_Thre) {
-            Image_LCornerJude_Status = IMAGE_LCORNER_IS_CIRCLE_RIGHT;
-        }
-
-
-    }
-    //环岛开始状态机
-    else if (Image_LCornerJude_Status == IMAGE_LCORNER_IS_CIRCLE_LEFT) {
-        Image_LCornerJude_Status = IMAGE_LCORNER_NONE;
-        if (Circle_status == CIRCLE_NONE) {
-            Circle_status = CIRCLE_LEFT_BEGIN;
-            Trace_Status=TRACE_CIRCLE;
-            //Beep_Tweet();
-        }
-    }
-    //环岛开始状态机
-    else if (Image_LCornerJude_Status == IMAGE_LCORNER_IS_CIRCLE_RIGHT) {
-        Image_LCornerJude_Status = IMAGE_LCORNER_NONE;
-        if (Circle_status == CIRCLE_NONE) {
-            Circle_status = CIRCLE_RIGHT_BEGIN;
-            Trace_Status=TRACE_CIRCLE;
-            //Beep_Tweet();
-        }
-
-    }
-}
+//void Image_LCornerCheck(void) {
+//    if (Image_LCornerJude_Status == IMAGE_LCORNER_NONE) {
+//        //左角点检测
+//        if (Image_LptLeft_Found && !Image_LptRight_Found && Image_isStraightRight) {
+//            gpio_set_level(P20_8, GPIO_LOW);
+//            Image_LCornerJude_Status = IMAGE_LCORNER_BEGIN_LEFT;
+//            Encoder_Begin(ENCODER_MOTOR_2);
+//        }
+//
+//        //右角点检测
+//        if (Image_LptRight_Found && !Image_LptLeft_Found && Image_isStraightLeft) {
+//            gpio_set_level(P20_9, GPIO_LOW);
+//            Image_LCornerJude_Status = IMAGE_LCORNER_BEGIN_RIGHT;
+//            Encoder_Begin(ENCODER_MOTOR_1);
+//        }
+//
+//    }
+//    else if (Image_LCornerJude_Status == IMAGE_LCORNER_BEGIN_LEFT) {
+//        //环岛
+//        if (abs(Encoder_sum_Motor1) > Image_GrageJudge_Thre) {
+//            Image_LCornerJude_Status = IMAGE_LCORNER_IS_CIRCLE_LEFT;
+//        }
+//    }
+//    else if (Image_LCornerJude_Status == IMAGE_LCORNER_BEGIN_RIGHT) {
+//        //环岛
+//        if (abs(Encoder_sum_Motor2) > Image_GrageJudge_Thre) {
+//            Image_LCornerJude_Status = IMAGE_LCORNER_IS_CIRCLE_RIGHT;
+//        }
+//
+//
+//    }
+//    //环岛开始状态机
+//    else if (Image_LCornerJude_Status == IMAGE_LCORNER_IS_CIRCLE_LEFT) {
+//        Image_LCornerJude_Status = IMAGE_LCORNER_NONE;
+//        if (Circle_status == CIRCLE_NONE) {
+//            Circle_status = CIRCLE_LEFT_BEGIN;
+//            Trace_Status=TRACE_CIRCLE_;
+//            //Beep_Tweet();
+//        }
+//    }
+//    //环岛开始状态机
+//    else if (Image_LCornerJude_Status == IMAGE_LCORNER_IS_CIRCLE_RIGHT) {
+//        Image_LCornerJude_Status = IMAGE_LCORNER_NONE;
+//        if (Circle_status == CIRCLE_NONE) {
+//            Circle_status = CIRCLE_RIGHT_BEGIN;
+//            Trace_Status=TRACE_CIRCLE;
+//            //Beep_Tweet();
+//        }
+//
+//    }
+//}
