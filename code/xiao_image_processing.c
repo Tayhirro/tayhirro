@@ -1187,7 +1187,7 @@ void Image_FindCorners(void) {
             Image_YptRight_Found = true;
         }
         //L角点判断
-        if (Image_LptRight_Found == false && 80 < conf && 130 > conf && i < 0.4 / Image_sampleDist) {
+        if (Image_LptRight_Found == false && 85 < conf && 130 > conf && i < 0.4 / Image_sampleDist) {
             Image_LptRight_rptsRights_id = i;
             Image_LptRight_Found = true;
         }
@@ -1465,6 +1465,31 @@ void Image_GetAngle(uint8 beg_x, uint8 beg_y, IMAGE_SCREEN screen) {
  *                      false : 边线不闭合
  */
 bool Image_LineIsClosed(uint8 select) {
+    if (select == 0) {
+        if (Image_iptsLeftNum > 10) {
+            uint8 begin_coor[2] = {Image_iptsLeft[0][0], Image_iptsLeft[0][1]};
+            for (uint8 i = 1; i < Image_iptsLeftNum; ++i) {
+                if (Image_iptsLeft[i][0] == begin_coor[0] && Image_iptsLeft[i][1] == begin_coor[1])
+                    return true;
+            }
+        }
+        return false;
+    }
+    else if (select == 1) {
+        if (Image_iptsRightNum > 10) {
+            uint8 begin_coor[2] = {Image_iptsRight[0][0], Image_iptsRight[0][1]};
+            for (uint8 i = 1; i < Image_iptsRightNum; ++i) {
+                if (Image_iptsRight[i][0] == begin_coor[0] && Image_iptsRight[i][1] == begin_coor[1])
+                    return true;
+            }
+        }
+        return false;
+
+    }
+    return false;
+}
+
+bool Image_LineIsClosed_origin(uint8 select) {
     if (select == 0) {
         if (Image_iptsLeftNum > 10) {
             uint8 begin_coor[2] = {Image_iptsLeft[0][0], Image_iptsLeft[0][1]};

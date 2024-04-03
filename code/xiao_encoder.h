@@ -36,6 +36,9 @@ extern uint8 Encoder_readFinishStatus;
 extern int32 Encoder_sum_Motor1;                           //电机1积分
 extern int32 Encoder_sum_Motor2;                           //电机2积分
 
+
+extern int32 Encoder_sum_Motor1_global;
+extern int32 Encoder_sum_Motor2_global;
 void Encoder_Init(void);
 void Encoder_SpeedRead(void);
 void Encoder_Begin(ENCODER_MOTOR_SELECT motorSelect);

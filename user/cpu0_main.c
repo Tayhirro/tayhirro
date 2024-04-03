@@ -56,12 +56,12 @@ float Elec_pLimit=5.0;     float Elec_coLimit=50.0;    float Elec_boost=1;
 //------------------------------
 //电机1PID
 //float Motor_1P = 145.8 ;      float Motor_1I = 3.6 ;       float Motor_1D = 0;     float Motor_1Target=0;      float Motor_1cor=0.0;
-float Motor_1P = 11;      float Motor_1I = 4.12 ;       float Motor_1D = 0;     float Motor_1Target=72;      float Motor_1cor=0.0;
+float Motor_1P = 11;      float Motor_1I = 4.12 ;       float Motor_1D = 0;     float Motor_1Target=84;      float Motor_1cor=0.0;
 float Motor_1Puse;         float Motor_1Pcor=0.0;      float Motor_1Icor=0.0;       float Motor_1Dcor=0.0;
 //------------------------------
 //电机2PID
 //float Motor_2P = 192.375 ;      float Motor_2I = 14.175 ;       float Motor_2D = 0   ;     float Motor_2Target=0;       float Motor_2cor=0.0;
-float Motor_2P =10.2 ;      float Motor_2I =5.04;       float Motor_2D = 0   ;     float Motor_2Target=72;       float Motor_2cor=0.0;
+float Motor_2P =10.2 ;      float Motor_2I =5.04;       float Motor_2D = 0   ;     float Motor_2Target=84;       float Motor_2cor=0.0;
 float Motor_2Puse;         float Motor_2Pcor=0.0;      float Motor_2Icor=0.0;       float Motor_2Dcor=0.0;
 //------------------------------
 //电机限幅
@@ -409,7 +409,7 @@ int core0_main(void)
 
    wireless_uart_init();
        // 设置逐飞助手使用DEBUG串口进行收发
-    seekfree_assistant_interface_init(SEEKFREE_ASSISTANT_WIRELESS_UART);
+    //seekfree_assistant_interface_init(SEEKFREE_ASSISTANT_WIRELESS_UART);
    // Elec_Init();                                                        //电感初始化
     //Show_Init();
        // wireless_uart_init();
@@ -445,8 +445,9 @@ int core0_main(void)
     //1. 图像处理
     pit_ms_init(CCU61_CH0, 10);
     pit_ms_init(CCU60_CH0, 4);
+    //pit_ms_init(CCU60_CH1, 5);
 
-
+    Image_Init();
     //------------------------------函数设置------------------------------
     //Elec_PID_Set(Elec_P, Elec_I, Elec_D, Elec_pLimit, Elec_coLimit, Elec_boost);             //电磁PID设置                                                //差比合差设置
          Motor_1PID_Set(Motor_1P, Motor_1I, Motor_1D, Motor_pLimit, Motor_coLimit, Motor_boost);  //电机1PID设置
@@ -457,10 +458,9 @@ int core0_main(void)
        //Beep_SetTweetTime(500, 4);
          // 初始化逐飞助手示波器的结构体
                        //      seekfree_assistant_oscilloscope_struct oscilloscope_data;
-         Motor_SetSpeed(MOTOR_1,1800);
-         Motor_SetSpeed(MOTOR_2,1800);
-         seekfree_assistant_camera_information_config(SEEKFREE_ASSISTANT_MT9V03X,NULL, MT9V03X_W, MT9V03X_H);
-         seekfree_assistant_camera_boundary_config(XY_BOUNDARY, 90, xy_x1_boundary, xy_x2_boundary, xy_x3_boundary, xy_y1_boundary, xy_y2_boundary, xy_y3_boundary);
+
+         //seekfree_assistant_camera_information_config(SEEKFREE_ASSISTANT_MT9V03X,NULL, MT9V03X_W, MT9V03X_H);
+         //seekfree_assistant_camera_boundary_config(XY_BOUNDARY, 90, xy_x1_boundary, xy_x2_boundary, xy_x3_boundary, xy_y1_boundary, xy_y2_boundary, xy_y3_boundary);
 
 
                              // 设置为4个通道，通道数量最大为8个
@@ -470,7 +470,11 @@ int core0_main(void)
     uint8 mapImage[MT9V03X_H][MT9V03X_W];               //进行逆透视变换后的图像
     //----------------------------------------
    // Image_Init();
+
     cpu_wait_event_ready();         // 等待所有核心初始化完毕
+    Motor_SetSpeed(MOTOR_1,2200);
+             Motor_SetSpeed(MOTOR_2,2200);
+
     while (TRUE)
     {
                                                   ips200_show_float(0,200,Image_iptsLeftNum, 3, 3);
@@ -482,7 +486,7 @@ int core0_main(void)
        // seekfree_assistant_oscilloscope_send(&oscilloscope_data);
         // oscilloscope_data.data[0] = Encoder_1Data;
         // oscilloscope_data.data[1] = Encoder_2Data;
-         seekfree_assistant_camera_send();
+         //seekfree_assistant_camera_send();
          ips200_show_float(0,300, Trace_Status, 3, 3);
          ips200_show_float(40,300, Cross_status, 3, 3);
          ips200_show_float(80,300,Circle_status,3,3);
@@ -499,8 +503,8 @@ int core0_main(void)
          ips200_show_float(0,0, Image_LptLeft_Found, 3, 3);
          ips200_show_float(150,0, Image_LptRight_Found, 3, 3);
          ips200_show_float(150,30, Shift_Direction, 3, 3);
-         ips200_show_float(70,60,abs(Encoder_sum_Motor2),5, 3);
-         ips200_show_float(0,60,abs(Encoder_sum_Motor1),5, 3);
+         ips200_show_float(100,60,abs(Encoder_sum_Motor2_global),7, 3);//Encoder_sum_Motor2_global  Encoder_sum_Motor2
+         ips200_show_float(0,60,abs(Encoder_sum_Motor1_global),7, 3);//Encoder_sum_Motor1_global   Encoder_sum_Motor1
          //ips200_show_float(70,30,none_leftshift_line,5, 3);
         // ips200_show_float(0,30,none_rightshift_line,5, 3);
          //ips200_show_float(0,0,abs(Gyro_z),3,3);
@@ -567,9 +571,16 @@ int core0_main(void)
                          handle_circle_right();
                     }
                 }
-                if (Grage_grageStatus == GRAGE_NONE && (Trace_Status==TRACE_CENTERLINENEAR||Trace_Status==TRACE_RIGHTLOST||Trace_Status==TRACE_LEFTLOST)) {
-                                     garage_check();
-                                }
+                if (Grage_grageStatus == GRAGE_NONE && (Trace_Status==TRACE_CENTERLINENEAR)) {
+                                                         garage_check();
+
+                                                    }
+                if((Encoder_sum_Motor1_global+Encoder_sum_Motor2_global)/2>=garage_sum_thre &&garage_flag==0){
+                                                        Motor_pidStatus=0;
+                                                        Motor_SetSpeed(MOTOR_1, 0);
+                                                        Motor_SetSpeed(MOTOR_2, 0);
+
+                }
 //                //环岛检测
 //                Circle_CheckCamera();
 //                //--------------------环岛处理----------------//
@@ -596,7 +607,7 @@ int core0_main(void)
             //------------------------------元素处理-----------------------------
             //------------------------------屏幕相关------------------------------
     //清除之前的显示
-                if(Image_Process_Status ==1){
+                /*if(Image_Process_Status ==1){
                        Image_ShowLine(0, 0, IMAGE_IPS200, IMAGE_CLEAR_ORIGIN);
                        Image_ShowLine(10, 130, IMAGE_IPS200, IMAGE_CLEAR_MAPPING);
                        Image_ShowLine(10, 130, IMAGE_IPS200, IMAGE_CLEAR_MIDLINE_RIGHT);
@@ -604,7 +615,7 @@ int core0_main(void)
                        Image_ShowLine(0, 0, IMAGE_IPS200, IMAGE_ORIGIN);
                        Image_ShowLine(10, 130, IMAGE_IPS200, IMAGE_MAPPING);
                        Image_ShowLine(10, 130, IMAGE_IPS200, IMAGE_MIDLINE_RIGHT);
-                }
+                }*/
     //显示原图和逆透视变换后的图
     //ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
     //ips200_show_gray_image(0, 130,mapImage[0] , MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
