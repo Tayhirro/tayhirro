@@ -567,13 +567,15 @@ int core0_main(void)
                 if(Trace_Status==TRACE_CROSS){
                         handle_cross();
                 }
-                if(Trace_Status==TRACE_CIRCLE){
+                if(Trace_Status==TRACE_CIRCLE_LEFT){
                     if(Circle_status!=CIRCLE_NONE){
                                        handle_circle_left();
                                        }
-                                       else{
-                                           handle_circle_right();
-                                       }
+                }
+                else if(Trace_Status==TRACE_CIRCLE_RIGHT){
+                    if(Circle_status!=CIRCLE_NONE){
+                         handle_circle_right();
+                    }
                 }
 //                //»·µº¼ì²â
 //                Circle_CheckCamera();

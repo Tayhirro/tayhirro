@@ -966,7 +966,7 @@ void Circle_CheckCamera(void) {
     //左环岛
     if (Circle_status == CIRCLE_NONE && Image_LptLeft_Found && !Image_LptRight_Found && Image_isStraightRight&&Trace_Status==TRACE_CENTERLINENEAR) {
         //测试代码
-        Trace_Status=TRACE_CIRCLE;
+        Trace_Status=TRACE_CIRCLE_LEFT;
         Circle_status = CIRCLE_LEFT_BEGIN;
         Trace_traceType = TRACE_Camera_Near_RIGHT;
         Encoder_Begin(ENCODER_MOTOR_2);
@@ -977,7 +977,7 @@ void Circle_CheckCamera(void) {
     }
     //右环岛
     if (Circle_status == CIRCLE_NONE && Image_LptRight_Found && !Image_LptLeft_Found && Image_isStraightLeft) {
-        Trace_Status=TRACE_CIRCLE;
+        Trace_Status=TRACE_CIRCLE_RIGHT;
         Circle_status = CIRCLE_RIGHT_BEGIN;
         Trace_traceType = TRACE_Camera_Near_LEFT;
         Encoder_Begin(ENCODER_MOTOR_1);
@@ -1076,5 +1076,91 @@ void handle_circle_left(){
 
 }
 void handle_circle_right(){
+    //------------------------------处理左环岛------------------------------
+    //------------------------------
+    //1. 开始,寻右边线
+    //2. 入环,寻内圆左线
+    //3. 在环内,正常巡线(直接用电磁 - 后者用摄像头寻外圆右线)
+    //4. 出环,寻内圆
+    //5. 走出圆环,寻右线(或者用电磁跑)
+    //------------------------------
+    //开始
+    if (Circle_status == CIRCLE_RIGHT_BEGIN) {
+        Trace_traceType = TRACE_Camera_Near_LEFT;           //近处寻右线
+
+        //先丢右线后左线
+        if (Image_rptsRightNum < 0.2 / Image_sampleDist) {++none_right_line;}
+        if (Image_rptsRightNum > 0.5 / Image_sampleDist && none_right_line > 2) {
+            ++have_right_line;
+            if (have_right_line >= 1&&abs(Encoder_sum_Motor1)>EncoderCircle_In_Thre) {
+                Circle_status = CIRCLE_RIGHT_IN_PRE;
+                none_right_line = 0;
+                have_right_line = 0;
+                Encoder_End(ENCODER_MOTOR_1);
+                Encoder_Clear(ENCODER_MOTOR_1);
+                Encoder_Begin(ENCODER_MOTOR_1);
+                Trace_traceType = TRACE_Camera_Near_RIGHT;
+            }
+        }
+    }
+    else if(Circle_status == CIRCLE_RIGHT_IN_PRE){
+        PWMSetSteer(82.0);
+        if(Image_rptsLeftNum==0&&abs(Encoder_sum_Motor1)>EncoderCircle_Pre_Thre){
+                        Circle_status=CIRCLE_RIGHT_IN;
+                        Encoder_End(ENCODER_MOTOR_1);
+                        Encoder_Clear(ENCODER_MOTOR_1);
+                        Encoder_Begin(ENCODER_MOTOR_1);
+             //           Trace_traceType = TRACE_Camera_Near_LEFT;
+        }
+    }
+    //入环,寻内圆左线
+    else if (Circle_status == CIRCLE_RIGHT_IN) {
+        //Trace_traceType = TRACE_Camera_Near_LEFT;
+        //检测到右边线时切换到下一个状态
+        PWMSetSteer(80.0);
+        if(Image_rptsLeftNum!=0&&abs(Encoder_sum_Motor1)*2>EncoderCircle_Running_Thre){
+            Circle_status=CIRCLE_RIGHT_RUNNING;
+            Encoder_End(ENCODER_MOTOR_1);
+            Encoder_Clear(ENCODER_MOTOR_1);
+            Encoder_Begin(ENCODER_MOTOR_1);
+            Trace_traceType = TRACE_Camera_Near_LEFT;
+        }
+    }
+    //在环内,正常巡线 (先做摄像头巡线)
+    else if (Circle_status == CIRCLE_RIGHT_RUNNING) {
+        Trace_traceType = TRACE_Camera_Near_LEFT;
+
+        //当找到左L角点的时候
+        if (Image_LptLeft_Found) Image_rptsLeftsNum = Image_rptsLeftcNum = Image_LptLeft_rptsLefts_id;
+        //外环拐点
+        if (Image_LptLeft_Found && Image_LptLeft_rptsLefts_id < 0.4 / Image_sampleDist&&abs(Encoder_sum_Motor1)*2>EncoderCircle_Out_Thre){
+            Circle_status = CIRCLE_RIGHT_OUT;
+                        Encoder_End(ENCODER_MOTOR_1);
+                        Encoder_Clear(ENCODER_MOTOR_1);
+                        Encoder_Begin(ENCODER_MOTOR_1);
+                        Trace_traceType = TRACE_Camera_Near_LEFT;
+        }
+    }
+    //出环
+    else if (Circle_status == CIRCLE_RIGHT_OUT) {
+        Trace_traceType = TRACE_Camera_Near_LEFT;
+        PWMSetSteer(80.0);
+        if (Image_rptsLeftNum>5&&abs(Encoder_sum_Motor1)>EncoderCircle_End_Thre) {
+            Circle_status = CIRCLE_RIGHT_END;
+            Encoder_End(ENCODER_MOTOR_1);
+            Encoder_Clear(ENCODER_MOTOR_1);
+            Encoder_Begin(ENCODER_MOTOR_1);
+            Trace_traceType = TRACE_Camera_Far_LEFT;
+        }
+    }
+    else if (Circle_status == CIRCLE_RIGHT_END) {
+        Trace_traceType = TRACE_Camera_Far_LEFT;
+        if(
+                abs(Encoder_sum_Motor1)>1.5*EncoderCircle_End_Thre)
+        Trace_traceType=TRACE_Camera_MID;
+        Trace_Status=TRACE_CENTERLINENEAR;
+        Circle_status = CIRCLE_NONE;
+        NORMAL_SPEED=72;
+    }
 
 }
