@@ -190,6 +190,6 @@ uint8 IMAGE_AT(uint8* image, int16 x, int16 y);
 void Image_ShowCorner(uint8 x, uint8 y, rgb565_color_enum color);
 void Image_LCornerCheck(void);
 bool Image_LineIsClosed(uint8 select);
-
+bool Image_LineIsClosed_origin(uint8 select);
 
 #endif /* CODE_XIAO_IMAGE_PROCESSING_H_ */

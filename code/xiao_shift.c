@@ -20,31 +20,32 @@ uint8 leftin=0,rightin=0;
 void check_shiftroad(void){
     if (Image_iptsLeftNum < 0.1 / Image_sampleDist) {++none_leftshift_line;}
     if (Image_iptsRightNum < 0.1 / Image_sampleDist){++none_rightshift_line;}
+
     if(none_leftshift_line&&!none_rightshift_line){            //ÏÈ¼ì²â×óÏßÊÇ·ñ¶ª
         //Trace_Status=TRACE_LEFTLOST;
         Shift_Direction=SHIFT_LEFT;
-        NORMAL_SPEED=64;
+        NORMAL_SPEED=40;
         none_leftshift_line=0;
         //Encoder_Begin(ENCODER_MOTOR_2);
         return;
     }
     else if(none_rightshift_line&&!none_leftshift_line){
         //Trace_Status=TRACE_RIGHTLOST;
-        NORMAL_SPEED=64;
+        NORMAL_SPEED=40;
         Shift_Direction=SHIFT_RIGHT;
         none_rightshift_line=0;
 
         return;
     }
     else if(none_rightshift_line&&none_leftshift_line){
-        NORMAL_SPEED=64;
+        NORMAL_SPEED=40;
         Shift_Direction=SHIFT_BOTH;
         none_rightshift_line=0;
         none_leftshift_line=0;
         return;
     }
     else if(!none_rightshift_line&&!none_leftshift_line){
-        NORMAL_SPEED=64;
+        NORMAL_SPEED=84;
         Shift_Direction=SHIFT_DNONE;
         return;
     }

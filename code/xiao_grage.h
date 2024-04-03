@@ -44,6 +44,8 @@ extern int8 Grage_stroageSpeedVar_Motor2_Left;        //入左库电机2变化量       
 extern float Grage_inAngle_Thre;                      //入库角度阈值           -        步进:0.5
 extern int16 Grage_inStraight_Thre;                   //入库直走阈值           -        步进:100
 extern uint8 Grage_outWarehous_Status;                  //出库状态机
+extern int32 garage_sum_thre;
+extern int garage_flag;
 //------------------------------_处理数据_------------------------------
 
 void Grage_Departure_Check(void);
@@ -51,5 +53,7 @@ void Grage_Storage(void);
 void Grage_Storage_Check(GRAGE_DETECTION_MODE detectMode);
 extern double isConvexHull_left(int numPoints);
 extern double isConvexHull_right(int numPoints) ;
+extern double isConvexHull_left_origin(int numPoints);
+extern double isConvexHull_right_origin(int numPoints);
 extern void garage_check();
 #endif /* CODE_XIAO_GRAGE_H_ */

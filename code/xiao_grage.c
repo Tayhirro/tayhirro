@@ -44,7 +44,8 @@ int8 Grage_outSpeedVar_Motor2 = -10;                //出库时强制打角,电机2的变化
 float Grage_outAngle_Thre = 45.0;                   //出库角度阈值
 int8 Grage_outSpeed_Motor1 = 35;
 int8 Grage_outSpeed_Motor2 = 25;
-
+int32 garage_sum_thre=320000;
+int garage_flag=0;
 double isConvexHull_left(int numPoints) {
     if (numPoints <= 20 && numPoints>=70)
         return 10;  // 点的数量小于3，无法构成凸包
@@ -89,8 +90,52 @@ double isConvexHull_right(int numPoints) {
 
 }
 
+double isConvexHull_left_origin(int numPoints) {
+    if (numPoints <= 25 )
+        return 1000;  // 点的数量小于3，无法构成凸包
+
+    int numClosePairs = 0;
+            double totalDistance_l = 0.0;
+            double totalDistance_r = 0.0;
+            int half =numPoints/2;
+            for (int i = 0; i < half; i++) {
+                totalDistance_l += Image_iptsLeft[i][1];
+            }
+            totalDistance_l/=half;
+            for (int i = half; i < numPoints; i++) {
+                           totalDistance_r += Image_iptsLeft[i][1];
+                        }
+            totalDistance_r/=(numPoints-half);
+            // 大多数相邻点对之间的距离较短，则增加构成环的可能性
+             return abs(totalDistance_l-totalDistance_r);
+        // 如果点数组是逆时针排列，则增加构成凸包的可能性
+
+}
+
+double isConvexHull_right_origin(int numPoints) {
+    if (numPoints <=25  )
+        return 1000;  // 点的数量小于3，无法构成凸包
+
+    int numClosePairs = 0;
+            double totalDistance_l = 0.0;
+            double totalDistance_r = 0.0;
+            int half =numPoints/2;
+            for (int i = 0; i < half; i++) {
+                totalDistance_l += Image_iptsRight[i][1];
+            }
+            totalDistance_l/=half;
+            for (int i = half; i < numPoints; i++) {
+                           totalDistance_r += Image_iptsRight[i][1];
+                        }
+            totalDistance_r/=(numPoints-half);
+            // 大多数相邻点对之间的距离较短，则增加构成环的可能性
+            return abs(totalDistance_l-totalDistance_r);
+        // 如果点数组是逆时针排列，则增加构成凸包的可能性
+
+}
+
 void garage_check(){
-    if((Image_rptsLeftNum>=24 || Image_rptsRightNum >=24)&& ((isConvexHull_left(Image_rptsLeftNum)<=5 ) ||(isConvexHull_right(Image_rptsRightNum)<=5))){
+    if((Image_rptsLeftNum>=5 && Image_rptsRightNum >=5)&& ((isConvexHull_left(Image_rptsLeftNum)<=5 ) ||(isConvexHull_right(Image_rptsRightNum)<=5))){
         if ((Image_LineIsClosed(0) == true && Image_LineIsClosed(1) == true) ||
                            (Image_iptsLeftNum != 0 && Image_iptsRightNum != 0 &&
                                    abs(Image_iptsLeft[0][0] - Image_iptsRight[0][0]) < 20)) {
@@ -106,6 +151,7 @@ void garage_check(){
                                     Motor_pidStatus=0;
                                     Motor_SetSpeed(MOTOR_1, 0);
                                     Motor_SetSpeed(MOTOR_2, 0);
+                                    garage_flag=1;
                    }
 
                     }

@@ -385,7 +385,7 @@ void handle_cross(){
                                  Encoder_Clear(ENCODER_MOTOR_2);
                                  Encoder_End(ENCODER_MOTOR_1);
                                  Encoder_Clear(ENCODER_MOTOR_1);
-                                 NORMAL_SPEED=72;
+                                 NORMAL_SPEED=84;
                              }
        }
 }

@@ -1071,7 +1071,7 @@ void handle_circle_left(){
         Trace_traceType=TRACE_Camera_MID;
         Trace_Status=TRACE_CENTERLINENEAR;
         Circle_status = CIRCLE_NONE;
-        NORMAL_SPEED=72;
+        NORMAL_SPEED=84;
     }
 
 }
@@ -1105,7 +1105,7 @@ void handle_circle_right(){
     }
     else if(Circle_status == CIRCLE_RIGHT_IN_PRE){
         PWMSetSteer(85.0);
-        if(Image_rptsLeftNum==0&&abs(Encoder_sum_Motor1)>EncoderCircle_Pre_Thre){
+        if(Image_rptsLeftNum==0&&abs(Encoder_sum_Motor1)*0.6>EncoderCircle_Pre_Thre){
                         Circle_status=CIRCLE_RIGHT_IN;
                         Encoder_End(ENCODER_MOTOR_1);
                         Encoder_Clear(ENCODER_MOTOR_1);
@@ -1160,7 +1160,7 @@ void handle_circle_right(){
         Trace_traceType=TRACE_Camera_MID;
         Trace_Status=TRACE_CENTERLINENEAR;
         Circle_status = CIRCLE_NONE;
-        NORMAL_SPEED=72;
+        NORMAL_SPEED=56;
     }
 
 }
