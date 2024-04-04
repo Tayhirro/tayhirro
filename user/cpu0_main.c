@@ -56,17 +56,17 @@ float Elec_pLimit=5.0;     float Elec_coLimit=50.0;    float Elec_boost=1;
 //------------------------------
 //电机1PID
 //float Motor_1P = 145.8 ;      float Motor_1I = 3.6 ;       float Motor_1D = 0;     float Motor_1Target=0;      float Motor_1cor=0.0;
-float Motor_1P = 11;      float Motor_1I = 4.12 ;       float Motor_1D = 0;     float Motor_1Target=84;      float Motor_1cor=0.0;
+float Motor_1P = 11;      float Motor_1I = 4.12 ;       float Motor_1D = 0;     float Motor_1Target=64;      float Motor_1cor=0.0;
 float Motor_1Puse;         float Motor_1Pcor=0.0;      float Motor_1Icor=0.0;       float Motor_1Dcor=0.0;
 //------------------------------
 //电机2PID
 //float Motor_2P = 192.375 ;      float Motor_2I = 14.175 ;       float Motor_2D = 0   ;     float Motor_2Target=0;       float Motor_2cor=0.0;
-float Motor_2P =10.2 ;      float Motor_2I =5.04;       float Motor_2D = 0   ;     float Motor_2Target=84;       float Motor_2cor=0.0;
+float Motor_2P =10.2 ;      float Motor_2I =5.04;       float Motor_2D = 0   ;     float Motor_2Target=64;       float Motor_2cor=0.0;
 float Motor_2Puse;         float Motor_2Pcor=0.0;      float Motor_2Icor=0.0;       float Motor_2Dcor=0.0;
 //------------------------------
 //电机限幅
 //float Motor_pLimit=0;    float Motor_coLimit=10000;   float Motor_boost=3.5;
-float Motor_pLimit=2000;    float Motor_coLimit=10000;   float Motor_boost=25.0;
+float Motor_pLimit=3000;    float Motor_coLimit=10000;   float Motor_boost=25.0;
 
 //------------------------------摄像头------------------------------
 //------------------------------
@@ -409,15 +409,15 @@ int core0_main(void)
 
    wireless_uart_init();
        // 设置逐飞助手使用DEBUG串口进行收发
-    //seekfree_assistant_interface_init(SEEKFREE_ASSISTANT_WIRELESS_UART);
+    seekfree_assistant_interface_init(SEEKFREE_ASSISTANT_WIRELESS_UART);
    // Elec_Init();                                                        //电感初始化
     //Show_Init();
        // wireless_uart_init();
-
+    //Image_Init();
     steer_init();                                                       //舵机初始化
     Motor_Init();                                                       //电机初始化
     Encoder_Init();                                                     //编码器初始化
-   // dl1a_init();                                                         //TOF初始化
+    dl1a_init();                                                         //TOF初始化
     //Beep_Init();                                                        //蜂鸣器初始化
     imu660ra_init();                                                    //陀螺仪初始化
     //------------------------------设备设置------------------------------
@@ -445,9 +445,9 @@ int core0_main(void)
     //1. 图像处理
     pit_ms_init(CCU61_CH0, 10);
     pit_ms_init(CCU60_CH0, 4);
-    //pit_ms_init(CCU60_CH1, 5);
+    //pit_ms_init(CCU60_CH1, 4);
 
-    Image_Init();
+   // Image_Init();
     //------------------------------函数设置------------------------------
     //Elec_PID_Set(Elec_P, Elec_I, Elec_D, Elec_pLimit, Elec_coLimit, Elec_boost);             //电磁PID设置                                                //差比合差设置
          Motor_1PID_Set(Motor_1P, Motor_1I, Motor_1D, Motor_pLimit, Motor_coLimit, Motor_boost);  //电机1PID设置
@@ -459,8 +459,8 @@ int core0_main(void)
          // 初始化逐飞助手示波器的结构体
                        //      seekfree_assistant_oscilloscope_struct oscilloscope_data;
 
-         //seekfree_assistant_camera_information_config(SEEKFREE_ASSISTANT_MT9V03X,NULL, MT9V03X_W, MT9V03X_H);
-         //seekfree_assistant_camera_boundary_config(XY_BOUNDARY, 90, xy_x1_boundary, xy_x2_boundary, xy_x3_boundary, xy_y1_boundary, xy_y2_boundary, xy_y3_boundary);
+         seekfree_assistant_camera_information_config(SEEKFREE_ASSISTANT_MT9V03X,NULL, MT9V03X_W, MT9V03X_H);
+        seekfree_assistant_camera_boundary_config(XY_BOUNDARY, 90, xy_x1_boundary, xy_x2_boundary, xy_x3_boundary, xy_y1_boundary, xy_y2_boundary, xy_y3_boundary);
 
 
                              // 设置为4个通道，通道数量最大为8个
@@ -474,6 +474,7 @@ int core0_main(void)
     cpu_wait_event_ready();         // 等待所有核心初始化完毕
     Motor_SetSpeed(MOTOR_1,2200);
              Motor_SetSpeed(MOTOR_2,2200);
+             PWMSetSteer(90.0);
 
     while (TRUE)
     {
@@ -486,7 +487,7 @@ int core0_main(void)
        // seekfree_assistant_oscilloscope_send(&oscilloscope_data);
         // oscilloscope_data.data[0] = Encoder_1Data;
         // oscilloscope_data.data[1] = Encoder_2Data;
-         //seekfree_assistant_camera_send();
+         seekfree_assistant_camera_send();
          ips200_show_float(0,300, Trace_Status, 3, 3);
          ips200_show_float(40,300, Cross_status, 3, 3);
          ips200_show_float(80,300,Circle_status,3,3);
@@ -500,9 +501,20 @@ int core0_main(void)
         //ips200_show_float(0, 0, Encoder_1Data, 3, 3);
         //ips200_show_float(0, 60, Encoder_sum_Motor1, 5, 3);
         //ips200_show_float(0, 120, Encoder_2Data, 3, 3);
+
+
          ips200_show_float(0,0, Image_LptLeft_Found, 3, 3);
          ips200_show_float(150,0, Image_LptRight_Found, 3, 3);
          ips200_show_float(150,30, Shift_Direction, 3, 3);
+
+         //ips200_show_float(0,150, banmaxian_kuandu, 3, 3);//斑马线宽度
+         //ips200_show_float(40,150, banmaxian_hangshu, 3, 3);//斑马线行数
+         if(dl1a_finsh_flag == 1)
+                 {
+                     dl1a_finsh_flag = 0;
+                     ips200_show_uint(0, 180, dl1a_distance_mm, 4);
+                 }
+         //ips200_show_float(0,180, dl1a_distance_mm, 3, 3);
          ips200_show_float(100,60,abs(Encoder_sum_Motor2_global),7, 3);//Encoder_sum_Motor2_global  Encoder_sum_Motor2
          ips200_show_float(0,60,abs(Encoder_sum_Motor1_global),7, 3);//Encoder_sum_Motor1_global   Encoder_sum_Motor1
          //ips200_show_float(70,30,none_leftshift_line,5, 3);
@@ -510,6 +522,8 @@ int core0_main(void)
          //ips200_show_float(0,0,abs(Gyro_z),3,3);
        //  ips200_show_float(0,300,Image_rptsLeftc[5][0],3,3);
        //  ips200_show_float(40,300,Image_rptsLeftc[5][1],3,3);
+
+
          ips200_show_string(0, 250, "Trace_angleError:");ips200_show_float(150, 250, Trace_angleError, 3, 3);
         // ips200_show_string(0, 270, "output:");ips200_show_float(150, 270, Trace_cameraMidPID.output_val, 3, 3);
         // ips200_show_string(0, 250, "Trace_angleErrorTher:");ips200_show_float(150, 250, Trace_angleErrorTher, 3, 3);
@@ -571,7 +585,7 @@ int core0_main(void)
                          handle_circle_right();
                     }
                 }
-                if (Grage_grageStatus == GRAGE_NONE && (Trace_Status==TRACE_CENTERLINENEAR)) {
+               /* if (Grage_grageStatus == GRAGE_NONE && (Trace_Status==TRACE_CENTERLINENEAR)) {
                                                          garage_check();
 
                                                     }
@@ -580,6 +594,15 @@ int core0_main(void)
                                                         Motor_SetSpeed(MOTOR_1, 0);
                                                         Motor_SetSpeed(MOTOR_2, 0);
 
+                }*/
+
+                banmaxian(40,50);
+                if(Grage_grageStatus==GRAGE_IN_BEGIN_LEFT){
+                    PWMSetSteer(90.0);
+                    system_delay_ms(500);
+                    Motor_pidStatus=0;
+                    Motor_SetSpeed(MOTOR_1, 0);
+                    Motor_SetSpeed(MOTOR_2, 0);
                 }
 //                //环岛检测
 //                Circle_CheckCamera();
@@ -596,13 +619,13 @@ int core0_main(void)
                 //------------------------------图传相关------------------------------
                 //----------------------------------------
                 //--------------------------------------------------------------------------
-                if (Image_LptLeft_Found) {
+               /* if (Image_LptLeft_Found) {
                     Image_ShowCorner(Image_rptsLefts[Image_LptLeft_rptsLefts_id][0], 130 + Image_rptsLefts[Image_LptLeft_rptsLefts_id][1], RGB565_BLUE);
                 }
                 if (Image_LptRight_Found) {
                     Image_ShowCorner(Image_rptsRights[Image_LptRight_rptsRights_id][0], 130 + Image_rptsRights[Image_LptRight_rptsRights_id][1], RGB565_RED);
                 }
-
+*/
 
             //------------------------------元素处理-----------------------------
             //------------------------------屏幕相关------------------------------

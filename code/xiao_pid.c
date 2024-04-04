@@ -7,7 +7,7 @@
 #include "xiao_pid.h"
 #include "xiao_steer.h"
 #include "xiao_trace.h"
-float NORMAL_SPEED=84;
+float NORMAL_SPEED=64;
 float STOP_SPEED=0;
 float CIRCLE_SPEED=40;
 //float Motor_1Target=80; // Motor_1Target -> left 左边标准速度    Motor_2Target -> right  右边标准速度
@@ -101,7 +101,7 @@ if(Trace_Status==TRACE_CROSS || Trace_Status==TRACE_CIRCLE_RIGHT || TRACE_CIRCLE
             }
             else if(speedflag == 2)
             {
-                Motor_2Target = CIRCLE_SPEED-0.8*(*topid_steer).err;
+                Motor_2Target = CIRCLE_SPEED-1.0*(*topid_steer).err;
                 Motor_1Target = CIRCLE_SPEED;
             }
             else if(speedflag == 5)
@@ -123,7 +123,7 @@ if(Trace_Status==TRACE_CROSS || Trace_Status==TRACE_CIRCLE_RIGHT || TRACE_CIRCLE
             }
             else if(speedflag == 2)
             {
-                Motor_2Target = CIRCLE_SPEED-0.8*(*topid_steer).err;
+                Motor_2Target = CIRCLE_SPEED-1.0*(*topid_steer).err;
                 Motor_1Target = CIRCLE_SPEED;
             }
             else if(speedflag == 5)
@@ -134,7 +134,7 @@ if(Trace_Status==TRACE_CROSS || Trace_Status==TRACE_CIRCLE_RIGHT || TRACE_CIRCLE
         }
         else if(-13>(*topid_steer).err && (*topid_steer).err>-18)//右偏较小
         {if(Trace_Status==TRACE_CENTERLINENEAR){speedflag =1;}
-            (*topid_steer).Kp=0.5;
+            (*topid_steer).Kp=0.6;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
             if(speedflag == 1)
             {
@@ -143,7 +143,7 @@ if(Trace_Status==TRACE_CROSS || Trace_Status==TRACE_CIRCLE_RIGHT || TRACE_CIRCLE
             }
             else if(speedflag == 2)
             {
-                Motor_2Target = CIRCLE_SPEED-0.1*(*topid_steer).err;
+                Motor_2Target = CIRCLE_SPEED-0.2*(*topid_steer).err;
                 Motor_1Target = CIRCLE_SPEED;
             }
             else if(speedflag == 5)
@@ -184,7 +184,7 @@ if(Trace_Status==TRACE_CROSS || Trace_Status==TRACE_CIRCLE_RIGHT || TRACE_CIRCLE
         }
         else if(13<(*topid_steer).err && (*topid_steer).err<18)//左偏较小
         {if(Trace_Status==TRACE_CENTERLINENEAR){speedflag =1;}
-            (*topid_steer).Kp=0.5;
+            (*topid_steer).Kp=0.6;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
            if(speedflag == 1)
             {
@@ -214,7 +214,7 @@ if(Trace_Status==TRACE_CROSS || Trace_Status==TRACE_CIRCLE_RIGHT || TRACE_CIRCLE
             }
             else if(speedflag == 2)
             {
-              Motor_1Target = CIRCLE_SPEED+0.8*(*topid_steer).err;
+              Motor_1Target = CIRCLE_SPEED+1.0*(*topid_steer).err;
                 Motor_2Target = CIRCLE_SPEED;
             }
             else if(speedflag == 5)
@@ -234,7 +234,7 @@ if(Trace_Status==TRACE_CROSS || Trace_Status==TRACE_CIRCLE_RIGHT || TRACE_CIRCLE
             }
             else if(speedflag == 2)
             {
-              Motor_1Target = CIRCLE_SPEED+0.8*(*topid_steer).err;
+              Motor_1Target = CIRCLE_SPEED+1.0*(*topid_steer).err;
               Motor_2Target = CIRCLE_SPEED;
             }else if(speedflag == 5)
             {

@@ -318,17 +318,28 @@ float Trace_Run() {
                                            }
 
         }
-        if(Circle_status==CIRCLE_RIGHT_BEGIN||Circle_status==CIRCLE_RIGHT_RUNNING||Circle_status==CIRCLE_RIGHT_END){
+        if(Circle_status==CIRCLE_RIGHT_RUNNING){
             if(Image_rptsRightNum<8){
-                                           direction_control(&Trace_cameraLeftPID,Trace_GetAngelError(),91);
+                                           direction_control(&Trace_cameraLeftPID,Trace_GetAngelError(),94);
                                        }
                                        else if(Image_rptsLeftNum<8){
-                                           direction_control(&Trace_cameraRightPID,Trace_angleError,84);
+                                           direction_control(&Trace_cameraRightPID,Trace_angleError,87);
                                        }
                                        else {
-                                                          direction_control(&Trace_cameraMidPID,Trace_GetAngelError(),91);
+                                                          direction_control(&Trace_cameraMidPID,Trace_GetAngelError(),94);
                                                       }
         }
+        if(Circle_status==CIRCLE_RIGHT_BEGIN||Circle_status==CIRCLE_RIGHT_END){
+                    if(Image_rptsRightNum<8){
+                                                   direction_control(&Trace_cameraLeftPID,Trace_GetAngelError(),91);
+                                               }
+                                               else if(Image_rptsLeftNum<8){
+                                                   direction_control(&Trace_cameraRightPID,Trace_angleError,84);
+                                               }
+                                               else {
+                                                                  direction_control(&Trace_cameraMidPID,Trace_GetAngelError(),91);
+                                                              }
+                }
         if(Circle_status==CIRCLE_NONE){
             direction_control(&Trace_cameraMidPID,Trace_GetAngelError(),84);
         }

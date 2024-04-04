@@ -45,7 +45,7 @@ void Cross_CheckCamera(void) {
     //Ê®×Ö
     if (Trace_Status==TRACE_CENTERLINENEAR&& Image_LptLeft_Found && Image_LptRight_Found&&Cross_status == CROSS_NONE) {//Cross_status == CROSS_NONE
         //²âÊÔ´úÂë
-        NORMAL_SPEED=48;
+        NORMAL_SPEED=40;
         Trace_Status=TRACE_CROSS;
         Cross_status = CROSS_BEGIN;
         Encoder_End(ENCODER_MOTOR_2);
@@ -385,7 +385,7 @@ void handle_cross(){
                                  Encoder_Clear(ENCODER_MOTOR_2);
                                  Encoder_End(ENCODER_MOTOR_1);
                                  Encoder_Clear(ENCODER_MOTOR_1);
-                                 NORMAL_SPEED=84;
+                                 NORMAL_SPEED=64;
                              }
        }
 }

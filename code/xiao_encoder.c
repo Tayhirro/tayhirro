@@ -131,8 +131,8 @@ void Encoder_Count(void) {
         if (Encoder_sumStatus_Motor2 == 1) {
             Encoder_sum_Motor2 += Encoder_2Data;
         }
-        Encoder_sum_Motor1_global+=Encoder_1Data;
-        Encoder_sum_Motor2_global+= Encoder_2Data;
+        //Encoder_sum_Motor1_global+=Encoder_1Data;
+       // Encoder_sum_Motor2_global+= Encoder_2Data;
 
     }
 }

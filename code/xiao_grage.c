@@ -135,7 +135,7 @@ double isConvexHull_right_origin(int numPoints) {
 }
 
 void garage_check(){
-    if((Image_rptsLeftNum>=5 && Image_rptsRightNum >=5)&& ((isConvexHull_left(Image_rptsLeftNum)<=5 ) ||(isConvexHull_right(Image_rptsRightNum)<=5))){
+    if((Image_rptsLeftNum>=3 && Image_rptsRightNum >=3)&& ((isConvexHull_left(Image_rptsLeftNum)<=5 ) ||(isConvexHull_right(Image_rptsRightNum)<=5))){
         if ((Image_LineIsClosed(0) == true && Image_LineIsClosed(1) == true) ||
                            (Image_iptsLeftNum != 0 && Image_iptsRightNum != 0 &&
                                    abs(Image_iptsLeft[0][0] - Image_iptsRight[0][0]) < 20)) {
@@ -157,6 +157,47 @@ void garage_check(){
                     }
 
 }
+
+//判断斑马线函数
+int banmaxian_kuandu;//斑马线宽度
+int banmaxian_hangshu;//斑马线行数
+int banmaxian_geshu;//斑马线个数（块）
+void banmaxian(int start_point, int end_point)
+{
+        //变量标志位
+    banmaxian_hangshu=0;
+        //从下往上扫描
+        for (int y = end_point; y >= start_point; y--)
+        {
+
+            // banmaxian_hangshu=0;
+             banmaxian_geshu=0;
+             //从右往左扫描
+            for (int x =158; x >=30; x--)
+            {
+                //int baidian_heng=0;
+                //扫描到黑色，就进判断
+                if ((mt9v03x_image[y][x] <=image_thre&&mt9v03x_image[y][x-1]>image_thre)||(mt9v03x_image[y][x] >image_thre&&mt9v03x_image[y][x-1]<=image_thre))
+                {
+                    banmaxian_geshu++;
+                }
+
+            }
+            //ips200_show_float(80,150, banmaxian_geshu, 3, 3);//斑马线个数（块）
+            //system_delay_ms(100);
+            //如果色块的个数在6~9之间则认为这一行的斑马线满足要求，在去扫下一行
+            if (banmaxian_geshu >= 10 && banmaxian_geshu <= 24){banmaxian_hangshu++;}
+        }
+        //如果有大于等于4行的有效斑马线
+        if(banmaxian_hangshu>=7)
+        {
+            //斑马线标准位置1
+            Grage_grageStatus=GRAGE_IN_BEGIN_LEFT;
+        }
+
+
+}
+
 /*
  * @brief               车库初始化
  * @attention           发车使用引脚P11_3

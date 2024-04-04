@@ -46,6 +46,9 @@ extern int16 Grage_inStraight_Thre;                   //入库直走阈值           -
 extern uint8 Grage_outWarehous_Status;                  //出库状态机
 extern int32 garage_sum_thre;
 extern int garage_flag;
+extern int banmaxian_kuandu;//斑马线宽度
+extern int banmaxian_hangshu;//斑马线行数
+extern int banmaxian_geshu;//斑马线个数（块）
 //------------------------------_处理数据_------------------------------
 
 void Grage_Departure_Check(void);
@@ -56,4 +59,5 @@ extern double isConvexHull_right(int numPoints) ;
 extern double isConvexHull_left_origin(int numPoints);
 extern double isConvexHull_right_origin(int numPoints);
 extern void garage_check();
+extern void banmaxian(int start_point, int end_point);
 #endif /* CODE_XIAO_GRAGE_H_ */

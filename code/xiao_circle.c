@@ -973,7 +973,7 @@ void Circle_CheckCamera(void) {
 
 //        put_int32(70, 1);
         gpio_set_level(P20_8, GPIO_LOW);
-        NORMAL_SPEED=48;
+        NORMAL_SPEED=40;
     }
     //”“ª∑µ∫
     if (Circle_status == CIRCLE_NONE && Image_LptRight_Found && !Image_LptLeft_Found && Image_isStraightLeft) {
@@ -983,7 +983,7 @@ void Circle_CheckCamera(void) {
         Encoder_Begin(ENCODER_MOTOR_1);
 //        put_int32(71, 1);
         gpio_set_level(P20_9, GPIO_LOW);
-        NORMAL_SPEED=48;
+        NORMAL_SPEED=40;
     }
 }
 void handle_circle_left(){
@@ -1071,7 +1071,7 @@ void handle_circle_left(){
         Trace_traceType=TRACE_Camera_MID;
         Trace_Status=TRACE_CENTERLINENEAR;
         Circle_status = CIRCLE_NONE;
-        NORMAL_SPEED=84;
+        NORMAL_SPEED=64;
     }
 
 }
@@ -1160,7 +1160,7 @@ void handle_circle_right(){
         Trace_traceType=TRACE_Camera_MID;
         Trace_Status=TRACE_CENTERLINENEAR;
         Circle_status = CIRCLE_NONE;
-        NORMAL_SPEED=56;
+        NORMAL_SPEED=64;
     }
 
 }
