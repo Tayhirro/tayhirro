@@ -45,7 +45,7 @@ void check_shiftroad(void){
         return;
     }
     else if(!none_rightshift_line&&!none_leftshift_line){
-        NORMAL_SPEED=84;
+        NORMAL_SPEED=40;
         Shift_Direction=SHIFT_DNONE;
         return;
     }
