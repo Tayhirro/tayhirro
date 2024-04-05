@@ -261,7 +261,7 @@ void handle_circle_left(){
     else if (Circle_status == CIRCLE_LEFT_OUT) {
         Trace_traceType = TRACE_Camera_Near_RIGHT;
         PWMSetSteer(100.0);
-        if (Image_rptsRightNum>5&&abs(Encoder_sum_Motor2)>EncoderCircle_End_Thre&&abs(Gyro_z)>Gyroscope_z_Circle_running_Thre) {
+        if (Image_rptsRightNum>5&&abs(Encoder_sum_Motor2)>EncoderCircle_End_Thre&&fabs(Gyro_z)>Gyroscope_z_Circle_running_Thre) {
             Circle_status = CIRCLE_LEFT_END;
             Encoder_End(ENCODER_MOTOR_2);
             Encoder_Clear(ENCODER_MOTOR_2);
@@ -350,7 +350,7 @@ void handle_circle_right(){
     else if (Circle_status == CIRCLE_RIGHT_OUT) {
         Trace_traceType = TRACE_Camera_Near_LEFT;
         PWMSetSteer(80.0);
-        if (Image_rptsLeftNum>5&&abs(Encoder_sum_Motor1)>EncoderCircle_End_Thre&&abs(Gyro_z)>Gyroscope_z_Circle_running_Thre) {
+        if (Image_rptsLeftNum>5&&abs(Encoder_sum_Motor1)>EncoderCircle_End_Thre&&fabs(Gyro_z)>Gyroscope_z_Circle_running_Thre) {
             Circle_status = CIRCLE_RIGHT_END;
             Encoder_End(ENCODER_MOTOR_1);
             Encoder_Clear(ENCODER_MOTOR_1);

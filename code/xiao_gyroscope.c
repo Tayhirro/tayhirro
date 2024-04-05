@@ -218,37 +218,37 @@ void Gyroscope_Conut(void) {
     //--------------------数据处理--------------------
     if (Gyro_x_status == 1) {
         if (Gyroscope_device == GYROSCOPE_IMU660RA) {
-            Gyro_x += imu660ra_gyro_transitionFloat((float)imu660ra_gyro_x - Gyro_Offset.Gyro_Xdata) * Gyroscope_time * 0.001;
+            Gyro_x += imu660ra_gyro_transition((float)imu660ra_gyro_x - Gyro_Offset.Gyro_Xdata) * Gyroscope_time * 0.001;
         }
     }
 
     if (Gyro_y_status == 1) {
         if (Gyroscope_device == GYROSCOPE_IMU660RA) {
-            Gyro_y += imu660ra_gyro_transitionFloat((float)imu660ra_gyro_y - Gyro_Offset.Gyro_Ydata) * Gyroscope_time * 0.001;
+            Gyro_y += imu660ra_gyro_transition((float)imu660ra_gyro_y - Gyro_Offset.Gyro_Ydata) * Gyroscope_time * 0.001;
         }
     }
 
     if (Gyro_z_status == 1) {
         if (Gyroscope_device == GYROSCOPE_IMU660RA) {
-            Gyro_z += imu660ra_gyro_transitionFloat((float)imu660ra_gyro_z - Gyro_Offset.Gyro_Zdata) * Gyroscope_time * 0.001;
+            Gyro_z += imu660ra_gyro_transition((float)imu660ra_gyro_z - Gyro_Offset.Gyro_Zdata) * Gyroscope_time * 0.001;
         }
     }
 
     if (Acc_x_status == 1) {
         if (Gyroscope_device == GYROSCOPE_IMU660RA) {
-            Acc_x += imu660ra_acc_transitionFloat((float)imu660ra_acc_x - Gyro_Offset.ACC_Xdata) * Gyroscope_time * 0.001;
+            Acc_x += imu660ra_acc_transition((float)imu660ra_acc_x - Gyro_Offset.ACC_Xdata) * Gyroscope_time * 0.001;
         }
     }
 
     if (Acc_y_status == 1) {
         if (Gyroscope_device == GYROSCOPE_IMU660RA) {
-            Acc_y += imu660ra_acc_transitionFloat((float)imu660ra_acc_y - Gyro_Offset.ACC_Ydata) * Gyroscope_time * 0.001;
+            Acc_y += imu660ra_acc_transition((float)imu660ra_acc_y - Gyro_Offset.ACC_Ydata) * Gyroscope_time * 0.001;
         }
     }
 
     if (Acc_z_status == 1) {
         if (Gyroscope_device == GYROSCOPE_IMU660RA) {
-            Acc_z += imu660ra_acc_transitionFloat((float)imu660ra_acc_z - Gyro_Offset.ACC_Zdata) * Gyroscope_time * 0.001;
+            Acc_z += imu660ra_acc_transition((float)imu660ra_acc_z - Gyro_Offset.ACC_Zdata) * Gyroscope_time * 0.001;
         }
     }
 }

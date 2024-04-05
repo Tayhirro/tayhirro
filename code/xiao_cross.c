@@ -311,7 +311,7 @@ void handle_cross(){
     if(Cross_status == CROSS_BEGIN){
            PWMSetSteer(85.0);
 
-           if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>EncoderCross_In_Thre&&abs(Gyro_z)>Gyroscope_z_Cross_in_Thre){
+           if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>EncoderCross_In_Thre&&fabs(Gyro_z)>Gyroscope_z_Cross_in_Thre){
                           Encoder_End(ENCODER_MOTOR_2);
                           Encoder_Clear(ENCODER_MOTOR_2);
                           Encoder_End(ENCODER_MOTOR_1);
@@ -340,7 +340,7 @@ void handle_cross(){
        if(Cross_status == CROSS_RUNNING){
            Trace_traceType=TRACE_Camera_Near;
            if(Image_rptsLeftNum>=Image_rptsRightNum){
-           if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>3.2*EncoderCross_Thre&&Image_LptLeft_Found&&abs(Gyro_z)>Gyroscope_z_Cross_running_Thre){
+           if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>3.2*EncoderCross_Thre&&Image_LptLeft_Found&&fabs(Gyro_z)>Gyroscope_z_Cross_running_Thre){
                    Encoder_End(ENCODER_MOTOR_2);
                    Encoder_Clear(ENCODER_MOTOR_2);
                    Encoder_End(ENCODER_MOTOR_1);
