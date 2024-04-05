@@ -83,10 +83,10 @@ static float Trace_GetAngelError() {
     //------------------------------
     //获取误差
     if(Trace_traceType==TRACE_Camera_Far){
-        Trace_aimLine=2;
+        Trace_aimLine=15;
     }
     if(Trace_traceType==TRACE_Camera_MID||Trace_traceType==TRACE_Camera_Near_RIGHT||Trace_traceType==TRACE_Camera_Near_LEFT||Trace_traceType==TRACE_Camera_Near){     //远处寻线
-        Trace_aimLine=5;
+        Trace_aimLine=25;
     }
 
     if(pid_type==PID_INV){
@@ -146,6 +146,8 @@ static float Trace_GetAngelError() {
 //                                           + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
 //                                           + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
 //                       }
+            Trace_aimLine=10;
+            
             if(Cross_status==CROSS_RUNNING||Cross_status==CROSS_IN||Cross_status==CROSS_END||Cross_status==CROSS_NONE){
                 if(Image_rptsLeftcNum!=0){
             Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]

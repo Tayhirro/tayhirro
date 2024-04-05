@@ -7,7 +7,7 @@
 #include "xiao_pid.h"
 #include "xiao_steer.h"
 #include "xiao_trace.h"
-float NORMAL_SPEED=64;
+float NORMAL_SPEED=96;
 float STOP_SPEED=0;
 float CIRCLE_SPEED=40;
 //float Motor_1Target=80; // Motor_1Target -> left 左边标准速度    Motor_2Target -> right  右边标准速度

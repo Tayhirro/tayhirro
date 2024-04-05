@@ -45,7 +45,6 @@ void Cross_CheckCamera(void) {
     //Ê®×Ö
     if (Trace_Status==TRACE_CENTERLINENEAR&& Image_LptLeft_Found&&Cross_status == CROSS_NONE) {//Cross_status == CROSS_NONE
         //²âÊÔ´úÂë
-        NORMAL_SPEED=40;
         Trace_Status=TRACE_CROSS;
         Cross_status = CROSS_BEGIN;
         Encoder_End(ENCODER_MOTOR_2);
@@ -308,7 +307,7 @@ void Cross_CheckCamera(void) {
 //}
 void handle_cross(){
     if(Cross_status == CROSS_BEGIN){
-           PWMSetSteer(90.0);
+           PWMSetSteer(85.0);
            if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>EncoderCross_In_Thre){
                           Encoder_End(ENCODER_MOTOR_2);
                           Encoder_Clear(ENCODER_MOTOR_2);
@@ -385,7 +384,6 @@ void handle_cross(){
                                  Encoder_Clear(ENCODER_MOTOR_2);
                                  Encoder_End(ENCODER_MOTOR_1);
                                  Encoder_Clear(ENCODER_MOTOR_1);
-                                 NORMAL_SPEED=64;
                              }
        }
 }

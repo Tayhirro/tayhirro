@@ -15,13 +15,13 @@
 typedef enum {
 TRACE_CENTERLINENEAR=0x00,   //中线搜索
 //--------------------------------------------------------------
-TRACE_CENTERLINEFAR=0X01,    //十字路口使用
+TRACE_CENTERLINEFAR=0X01,
 //--------------------------------------------------------------
 TRACE_RIGHTLOST=0x02,   //右线丢失//在pidorigin时有效//
 TRACE_LEFTLOST=0x03,   //左线丢失1//在pidorigin时有效//
 TRACE_CROSS=0x04,   //十字
-TRACE_CIRCLE_LEFT=0x05,   //环岛
-TRACE_CIRCLE_RIGHT=0x06
+TRACE_CIRCLE_LEFT=0x05,   //环岛    
+TRACE_CIRCLE_RIGHT=0x06     //环岛
 }TRACE_STATUS;
 
 
