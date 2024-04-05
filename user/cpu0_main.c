@@ -437,7 +437,8 @@ int core0_main(void)
     Motor_PID_Init();
    //电机PID初始化
     Steer_PID_Init();
-    //Gyroscope_Init(GYROSCOPE_IMU660RA, 4);
+    Gyroscope_Init(GYROSCOPE_IMU660RA, 4);
+
     //seekfree_assistant_oscilloscope_struct oscilloscope_data;
     //oscilloscope_data.channel_num = 2;
     //------------------------------中断初始化------------------------------
@@ -519,7 +520,7 @@ int core0_main(void)
          ips200_show_float(0,60,abs(Encoder_sum_Motor1_global),7, 3);//Encoder_sum_Motor1_global   Encoder_sum_Motor1
          //ips200_show_float(70,30,none_leftshift_line,5, 3);
         // ips200_show_float(0,30,none_rightshift_line,5, 3);
-         //ips200_show_float(0,0,abs(Gyro_z),3,3);
+         ips200_show_float(0,110,abs(Gyro_z),3,3);
        //  ips200_show_float(0,300,Image_rptsLeftc[5][0],3,3);
        //  ips200_show_float(40,300,Image_rptsLeftc[5][1],3,3);
 

@@ -61,12 +61,6 @@ extern uint8 Circle_speedAcc_Status;             //出环岛加速状态机         -   
 
 extern uint8 none_left_line;
 extern uint8 have_left_line;
-void Circle_RunElec(CIRCLE_PRE_ENTRY_METHOD entryMethod);
-void Grage_Departure_Check(void);
-void Circle_RunCamera();
-void Circle_RunGyscopAndEncoder();
-
-
 void Circle_CheckCamera(void);
 void handle_circle_left();
 void handle_circle_right();

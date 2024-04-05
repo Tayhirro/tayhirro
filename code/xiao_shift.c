@@ -23,20 +23,20 @@ void check_shiftroad(void){
 
     if(none_leftshift_line&&!none_rightshift_line){            //ÏÈ¼ì²â×óÏßÊÇ·ñ¶ª
         Shift_Direction=SHIFT_LEFT;
-        Trace_aimLine=8;
+        Trace_aimLine=10;
         none_leftshift_line=0;
         //Encoder_Begin(ENCODER_MOTOR_2);
         return;
     }
     else if(none_rightshift_line&&!none_leftshift_line){
-        Trace_aimLine=8;
+        Trace_aimLine=10;
         Shift_Direction=SHIFT_RIGHT;
         none_rightshift_line=0;
 
         return;
     }
     else if(none_rightshift_line&&none_leftshift_line){
-        Trace_aimLine=8;
+        Trace_aimLine=10;
         Shift_Direction=SHIFT_BOTH;
         none_rightshift_line=0;
         none_leftshift_line=0;
