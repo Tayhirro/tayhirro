@@ -43,7 +43,7 @@ GYROSCOPE_MEASURE_TYPE Cross_measureType = GYROSCOPE_GYRO_Z;
 
 void Cross_CheckCamera(void) {
     //Ê®×Ö
-    if (Trace_Status==TRACE_CENTERLINENEAR&& Image_LptLeft_Found && Image_LptRight_Found&&Cross_status == CROSS_NONE) {//Cross_status == CROSS_NONE
+    if (Trace_Status==TRACE_CENTERLINENEAR&& Image_LptLeft_Found&&Cross_status == CROSS_NONE) {//Cross_status == CROSS_NONE
         //²âÊÔ´úÂë
         NORMAL_SPEED=40;
         Trace_Status=TRACE_CROSS;
