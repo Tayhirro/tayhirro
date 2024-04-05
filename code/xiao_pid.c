@@ -9,7 +9,7 @@
 #include "xiao_trace.h"
 float NORMAL_SPEED=96;
 float STOP_SPEED=0;
-float CIRCLE_SPEED=40;
+float CIRCLE_SPEED=54;
 //float Motor_1Target=80; // Motor_1Target -> left 左边标准速度    Motor_2Target -> right  右边标准速度
 //float Motor_2Target=80;
 int speedflag=1;           //直道、停止、进环判断标志

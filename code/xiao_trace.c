@@ -105,7 +105,6 @@ static float Trace_GetAngelError() {
                 Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsRightc[bf_clip(Trace_aimLine, 0, Image_rptsRightcNum - 1)][0]
                                 + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
                                 + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
-
             }
             else{
 //                Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsRightc[bf_clip(Trace_aimLine, 0, Image_rptsRightcNum - 1)][0]
@@ -147,7 +146,7 @@ static float Trace_GetAngelError() {
 //                                           + Trace_lineWeight[2] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 2, 0, Image_rptsRightcNum - 1)][0];
 //                       }
             Trace_aimLine=10;
-            
+
             if(Cross_status==CROSS_RUNNING||Cross_status==CROSS_IN||Cross_status==CROSS_END||Cross_status==CROSS_NONE){
                 if(Image_rptsLeftcNum!=0){
             Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsLeftc[bf_clip(Trace_aimLine, 0, Image_rptsLeftcNum - 1)][0]
@@ -175,6 +174,7 @@ static float Trace_GetAngelError() {
                          return Trace_angleError;
                      }
         if(Trace_Status ==TRACE_CIRCLE_LEFT||Trace_Status ==TRACE_CIRCLE_RIGHT){
+            Trace_aimLine=10;
             if(Circle_status == CIRCLE_LEFT_BEGIN||Circle_status == CIRCLE_LEFT_RUNNING||Circle_status ==CIRCLE_LEFT_OUT||Circle_status ==CIRCLE_LEFT_END||Circle_status ==CIRCLE_RIGHT_IN||Circle_status ==CIRCLE_RIGHT_IN_PRE){
             Trace_angleError = Trace_lineWeight[0] * (float)Image_rptsRightc[bf_clip(Trace_aimLine, 0, Image_rptsRightcNum - 1)][0]
                                       + Trace_lineWeight[1] * (float)Image_rptsRightc[bf_clip(Trace_aimLine + 1, 0, Image_rptsRightcNum - 1)][0]
