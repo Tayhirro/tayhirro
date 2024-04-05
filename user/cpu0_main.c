@@ -604,41 +604,7 @@ int core0_main(void)
                     Motor_SetSpeed(MOTOR_1, 0);
                     Motor_SetSpeed(MOTOR_2, 0);
                 }
-//                //环岛检测
-//                Circle_CheckCamera();
-//                //--------------------环岛处理----------------//
-//                if(Trace_Status==TRACE_CIRCLE){
-//                    if(Trace_Circle_Type==TRACE_CIRCLE_CAREMA_GYROSCOPE_ENCODER||Trace_Circle_Type==TRACE_CIRCLE_CAREMA){
-//                                 Circle_RunCamera();
-//                    }
-//                    if(Trace_Circle_Type==TRACE_CIRCLE_GYROSCOPE_ENCODER){
-//                                 Circle_RunGyscopAndEncoder();
-//                    }
-//                }
-
-                //------------------------------图传相关------------------------------
-                //----------------------------------------
-                //--------------------------------------------------------------------------
-               /* if (Image_LptLeft_Found) {
-                    Image_ShowCorner(Image_rptsLefts[Image_LptLeft_rptsLefts_id][0], 130 + Image_rptsLefts[Image_LptLeft_rptsLefts_id][1], RGB565_BLUE);
-                }
-                if (Image_LptRight_Found) {
-                    Image_ShowCorner(Image_rptsRights[Image_LptRight_rptsRights_id][0], 130 + Image_rptsRights[Image_LptRight_rptsRights_id][1], RGB565_RED);
-                }
-*/
-
             //------------------------------元素处理-----------------------------
-            //------------------------------屏幕相关------------------------------
-    //清除之前的显示
-                /*if(Image_Process_Status ==1){
-                       Image_ShowLine(0, 0, IMAGE_IPS200, IMAGE_CLEAR_ORIGIN);
-                       Image_ShowLine(10, 130, IMAGE_IPS200, IMAGE_CLEAR_MAPPING);
-                       Image_ShowLine(10, 130, IMAGE_IPS200, IMAGE_CLEAR_MIDLINE_RIGHT);
-    //显示边线和逆透视变换后的边线
-                       Image_ShowLine(0, 0, IMAGE_IPS200, IMAGE_ORIGIN);
-                       Image_ShowLine(10, 130, IMAGE_IPS200, IMAGE_MAPPING);
-                       Image_ShowLine(10, 130, IMAGE_IPS200, IMAGE_MIDLINE_RIGHT);
-                }*/
     //显示原图和逆透视变换后的图
     //ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
     //ips200_show_gray_image(0, 130,mapImage[0] , MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
