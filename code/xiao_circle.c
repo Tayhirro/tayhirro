@@ -177,7 +177,7 @@ void Circle_CheckCamera(void) {
         Circle_status = CIRCLE_LEFT_BEGIN;
         Trace_traceType = TRACE_Camera_Near_RIGHT;
         Encoder_Begin(ENCODER_MOTOR_2);
-        Gyroscope_Begin(Circle_measureType);
+       // Gyroscope_Begin(Circle_measureType);
 //        put_int32(70, 1);
         gpio_set_level(P20_8, GPIO_LOW);
     }
@@ -261,13 +261,13 @@ void handle_circle_left(){
     else if (Circle_status == CIRCLE_LEFT_OUT) {
         Trace_traceType = TRACE_Camera_Near_RIGHT;
         PWMSetSteer(100.0);
-        if (Image_rptsRightNum>5&&abs(Encoder_sum_Motor2)>EncoderCircle_End_Thre&&fabs(Gyro_z)>Gyroscope_z_Circle_running_Thre) {
+        if (Image_rptsRightNum>5&&abs(Encoder_sum_Motor2)>EncoderCircle_End_Thre) {
             Circle_status = CIRCLE_LEFT_END;
             Encoder_End(ENCODER_MOTOR_2);
             Encoder_Clear(ENCODER_MOTOR_2);
             Encoder_Begin(ENCODER_MOTOR_2);
-            Gyroscope_End(Circle_measureType);
-            Gyroscope_Clear(Circle_measureType);
+          //  Gyroscope_End(Circle_measureType);
+          //  Gyroscope_Clear(Circle_measureType);
             Trace_traceType = TRACE_Camera_Far_RIGHT;
         }
     }
@@ -350,13 +350,13 @@ void handle_circle_right(){
     else if (Circle_status == CIRCLE_RIGHT_OUT) {
         Trace_traceType = TRACE_Camera_Near_LEFT;
         PWMSetSteer(80.0);
-        if (Image_rptsLeftNum>5&&abs(Encoder_sum_Motor1)>EncoderCircle_End_Thre&&fabs(Gyro_z)>Gyroscope_z_Circle_running_Thre) {
+        if (Image_rptsLeftNum>5&&abs(Encoder_sum_Motor1)>EncoderCircle_End_Thre) {
             Circle_status = CIRCLE_RIGHT_END;
             Encoder_End(ENCODER_MOTOR_1);
             Encoder_Clear(ENCODER_MOTOR_1);
             Encoder_Begin(ENCODER_MOTOR_1);
-            Gyroscope_End(Circle_measureType);
-            Gyroscope_Clear(Circle_measureType);
+           // Gyroscope_End(Circle_measureType);
+           // Gyroscope_Clear(Circle_measureType);
             Trace_traceType = TRACE_Camera_Far_LEFT;
         }
     }

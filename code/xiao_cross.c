@@ -53,6 +53,7 @@ void Cross_CheckCamera(void) {
         Encoder_Clear(ENCODER_MOTOR_2);
         Encoder_End(ENCODER_MOTOR_1);
         Encoder_Clear(ENCODER_MOTOR_1);
+
         Encoder_Begin(ENCODER_MOTOR_1);
         Encoder_Begin(ENCODER_MOTOR_2);
         Gyroscope_Begin(Cross_measureType);     //¿ªÆôÍÓÂÝÒÇ
@@ -309,7 +310,7 @@ void Cross_CheckCamera(void) {
 //}
 void handle_cross(){
     if(Cross_status == CROSS_BEGIN){
-           PWMSetSteer(85.0);
+           PWMSetSteer(90.0);
 
            if((abs(Encoder_sum_Motor2)+abs(Encoder_sum_Motor1))>EncoderCross_In_Thre&&fabs(Gyro_z)>Gyroscope_z_Cross_in_Thre){
                           Encoder_End(ENCODER_MOTOR_2);

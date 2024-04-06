@@ -48,7 +48,7 @@ IFX_INTERRUPT(cc60_pit_ch0_isr,0, CCU6_0_CH0_ISR_PRIORITY)
     Encoder_SpeedRead();                            //编码器数据采集
     //对陀螺仪进行数据采集
     Image_FindCorners();
-   // Gyroscope_Conut();
+    Gyroscope_Conut();
     //--------------------数据处理--------------------
     //电磁PID
 //    if (Elec_pidStatus == 1){

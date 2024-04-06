@@ -7,7 +7,7 @@
 #include "xiao_pid.h"
 #include "xiao_steer.h"
 #include "xiao_trace.h"
-float NORMAL_SPEED=96;
+float NORMAL_SPEED=72;
 float STOP_SPEED=0;
 float CIRCLE_SPEED=54;
 //float Motor_1Target=80; // Motor_1Target -> left 左边标准速度    Motor_2Target -> right  右边标准速度
@@ -111,7 +111,7 @@ if(Trace_Status==TRACE_CROSS || Trace_Status==TRACE_CIRCLE_RIGHT || TRACE_CIRCLE
             }
         }
 
-        else if(-18>=(*topid_steer).err && (*topid_steer).err>=-30)//右偏较大
+        else if(-15>=(*topid_steer).err && (*topid_steer).err>=-30)//右偏较大
         {if(Trace_Status==TRACE_CENTERLINENEAR){speedflag =2;}
         (*topid_steer).Kd=0.7;
             (*topid_steer).Kp=0.8;
@@ -132,8 +132,8 @@ if(Trace_Status==TRACE_CROSS || Trace_Status==TRACE_CIRCLE_RIGHT || TRACE_CIRCLE
                 Motor_2Target = STOP_SPEED-0.5*(*topid_steer).err;
             }
         }
-        else if(-13>(*topid_steer).err && (*topid_steer).err>-18)//右偏较小
-        {if(Trace_Status==TRACE_CENTERLINENEAR){speedflag =1;}
+        else if(-11>(*topid_steer).err && (*topid_steer).err>-15)//右偏较小
+        {if(Trace_Status==TRACE_CENTERLINENEAR){speedflag =2;}
             (*topid_steer).Kp=0.6;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
             if(speedflag == 1)
@@ -152,7 +152,7 @@ if(Trace_Status==TRACE_CROSS || Trace_Status==TRACE_CIRCLE_RIGHT || TRACE_CIRCLE
                 Motor_2Target = STOP_SPEED-0.5*(*topid_steer).err;
             }
         }
-        else if(-13<=(*topid_steer).err && (*topid_steer).err<0)//基本无右偏
+        else if(-11<=(*topid_steer).err && (*topid_steer).err<0)//基本无右偏
         {if(Trace_Status==TRACE_CENTERLINENEAR){speedflag =1;}
             (*topid_steer).Kp=0.5;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
@@ -167,7 +167,7 @@ if(Trace_Status==TRACE_CROSS || Trace_Status==TRACE_CIRCLE_RIGHT || TRACE_CIRCLE
             }
 
         }
-        else if(0<=(*topid_steer).err && (*topid_steer).err<=13)//基本无左偏
+        else if(0<=(*topid_steer).err && (*topid_steer).err<=11)//基本无左偏
         {if(Trace_Status==TRACE_CENTERLINENEAR){speedflag =1;}
             (*topid_steer).Kp=0.5;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
@@ -182,8 +182,8 @@ if(Trace_Status==TRACE_CROSS || Trace_Status==TRACE_CIRCLE_RIGHT || TRACE_CIRCLE
             }
 
         }
-        else if(13<(*topid_steer).err && (*topid_steer).err<18)//左偏较小
-        {if(Trace_Status==TRACE_CENTERLINENEAR){speedflag =1;}
+        else if(11<(*topid_steer).err && (*topid_steer).err<15)//左偏较小
+        {if(Trace_Status==TRACE_CENTERLINENEAR){speedflag =2;}
             (*topid_steer).Kp=0.6;
             (*topid_steer).Kp_output_val=(*topid_steer).Kp*(*topid_steer).err;
            if(speedflag == 1)
@@ -202,7 +202,7 @@ if(Trace_Status==TRACE_CROSS || Trace_Status==TRACE_CIRCLE_RIGHT || TRACE_CIRCLE
                 Motor_2Target = STOP_SPEED;
             }
         }
-        else if(18<=(*topid_steer).err && (*topid_steer).err<30)//左偏较大
+        else if(15<=(*topid_steer).err && (*topid_steer).err<30)//左偏较大
         {if(Trace_Status==TRACE_CENTERLINENEAR){speedflag =2;}
         (*topid_steer).Kd=0.7;
             (*topid_steer).Kp=0.8;

@@ -56,12 +56,12 @@ float Elec_pLimit=5.0;     float Elec_coLimit=50.0;    float Elec_boost=1;
 //------------------------------
 //电机1PID
 //float Motor_1P = 145.8 ;      float Motor_1I = 3.6 ;       float Motor_1D = 0;     float Motor_1Target=0;      float Motor_1cor=0.0;
-float Motor_1P = 11;      float Motor_1I = 4.12 ;       float Motor_1D = 0;     float Motor_1Target=64;      float Motor_1cor=0.0;
+float Motor_1P = 10.4;      float Motor_1I = 4.8 ;       float Motor_1D = 0;     float Motor_1Target=72;      float Motor_1cor=0.0;//11 4.12
 float Motor_1Puse;         float Motor_1Pcor=0.0;      float Motor_1Icor=0.0;       float Motor_1Dcor=0.0;
 //------------------------------
-//电机2PID
+//电机2PID.
 //float Motor_2P = 192.375 ;      float Motor_2I = 14.175 ;       float Motor_2D = 0   ;     float Motor_2Target=0;       float Motor_2cor=0.0;
-float Motor_2P =10.2 ;      float Motor_2I =5.04;       float Motor_2D = 0   ;     float Motor_2Target=64;       float Motor_2cor=0.0;
+float Motor_2P =10.6 ;      float Motor_2I =5.17;       float Motor_2D = 0   ;     float Motor_2Target=72;       float Motor_2cor=0.0;
 float Motor_2Puse;         float Motor_2Pcor=0.0;      float Motor_2Icor=0.0;       float Motor_2Dcor=0.0;
 //------------------------------
 //电机限幅
@@ -473,10 +473,12 @@ int core0_main(void)
    // Image_Init();
 
     cpu_wait_event_ready();         // 等待所有核心初始化完毕
-    Motor_SetSpeed(MOTOR_1,2200);
-             Motor_SetSpeed(MOTOR_2,2200);
+    Motor_SetSpeed(MOTOR_1,1800);
+             Motor_SetSpeed(MOTOR_2,1800);
              PWMSetSteer(90.0);
-
+             Gyroscope_Begin(GYROSCOPE_GYRO_X);
+                                                               Gyroscope_Begin(GYROSCOPE_GYRO_Y);
+                                                               Gyroscope_Begin(GYROSCOPE_GYRO_Z);
     while (TRUE)
     {
                                                   ips200_show_float(0,200,Image_iptsLeftNum, 3, 3);
@@ -520,7 +522,9 @@ int core0_main(void)
          ips200_show_float(0,60,abs(Encoder_sum_Motor1_global),7, 3);//Encoder_sum_Motor1_global   Encoder_sum_Motor1
          //ips200_show_float(70,30,none_leftshift_line,5, 3);
         // ips200_show_float(0,30,none_rightshift_line,5, 3);
-         ips200_show_float(0,110,abs(Gyro_z),3,3);
+         ips200_show_float(0,110,abs(Gyro_x),3,3);
+         ips200_show_float(40,110,abs(Gyro_y),3,3);
+         ips200_show_float(80,110,abs(Gyro_z),3,3);
        //  ips200_show_float(0,300,Image_rptsLeftc[5][0],3,3);
        //  ips200_show_float(40,300,Image_rptsLeftc[5][1],3,3);
 
@@ -562,7 +566,7 @@ int core0_main(void)
 */
                 //------------------------------元素判断------------------------------
 
-                check_shiftroad();
+                //check_shiftroad();
                 //--------------------环岛-----十字---------------
                 //角点还是用逆透视进行判断
                 //角点判断

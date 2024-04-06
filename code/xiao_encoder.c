@@ -50,6 +50,18 @@ void Encoder_Init(void) {
     encoder_dir_init(ENCODER_2_DIR, ENCODER_2_DIR_PULSE, ENCODER_2_DIR_DIR);
 }
 
+float last;
+float A=0.7;
+float wave_filtering(float y1)
+{
+   float output;
+   output=y1*A+(1-A)*last;
+
+   last=output;
+   return output;
+}
+
+
 /**
  * @brief   编码器读取一次数据并进行滤波
  * @return  NULL
@@ -75,6 +87,8 @@ void Encoder_SpeedRead(void) {
         Encoder_1Data += Encoder_leftFilter[index] * Encoder_filterWeight[i];
         Encoder_2Data += Encoder_rightFilter[index] * Encoder_filterWeight[i];
     }
+    Encoder_1Data=wave_filtering(Encoder_1Data);
+        Encoder_2Data=wave_filtering(Encoder_2Data);
     Encoder_dataPointer = (++Encoder_dataPointer) % ENCODER_FILTER_MAX;
     //倒着跑
     //Encoder_1Data = -Encoder_1Data;
